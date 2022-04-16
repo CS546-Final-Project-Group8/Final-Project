@@ -1,10 +1,11 @@
-// Do require routes here
+const HomepageRoute = require("./homepage");
+const UsersRoute = require("./users");
 
 const constructorMethod = (app) => {
-  // write your routing code here
-
+  app.use("/home", HomepageRoute);
+  app.use("/", UsersRoute);
   app.use("*", (req, res) => {
-    res.status(404).json({ error: "Not found" });
+    res.status(404).json({ error: "this route is not being used" });
   });
 };
 
