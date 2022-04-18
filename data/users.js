@@ -5,8 +5,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const validate = require("../validate/index.js");
 
-// function createUser(email, password) this function creates a email and password in monogoDB database
-let createUser = async (email, password) => {
+// function createEmployee(email, password) this function creates a email and password in monogoDB database
+let createEmployee = async (email, password) => {
   await validate.checkEmail(email);
   email = email.toLowerCase().trim();
   await validate.checkPassword(password);
@@ -29,8 +29,8 @@ let createUser = async (email, password) => {
   return { employeeInserted: true };
 };
 
-// function checkUser(email, password) this function checks if the email and password are correct
-let checkUser = async (email, password) => {
+// function checkEmployee(email, password) this function checks if the email and password are correct
+let checkEmployee = async (email, password) => {
   await validate.checkEmail(email);
   email = email.toLowerCase().trim();
   await validate.checkPassword(password);
@@ -47,7 +47,17 @@ let checkUser = async (email, password) => {
   return { authenticated: true };
 };
 
+let getAllEmployees = async () => {
+  const employeesCollection = await employees();
+  const employee = await employeesCollection.find({}).toArray();
+  for (const element of employee) {
+    element._id = element._id.toString();
+  }
+  return employee;
+};
+
 module.exports = {
-  createUser,
-  checkUser,
+  createEmployee,
+  checkEmployee,
+  getAllEmployees,
 };
