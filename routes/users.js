@@ -3,6 +3,14 @@ const router = express.Router();
 const validate = require("../validate/index.js");
 const users = require("../data/users.js");
 
+router.get("/", async (req, res) => {
+  if (req.session.user) {
+    res.redirect("/home");
+  } else {
+    res.redirect("/login");
+  }
+});
+
 router.get("/signup", async (req, res) => {
   try {
     if (!req.session.user) {
@@ -30,7 +38,7 @@ router.post("/signup", async (req, res) => {
     let email = req.body.email.toLowerCase().trim();
     await validate.checkPassword(req.body.password);
     let password = req.body.password.trim();
-    const result = await users.createUser(email, password);
+    const result = await users.createEmployee(email, password);
     if (result.employeeInserted) {
       req.session.user = email;
       req.session.name = "AuthCookie";
@@ -80,7 +88,7 @@ router.post("/login", async (req, res) => {
     let email = req.body.email.toLowerCase().trim();
     await validate.checkPassword(req.body.password);
     let password = req.body.password.trim();
-    const result = await users.checkUser(email, password);
+    const result = await users.checkEmployee(email, password);
     if (result.authenticated) {
       req.session.user = email;
       req.session.name = "AuthCookie";

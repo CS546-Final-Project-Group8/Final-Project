@@ -4,11 +4,11 @@ const validate = require("../validate/index.js");
 
 router.use("/", async (req, res) => {
   if (req.session.user) {
-    res.status(200).json({
-      title: "Home",
+    res.render("home/home", {
+      user: req.session.user,
     });
   } else {
-    res.redirect("/signup");
+    res.redirect("/login");
   }
 });
 

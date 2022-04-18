@@ -1,0 +1,32 @@
+<h1>This is Employee dashboard</h1>
+
+<h2>Existing Employees</h2>
+
+{{!-- loop through allEmployees object --}}
+<div id="employeesTable">
+{{#each allEmployees}}
+<div class="employee">
+    <p>{{email}}</p>
+</div>
+{{/each}}
+</div>
+
+
+<button id="newEmployee">Create New Employee</button>
+{{!-- form to create new employee --}}
+<form hidden id="newEmployeeForm" action="/employee/new" method="POST">
+    <div class="emailDiv">
+        <label for="email">Email : </label>
+        <input required type="text" id = "email" name="email" value="{{email}}" placeholder="email">
+    </div>
+    <div class="passwordDiv">
+        <label for="password">Password : </label>
+        <input type="password" required id = "password" name="password" value="{{password}}" placeholder="password">
+    </div>
+    <button id="cancelEmployee">cancel</button>
+    <button type="submit" id="createEmployee">Create Employee</button>
+</form>
+{{!-- if error --}}
+{{#if error}}
+    <p class="error">{{error}}</p>
+{{/if}}
