@@ -3,14 +3,32 @@
 <h2>Existing Employees</h2>
 
 {{!-- loop through allEmployees object --}}
-<div id="employeesTable">
-{{#each allEmployees}}
-<div class="employee">
-    <p>{{email}}</p>
-</div>
-{{/each}}
-</div>
+<table id="employeesTable">
+    <thead>
+        <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each allEmployees}}
+        <tr>
+        <td>{{name}}</td>
+        <td>{{email}}</td>
+        <td>{{phone}}</td>
+        <td>{{address}}</td>
+        <td>
+            <a href="#" class="editEmployee" id="{{_id}}">Edit</a>
+        </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
 
+<button id="backToHome">Back to Home</button>
 
 <button id="newEmployee">Create New Employee</button>
 {{!-- form to create new employee --}}

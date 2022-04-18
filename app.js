@@ -8,7 +8,7 @@ app.use(
     secret: "secret to bcrypt password",
     saveUninitialized: true,
     resave: false,
-    cookie: { maxAge: 40000 },
+    cookie: { maxAge: 60000 },
   })
 );
 
