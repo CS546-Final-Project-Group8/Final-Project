@@ -78,21 +78,30 @@ let createEmployee = async (
   if (employee) throw "employee already exists";
 
   const insertInfo = await employeesCollection.insertOne(newEmployee);
-  console.log(insertInfo);
   if (insertInfo.insertedCount === 0)
     throw "Could not add employee to database";
 
   // add employeeID to business collection
   const newEmployeeId = insertInfo.insertedId.toString();
-  const updateInfo = await businessCollection.updateOne(
-    { _id: ObjectId(businessId) },
-    { $push: { employees: newEmployeeId } }
-  );
-  if (updateInfo.modifiedCount === 0) {
-    throw "Could not add employee to business";
+  if (!isManager) {
+    const updateInfo = await businessCollection.updateOne(
+      { _id: ObjectId(businessId) },
+      { $push: { employees: newEmployeeId } }
+    );
+    if (updateInfo.modifiedCount === 0) {
+      throw "Could not add manager to business";
+    }
+  } else {
+    const updateInfo = await businessCollection.updateOne(
+      { _id: ObjectId(businessId) },
+      { $push: { managers: newEmployeeId } }
+    );
+    if (updateInfo.modifiedCount === 0) {
+      throw "Could not add employee to business";
+    }
   }
 
-  return { employeeInserted: true, employeeID: insertInfo.insertedId };
+  return { employeeInserted: true, employeeID: newEmployeeId };
 };
 
 // function checkEmployee(email, password) this function checks if the email and password are correct
@@ -110,7 +119,12 @@ let checkEmployee = async (email, password) => {
     employee.hashedPassword
   );
   if (!passwordStatus) throw "Either the email or password is invalid";
-  return { authenticated: true };
+  return {
+    authenticated: true,
+    employeeID: employee._id,
+    businessId: employee.businessId,
+    isAdmin: employee.isManager,
+  };
 };
 
 let getAllEmployees = async (businessId) => {

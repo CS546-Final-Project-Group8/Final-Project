@@ -53,6 +53,7 @@ router.post("/signup", async (req, res) => {
       if (result.businessInserted) {
         req.session.user = email;
         req.session.businessId = result.businessID;
+        req.session.isAdmin = true;
         req.session.name = "AuthCookie";
         res.redirect("/home");
       } else {
@@ -115,6 +116,7 @@ router.post("/login", async (req, res) => {
       const result = await businesses.checkBusiness(email, password);
       if (result.authenticated) {
         req.session.user = email;
+        req.session.isAdmin = true;
         req.session.businessId = result.businessID;
         req.session.name = "AuthCookie";
         res.redirect("/home");

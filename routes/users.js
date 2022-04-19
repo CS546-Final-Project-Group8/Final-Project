@@ -42,7 +42,10 @@ router.post("/login", async (req, res) => {
       const result = await users.checkEmployee(email, password);
       if (result.authenticated) {
         req.session.user = email;
+        req.session.isAdmin = result.isAdmin;
+        req.session.businessId = result.businessId;
         req.session.name = "AuthCookie";
+        req.session.employeeId = result.employeeID;
         res.redirect("/home");
       } else {
         return res.status(500).render("users/login", {

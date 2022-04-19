@@ -4,7 +4,7 @@ const validate = require("../validate/index.js");
 const users = require("../data/users.js");
 
 router.get("/", async (req, res) => {
-  if (req.session.user) {
+  if (req.session.isAdmin) {
     validate.checkID(req.session.businessId);
     let allEmployees = await users.getAllEmployees(req.session.businessId);
     res.render("employee/employee", {
@@ -13,12 +13,12 @@ router.get("/", async (req, res) => {
       allEmployees: allEmployees,
     });
   } else {
-    res.redirect("/login");
+    res.redirect("/home");
   }
 });
 
 router.post("/new", async (req, res) => {
-  if (req.session.user) {
+  if (req.session.isAdmin) {
     try {
       await validate.checkID(req.session.businessId);
       let businessId = req.session.businessId;
@@ -62,8 +62,6 @@ router.post("/new", async (req, res) => {
         isManager
       );
       if (result.employeeInserted) {
-        req.session.user = email;
-        req.session.name = "AuthCookie";
         res.redirect("/employee");
       } else {
         return res.status(500).render("employee/employee", {
@@ -82,7 +80,7 @@ router.post("/new", async (req, res) => {
       });
     }
   } else {
-    res.redirect("/login");
+    res.redirect("/home");
   }
 });
 
