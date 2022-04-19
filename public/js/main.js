@@ -21,5 +21,5 @@ $("#cancelEmployee").on("click", async () => {
 
 $("#backToHome").on("click", async () => {
   // redirect to the home page
-  window.location.href = "/";
+  window.location.href = "/home";
 });

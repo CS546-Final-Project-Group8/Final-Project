@@ -1,3 +1,5 @@
+const { ObjectId } = require("mongodb");
+
 // function checkString(string) this function checks if the string is valid
 let checkString = async (str) => {
   return !(!str || typeof str !== "string" || !str.trim());
@@ -5,64 +7,89 @@ let checkString = async (str) => {
 
 // function checkNumber(number) this function checks if the number is a valid positive number
 let checkNumber = async (num) => {
-  if (!num || typeof num !== "number" || !Number.isInteger(age) || num < 0) {
-    throw "Invalid number, please enter a valid positive number";
-  } else {
-    return true;
+  if (!num) {
+    throw "Error: Invalid number, please enter a number";
   }
+  if (typeof num === "string") {
+    if (num != parseInt(num)) {
+      // here "==" is the logic used to compare data but not the type
+      throw "Error: Invalid number, please enter a number";
+    }
+  }
+  num = parseInt(num);
+  if (isNaN(num)) {
+    throw "Error: Invalid number, please enter a number";
+  }
+  if (num < 0) {
+    throw "Error: Invalid number, please enter a positive number";
+  }
+  return true;
 };
 
 // function checkBoolean(boolean) this function checks if the boolean is valid
 let checkBoolean = async (bool) => {
-  if (!bool || typeof bool !== "boolean") {
-    throw "Error: Invalid boolean, please enter boolean in true or false format";
-  } else {
+  if (!bool) {
+    throw "Error: Invalid boolean, please enter a boolean";
+  }
+  if (typeof bool === "string") {
+    if (bool === "true" || bool === "false") {
+      return true;
+    } else {
+      throw "Error: Invalid boolean, please enter a boolean";
+    }
+  }
+  if (typeof bool === "boolean") {
     return true;
+  } else {
+    throw "Error: Invalid boolean, please enter a boolean";
   }
 };
 
 // function checkDate(date) this function checks if the date is valid
-let checkDate = async (date) => {
-  await checkString(date);
-  // validate Date in MM/DD/YYYY format
-  let arr = date.split("/");
-  if (arr.length !== 3)
-    throw "Error: Date should contain 3 values of month, day, year in MM/DD/YYYY format";
-  if (arr[0] > 12 || arr[0] < 1)
-    throw "Error: month of Date should be between 1 and 12";
 
-  let month = parseInt(arr[0]);
-  let day = parseInt(arr[1]);
-  let year = parseInt(arr[2]);
-  if (month != arr[0] || day != arr[1] || year != arr[2]) {
-    throw "Error: Invalid characters present in releaseDate";
-  }
-  // months with 31 days
-  if ([1, 3, 5, 7, 8, 10, 12].includes(month)) {
-    if (day < 1 || day > 31) {
-      throw "Error: Value for day should be between 1 and 31";
-    }
-  } // months with 30 days
-  else if ([4, 6, 9, 11].includes(month)) {
-    if (day < 1 || day > 30) {
-      throw "Error: Value for day should be between 1 and 30";
-    }
-  } // february
-  else if (month == 2) {
-    if (year % 4 == 0) {
-      if (day < 1 || day > 29) {
-        throw "Error: Value for day should be between 1 and 29";
-      }
-    } else {
-      if (day < 1 || day > 28) {
-        throw "Error: Value for day should be between 1 and 28";
-      }
-    }
-    if (year < 1900 || year > 2023) {
-      throw "Error: Value for year should be between 1900 and 2023";
-    }
-  }
-};
+// pending
+
+// let checkDate = async (date) => {
+//   await checkString(date);
+//   // validate Date in MM/DD/YYYY format
+//   let arr = date.split("/");
+//   if (arr.length !== 3)
+//     throw "Error: Date should contain 3 values of month, day, year in MM/DD/YYYY format";
+//   if (arr[0] > 12 || arr[0] < 1)
+//     throw "Error: month of Date should be between 1 and 12";
+
+//   let month = parseInt(arr[0]);
+//   let day = parseInt(arr[1]);
+//   let year = parseInt(arr[2]);
+//   if (month != arr[0] || day != arr[1] || year != arr[2]) {
+//     throw "Error: Invalid characters present in releaseDate";
+//   }
+//   // months with 31 days
+//   if ([1, 3, 5, 7, 8, 10, 12].includes(month)) {
+//     if (day < 1 || day > 31) {
+//       throw "Error: Value for day should be between 1 and 31";
+//     }
+//   } // months with 30 days
+//   else if ([4, 6, 9, 11].includes(month)) {
+//     if (day < 1 || day > 30) {
+//       throw "Error: Value for day should be between 1 and 30";
+//     }
+//   } // february
+//   else if (month == 2) {
+//     if (year % 4 == 0) {
+//       if (day < 1 || day > 29) {
+//         throw "Error: Value for day should be between 1 and 29";
+//       }
+//     } else {
+//       if (day < 1 || day > 28) {
+//         throw "Error: Value for day should be between 1 and 28";
+//       }
+//     }
+//     if (year < 1900 || year > 2023) {
+//       throw "Error: Value for year should be between 1900 and 2023";
+//     }
+//   }
+// };
 
 // function cheackEmail(email) this function checks if the email is valid
 let checkEmail = async (email) => {
@@ -165,14 +192,42 @@ let checkPhone = async (phone) => {
   }
 };
 
+// checkID(ObjectID) this function checks if the ObjectID is valid mongoDB ObjectID
+let checkID = async (id) => {
+  if (!id || typeof id !== "string" || !ObjectId.isValid(id)) {
+    throw "Error: Invalid ObjectID, please enter ObjectID in string format";
+  }
+  return true;
+};
+
+// let checkGender(gender), check if gender is valid
+let checkGender = async (gender) => {
+  if (
+    [
+      "male",
+      "female",
+      "transgender",
+      "gender neutral",
+      "non-binary",
+      "prefer not to say",
+    ].includes(gender.toLowerCase().trim())
+  ) {
+    return true;
+  } else {
+    throw "Please choose a gender from provided options";
+  }
+};
+
 module.exports = {
   checkString,
   checkNumber,
   checkBoolean,
-  checkDate,
+  // checkDate,  //pending
   checkEmail,
   checkPassword,
   checkState,
   checkZip,
   checkPhone,
+  checkID,
+  checkGender,
 };

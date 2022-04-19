@@ -1,0 +1,16 @@
+<h1>This is login page for a business</h1>
+
+<form action="/businesses/login" method="POST">
+<label for="email">Business Email : </label>
+<input required type="text" id = "email" name="email" value="{{email}}" placeholder="business email">
+<label for="password">Password : </label>
+<input required type="password" id = "password" name="password" value="{{password}}" placeholder="password">
+<button type="submit" id="checkLogin">Login</button>
+</form>
+
+<a href="/businesses/signup">Need a business account? Click here to signup</a>
+
+{{!-- error --}}
+{{#if error}}
+    <p class="error">{{error}}</p>
+{{/if}}
