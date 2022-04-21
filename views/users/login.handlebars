@@ -1,14 +1,10 @@
 <h1>Employee Login Page</h1>
 <form id = "login-form" action="/login" method="post">
-    <div class="emailDiv">
     <label for="email">Email : </label>
     <input required type="text" id = "email" name="email" value="{{email}}" placeholder="email">
-    </div>
-    <div class="passwordDiv" style="margin-left: 10px;">
     <label for="password">Password : </label>
     <input type="password" required id = "password" name="password" value="{{password}}" placeholder="password">
-    </div>
-    <button type="submit" id="checkLogin" style="margin-left: 91px;" >Login</button>
+    <button type="submit" id="checkLogin" >Login</button>
 </form>
 {{#if error}}
     <p class="error">{{error}}</p>
