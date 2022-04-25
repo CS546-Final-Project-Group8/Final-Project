@@ -47,49 +47,67 @@ let checkBoolean = async (bool) => {
 
 // function checkDate(date) this function checks if the date is valid
 
-// pending
+let checkDate = async (date) => {
+  await checkString(date);
+  // validate Date in YYYY-MM-DD format
+  let arr = date.split("-");
+  if (arr.length !== 3)
+    throw "Error: Date should contain 3 values of month, day, year in YYYY-MM-DD format";
 
-// let checkDate = async (date) => {
-//   await checkString(date);
-//   // validate Date in MM/DD/YYYY format
-//   let arr = date.split("/");
-//   if (arr.length !== 3)
-//     throw "Error: Date should contain 3 values of month, day, year in MM/DD/YYYY format";
-//   if (arr[0] > 12 || arr[0] < 1)
-//     throw "Error: month of Date should be between 1 and 12";
+  let year = parseInt(arr[0]);
+  let month = parseInt(arr[1]);
+  let day = parseInt(arr[2]);
 
-//   let month = parseInt(arr[0]);
-//   let day = parseInt(arr[1]);
-//   let year = parseInt(arr[2]);
-//   if (month != arr[0] || day != arr[1] || year != arr[2]) {
-//     throw "Error: Invalid characters present in releaseDate";
-//   }
-//   // months with 31 days
-//   if ([1, 3, 5, 7, 8, 10, 12].includes(month)) {
-//     if (day < 1 || day > 31) {
-//       throw "Error: Value for day should be between 1 and 31";
-//     }
-//   } // months with 30 days
-//   else if ([4, 6, 9, 11].includes(month)) {
-//     if (day < 1 || day > 30) {
-//       throw "Error: Value for day should be between 1 and 30";
-//     }
-//   } // february
-//   else if (month == 2) {
-//     if (year % 4 == 0) {
-//       if (day < 1 || day > 29) {
-//         throw "Error: Value for day should be between 1 and 29";
-//       }
-//     } else {
-//       if (day < 1 || day > 28) {
-//         throw "Error: Value for day should be between 1 and 28";
-//       }
-//     }
-//     if (year < 1900 || year > 2023) {
-//       throw "Error: Value for year should be between 1900 and 2023";
-//     }
-//   }
-// };
+  if (year != arr[0] || month != arr[1] || day != arr[2]) {
+    throw "Error: Invalid characters present in releaseDate";
+  }
+
+  if (month > 12 || month < 1)
+    throw "Error: month of Date should be between 1 and 12";
+  // months with 31 days
+  if ([1, 3, 5, 7, 8, 10, 12].includes(month)) {
+    if (day < 1 || day > 31) {
+      throw "Error: Value for day should be between 1 and 31";
+    }
+  } // months with 30 days
+  else if ([4, 6, 9, 11].includes(month)) {
+    if (day < 1 || day > 30) {
+      throw "Error: Value for day should be between 1 and 30";
+    }
+  } // february
+  else if (month == 2) {
+    if (year % 4 == 0) {
+      if (day < 1 || day > 29) {
+        throw "Error: Value for day should be between 1 and 29";
+      }
+    } else {
+      if (day < 1 || day > 28) {
+        throw "Error: Value for day should be between 1 and 28";
+      }
+    }
+  }
+  // check if date is in the past, if not throw error
+  // new Date() returns the current date in YYYY-MM-DD format
+
+  let currentYear = new Date().getFullYear();
+  if (year < 1900 || year > currentYear) {
+    throw "Error: Value for year should be between 1900 and " + currentYear;
+  } else if (year === currentYear) {
+    let currentMonth = new Date().getMonth() + 1;
+    if (month > currentMonth) {
+      throw (
+        "Error: Value for month should be less than or equal to " + currentMonth
+      );
+    } else if (month == currentMonth) {
+      let currentDay = new Date().getDate();
+      if (day > currentDay) {
+        throw (
+          "Error: Value for day should be less than or equal to " + currentDay
+        );
+      }
+    }
+  }
+};
 
 // function cheackEmail(email) this function checks if the email is valid
 let checkEmail = async (email) => {
@@ -218,11 +236,29 @@ let checkGender = async (gender) => {
   }
 };
 
+let checkEmploymentStatus = async (employmentStatus) => {
+  if (
+    [
+      "full-time",
+      "part-time",
+      "contract",
+      "intern",
+      "temporary",
+      "volunteer",
+      "other",
+    ].includes(employmentStatus.toLowerCase().trim())
+  ) {
+    return true;
+  } else {
+    throw "Please choose an employment status from provided options";
+  }
+};
+
 module.exports = {
   checkString,
   checkNumber,
   checkBoolean,
-  // checkDate,  //pending
+  checkDate,
   checkEmail,
   checkPassword,
   checkState,
@@ -230,4 +266,5 @@ module.exports = {
   checkPhone,
   checkID,
   checkGender,
+  checkEmploymentStatus,
 };

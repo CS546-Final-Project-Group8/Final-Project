@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const validate = require("../validate/index.js");
 
-// function createEmployee(businessId, email, password, firstName, lastName, gender,  address, city, state, phone, hourlyPay, startDate, isManager) this function creates an employee in monogoDB database
+// function createEmployee(businessId, email, password, firstName, lastName, gender,  address, city, state, phone, hourlyPay, startDate, employmentStatus, isActiveEmployee, isManager) this function creates an employee in monogoDB database
 let createEmployee = async (
   businessId,
   email,
@@ -20,6 +20,8 @@ let createEmployee = async (
   phone,
   hourlyPay,
   startDate,
+  employmentStatus,
+  isActiveEmployee,
   isManager
 ) => {
   await validate.checkID(businessId);
@@ -43,8 +45,12 @@ let createEmployee = async (
   phone = phone.trim();
   await validate.checkNumber(hourlyPay);
   hourlyPay = parseInt(hourlyPay);
-  // await validate.checkDate(startDate);  // pending
+  await validate.checkDate(startDate);
   startDate = startDate.trim();
+  await validate.checkEmploymentStatus(employmentStatus);
+  employmentStatus = employmentStatus.trim();
+  await validate.checkBoolean(isActiveEmployee);
+  isActiveEmployee = isActiveEmployee.trim();
   await validate.checkBoolean(isManager);
   isManager = isManager.toLowerCase().trim() === "true";
 
@@ -67,9 +73,12 @@ let createEmployee = async (
     gender: gender,
     address: address,
     state: state,
+    city: city,
     phone: phone,
     hourlyPay: hourlyPay,
     startDate: startDate,
+    employmentStatus: employmentStatus,
+    isActiveEmployee: isActiveEmployee,
     isManager: isManager,
   };
 
@@ -113,18 +122,34 @@ let checkEmployee = async (email, password) => {
 
   const employeesCollection = await employees();
   const employee = await employeesCollection.findOne({ email: email });
-  if (!employee) throw "Either the email or password is invalid";
-  const passwordStatus = await bcrypt.compare(
-    password,
-    employee.hashedPassword
-  );
+  const businessCollection = await businesses();
+  const businessData = await businessCollection.findOne({ email: email });
+  if (!(employee || businessData))
+    throw "Either the email or password is invalid";
+  let passwordStatus;
+  if (employee) {
+    passwordStatus = await bcrypt.compare(password, employee.hashedPassword);
+  } else {
+    passwordStatus = await bcrypt.compare(
+      password,
+      businessData.hashedPassword
+    );
+  }
   if (!passwordStatus) throw "Either the email or password is invalid";
-  return {
-    authenticated: true,
-    employeeID: employee._id,
-    businessId: employee.businessId,
-    isAdmin: employee.isManager,
-  };
+  if (employee) {
+    return {
+      authenticated: true,
+      employeeID: employee._id,
+      businessId: employee.businessId,
+      isAdmin: employee.isManager,
+    };
+  } else {
+    return {
+      authenticated: true,
+      businessId: businessData._id,
+      isAdmin: true,
+    };
+  }
 };
 
 let getAllEmployees = async (businessId) => {

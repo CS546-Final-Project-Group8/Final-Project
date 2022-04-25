@@ -60,6 +60,21 @@
     <input required type="text" id = "zip" name="zip" value="{{zip}}" placeholder="zip">
     <label for="phoneNumber">Phone Number :</label>
     <input required type="text" id = "phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="phoneNumber">
+    <label for="employmentStatus">Employment Status :</label>
+    <select name="employmentStatus" id="employmentStatus">
+        <option selected value="Full-Time">Full-Time</option>
+        <option value="Part-Time">Part-Time</option>
+        <option value="Contract">Contract</option>
+        <option value="Intern">Intern</option>
+        <option value="Temporary">Temporary</option>
+        <option value="Volunteer">Volunteer</option>
+        <option value="Other">Other</option>
+    </select>
+    <label for="isActiveEmployee">Is Active Employee :</label>
+    <select name="isActiveEmployee" id="isActiveEmployee">
+        <option selected value="true">True</option>
+        <option value="false">False</option>
+    </select>
     <label for="hourlyPay">hourlyPay</label>
     <input required type="number" id = "hourlyPay" name="hourlyPay" value="{{hourlyPay}}" placeholder="hourlyPay">
     <label for="startDate">Start Date</label>

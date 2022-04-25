@@ -42,8 +42,12 @@ router.post("/new", async (req, res) => {
       let phone = req.body.phoneNumber.trim();
       await validate.checkNumber(req.body.hourlyPay);
       let hourlyPay = parseInt(req.body.hourlyPay);
-      // await validate.checkDate(req.body.startDate); //pending
+      await validate.checkDate(req.body.startDate);
       let startDate = req.body.startDate.trim();
+      await validate.checkEmploymentStatus(req.body.employmentStatus);
+      let employmentStatus = req.body.employmentStatus.trim();
+      await validate.checkBoolean(req.body.isActiveEmployee);
+      let isActiveEmployee = req.body.isActiveEmployee.trim();
       await validate.checkBoolean(req.body.isManager);
       let isManager = req.body.isManager.trim();
       const result = await users.createEmployee(
@@ -59,6 +63,8 @@ router.post("/new", async (req, res) => {
         phone,
         hourlyPay,
         startDate,
+        employmentStatus,
+        isActiveEmployee,
         isManager
       );
       if (result.employeeInserted) {
@@ -67,6 +73,19 @@ router.post("/new", async (req, res) => {
         return res.status(500).render("employee/employee", {
           email: req.body.email,
           password: req.body.password,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          gender: req.body.gender,
+          address: req.body.gender,
+          city: req.body.city,
+          state: req.body.state,
+          zip: req.body.zip,
+          phoneNumber: req.body.phoneNumber,
+          employmentStatus: req.body.employmentStatus,
+          isActiveEmployee: req.body.isActiveEmployee,
+          hourlyPay: req.body.hourlyPay,
+          startDate: req.body.startDate,
+          isManager: req.body.isManager,
           title: "Employee",
           error: "Internal Server Error",
         });
@@ -75,6 +94,19 @@ router.post("/new", async (req, res) => {
       res.status(400).render("employee/employee", {
         email: req.body.email,
         password: req.body.password,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        gender: req.body.gender,
+        address: req.body.gender,
+        city: req.body.city,
+        state: req.body.state,
+        zip: req.body.zip,
+        phoneNumber: req.body.phoneNumber,
+        employmentStatus: req.body.employmentStatus,
+        isActiveEmployee: req.body.isActiveEmployee,
+        hourlyPay: req.body.hourlyPay,
+        startDate: req.body.startDate,
+        isManager: req.body.isManager,
         title: "Employee",
         error: e,
       });
