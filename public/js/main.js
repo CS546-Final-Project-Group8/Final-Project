@@ -6,6 +6,7 @@ $("#newEmployee").on("click", async () => {
   $("#newEmployee").hide();
   // hide the table
   $("#employeesTable").hide();
+  $("#backToHome").hide();
 });
 
 $("#cancelEmployee").on("click", async () => {
@@ -15,4 +16,10 @@ $("#cancelEmployee").on("click", async () => {
   $("#newEmployee").show();
   // show the table
   $("#employeesTable").show();
+  $("#backToHome").show();
+});
+
+$("#backToHome").on("click", async () => {
+  // redirect to the home page
+  window.location.href = "/home";
 });

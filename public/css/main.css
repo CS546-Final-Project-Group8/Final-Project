@@ -4,6 +4,27 @@
   box-sizing: border-box;
 }
 
+body {
+  padding: 20px 40px;
+}
+
 .error {
   color: red;
+}
+
+table {
+  width: 100%;
+  border: 2px solid black;
+}
+thead {
+  background-color: #eee;
+  font-weight: bold;
+}
+tbody tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+th,
+td {
+  border: 1px solid rgb(78, 76, 76);
 }
