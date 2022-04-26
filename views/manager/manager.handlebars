@@ -6,8 +6,7 @@
 <table id="employeesTable">
     <thead>
         <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
+        <th>Name</th>
         <th>Email</th>
         <th>Phone</th>
         <th>Address</th>
@@ -17,8 +16,7 @@
     <tbody>
         {{#each allEmployees}}
         <tr>
-        <td>{{firstName}}</td>
-        <td>{{lastName}}</td>
+        <td>{{firstName}} {{lastName}}</td>
         <td>{{email}}</td>
         <td>{{phone}}</td>
         <td>{{address}}</td>
@@ -40,7 +38,7 @@
 
 <button id="newEmployee">Create New Employee</button>
 {{!-- form to create new employee --}}
-<form hidden id="newEmployeeForm" action="/employee/new" method="POST">
+<form hidden id="newEmployeeForm" action="/manager/new" method="POST">
     <label for="email">Email : </label>
     <input required type="text" id = "email" name="email" value="{{email}}" placeholder="Email">
     <label for="password">Password : </label>
