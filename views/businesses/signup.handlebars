@@ -1,28 +1,28 @@
-<h1>Business Signup page</h1>
+<h1>Business Signup Page</h1>
 
 <form action="/businesses/signup" method="POST">
     <label for="businessName">Business Name : </label>
-    <input required type="text" id = "businessName" name="businessName" value="{{businessName}}" placeholder="businessName">
+    <input required type="text" id = "businessName" name="businessName" value="{{businessName}}" placeholder="Business Name">
     <label for="email">Email : </label>
-    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="email">
+    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="Email">
     <label for="password">Password : </label>
-    <input required type="password" id = "password" name="password" value="{{password}}" placeholder="password">
+    <input required type="password" id = "password" name="password" value="{{password}}" placeholder="Password">
     <label for="address">Address :</label>
-    <input required type="text" id = "address" name="address" value="{{address}}" placeholder="address">
+    <input required type="text" id = "address" name="address" value="{{address}}" placeholder="Address">
     <label for="city">City :</label>
-    <input required type="text" id = "city" name="city" value="{{city}}" placeholder="city">
+    <input required type="text" id = "city" name="city" value="{{city}}" placeholder="City">
     <label for="state">State :</label>
-    <input required type="text" id = "state" name="state" value="{{state}}" placeholder="state">
+    <input required type="text" id = "state" name="state" value="{{state}}" placeholder="State">
     <label for="phoneNumber">Phone Number :</label>
-    <input required type="text" id = "phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="phoneNumber">
+    <input required type="text" id = "phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="Phone Number">
     <label for="about">About :</label>
-    <input required type="text" id = "about" name="about" value="{{about}}" placeholder="about">
+    <input required type="text" id = "about" name="about" value="{{about}}" placeholder="About the business">
 
-    <button type="submit" id="checkSignup">Signup</button>
+    <button type="submit" id="checkSignup">Sign up</button>
 </form>
 
 
-<a href="/businesses/login">Already have a business account? Click here to log-in</a>
+<a href="/businesses/login">Already have a business account? Click here to log in</a>
 
 {{!-- error --}}
 {{#if error}}
