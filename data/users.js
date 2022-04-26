@@ -73,13 +73,13 @@ let createEmployee = async (
     lastName: lastName,
     gender: gender,
     address: address,
-    state: state,
     city: city,
+    state: state,
     phone: phone,
-    hourlyPay: hourlyPay,
-    startDate: startDate,
     employmentStatus: employmentStatus,
     isActiveEmployee: isActiveEmployee,
+    hourlyPay: hourlyPay,
+    startDate: startDate,
     isManager: isManager,
   };
 

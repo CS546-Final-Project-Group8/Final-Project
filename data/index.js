@@ -1,4 +1,7 @@
-const mongoCollections = require("../config/mongoCollections");
-const employees = mongoCollections.employees;
-const { ObjectId } = require("mongodb");
-const validate = require("./validate");
+const employees = require("./users");
+const businesses = require("./businesses");
+
+module.exports = {
+  employees,
+  businesses,
+};
