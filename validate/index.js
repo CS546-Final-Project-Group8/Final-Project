@@ -75,8 +75,8 @@ let checkDate = async (date) => {
       throw "Error: Value for day should be between 1 and 30";
     }
   } // february
-  else if (month == 2) {
-    if (year % 4 == 0) {
+  else if (month === 2) {
+    if (year % 4 === 0) {
       if (day < 1 || day > 29) {
         throw "Error: Value for day should be between 1 and 29";
       }
@@ -98,7 +98,7 @@ let checkDate = async (date) => {
       throw (
         "Error: Value for month should be less than or equal to " + currentMonth
       );
-    } else if (month == currentMonth) {
+    } else if (month === currentMonth) {
       let currentDay = new Date().getDate();
       if (day > currentDay) {
         throw (

@@ -55,7 +55,9 @@ let createBusiness = async (
   const insertInfo = await businessCollection.insertOne(newBusiness);
   if (insertInfo.insertedCount === 0)
     throw "Could not add business to database";
-  return { businessInserted: true, businessID: insertInfo.insertedId };
+  // convert the ObjectId to string
+  const newId = insertInfo.insertedId.toString();
+  return { businessInserted: true, businessID: newId };
 };
 
 // function checkBusiness(email, password) this function checks if the email and password are correct
