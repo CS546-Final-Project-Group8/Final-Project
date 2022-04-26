@@ -9,6 +9,8 @@ router.get("/", async (req, res) => {
     let allEmployees = await users.getAllEmployees(req.session.businessId);
     res.render("employee/employee", {
       user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      isBusiness: req.session.isBusiness,
       title: "Employee",
       allEmployees: allEmployees,
     });
@@ -21,7 +23,7 @@ router.post("/new", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId;
+      let businessId = req.session.businessId.toLowerCase().trim();
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();
       await validate.checkPassword(req.body.password);
@@ -61,10 +63,10 @@ router.post("/new", async (req, res) => {
         city,
         state,
         phone,
-        hourlyPay,
-        startDate,
         employmentStatus,
         isActiveEmployee,
+        hourlyPay,
+        startDate,
         isManager
       );
       if (result.employeeInserted) {

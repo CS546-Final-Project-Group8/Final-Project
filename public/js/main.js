@@ -16,7 +16,13 @@ $("#cancelEmployee").on("click", async () => {
   $("#newEmployee").show();
   // show the table
   $("#employeesTable").show();
-  $("#backToHome").show();
+  // check is isbusiness is true
+  const isBusiness = $("#isBusiness").val();
+  if (!isBusiness) {
+    $("#backToHome").show();
+  } else {
+    $("#backToHome").hide();
+  }
 });
 
 $("#backToHome").on("click", async () => {

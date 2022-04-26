@@ -1,9 +1,11 @@
 <h1>Login Page</h1>
 <form id = "login-form" action="/login" method="post">
+    <label for="businessEmail">Business Email : </label>
+    <input required type="text" id = "businessEmail" name="businessEmail" value="{{businessEmail}}" placeholder="business email">
     <label for="email">Email : </label>
-    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="email">
+    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="employee email">
     <label for="password">Password : </label>
-    <input type="password" required id = "password" name="password" value="{{password}}" placeholder="password">
+    <input required type="password" id = "password" name="password" value="{{password}}" placeholder="password">
     <button type="submit" id="checkLogin" >Login</button>
 </form>
 {{#if error}}
