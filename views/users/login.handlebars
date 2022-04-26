@@ -3,12 +3,15 @@
     <label for="businessEmail">Business Email : </label>
     <input required type="text" id = "businessEmail" name="businessEmail" value="{{businessEmail}}" placeholder="business email">
     <label for="email">Email : </label>
-    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="employee email">
+    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="Email">
     <label for="password">Password : </label>
-    <input required type="password" id = "password" name="password" value="{{password}}" placeholder="password">
+    <input type="password" required id = "password" name="password" value="{{password}}" placeholder="Password">
     <button type="submit" id="checkLogin" >Login</button>
 </form>
 {{#if error}}
     <p class="error">{{error}}</p>
 {{/if}}
-<a href="/businesses/signup">Need to register for new business? Click here to sign-up</a>
+<ul>
+    <li><a href="/businesses/login">Business Login</a></li>
+    <li><a href="/businesses/signup">Create a new business account? Click here to sign up</a></li>
+</ul>
