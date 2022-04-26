@@ -1,12 +1,13 @@
 <h1>This is Employee dashboard</h1>
 
+{{#if allEmployees}}
 <h2>Existing Employees</h2>
-
 {{!-- loop through allEmployees object --}}
 <table id="employeesTable">
     <thead>
         <tr>
-        <th>Name</th>
+        <th>First Name</th>
+        <th>Last Name</th>
         <th>Email</th>
         <th>Phone</th>
         <th>Address</th>
@@ -16,7 +17,8 @@
     <tbody>
         {{#each allEmployees}}
         <tr>
-        <td>{{name}}</td>
+        <td>{{firstName}}</td>
+        <td>{{lastName}}</td>
         <td>{{email}}</td>
         <td>{{phone}}</td>
         <td>{{address}}</td>
@@ -27,8 +29,14 @@
         {{/each}}
     </tbody>
 </table>
-
+{{/if}}
+{{#if isBusiness}}
+<input type="bool" hidden id="isBusiness" value="{{isBusiness}}">
+<button hidden id="backToHome">Back to Home</button>
+{{else }}
 <button id="backToHome">Back to Home</button>
+{{/if}}
+
 
 <button id="newEmployee">Create New Employee</button>
 {{!-- form to create new employee --}}
@@ -92,3 +100,7 @@
 {{#if error}}
     <p class="error">{{error}}</p>
 {{/if}}
+
+<footer>
+    <a href="/logout">Logout</a>
+</footer>

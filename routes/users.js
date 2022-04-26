@@ -35,11 +35,13 @@ router.get("/login", async (req, res) => {
 router.post("/login", async (req, res) => {
   if (!req.session.user) {
     try {
+      await validate.checkEmail(req.body.businessEmail);
+      let businessEmail = req.body.businessEmail.toLowerCase().trim();
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();
       await validate.checkPassword(req.body.password);
       let password = req.body.password.trim();
-      const result = await users.checkEmployee(email, password);
+      const result = await users.checkEmployee(businessEmail, email, password);
       if (result.authenticated) {
         req.session.user = email;
         req.session.isAdmin = result.isAdmin;
@@ -49,6 +51,7 @@ router.post("/login", async (req, res) => {
         res.redirect("/home");
       } else {
         return res.status(500).render("users/login", {
+          businessEmail: req.body.businessEmail,
           email: req.body.email,
           password: req.body.password,
           title: "Login",
@@ -57,6 +60,7 @@ router.post("/login", async (req, res) => {
       }
     } catch (e) {
       res.status(400).render("users/login", {
+        businessEmail: req.body.businessEmail,
         email: req.body.email,
         password: req.body.password,
         title: "Login",

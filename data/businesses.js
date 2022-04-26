@@ -73,7 +73,7 @@ let checkBusiness = async (email, password) => {
     businessData.hashedPassword
   );
   if (!passwordStatus) throw "Either the email or password is invalid";
-  return { authenticated: true, businessID: businessData._id };
+  return { authenticated: true, businessID: businessData._id, isAdmin: true };
 };
 
 module.exports = {
