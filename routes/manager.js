@@ -7,11 +7,11 @@ router.get("/", async (req, res) => {
   if (req.session.isAdmin) {
     validate.checkID(req.session.businessId);
     let allEmployees = await users.getAllEmployees(req.session.businessId);
-    res.render("employee/employee", {
+    res.render("manager/manager", {
       user: req.session.user,
       isAdmin: req.session.isAdmin,
       isBusiness: req.session.isBusiness,
-      title: "Employee",
+      title: "Manager Dashboard",
       allEmployees: allEmployees,
     });
   } else {

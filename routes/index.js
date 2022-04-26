@@ -1,12 +1,12 @@
 const HomepageRoute = require("./home");
 const UsersRoute = require("./users");
-const EmployeeRoute = require("./employee");
+const ManagerRoute = require("./manager");
 const BusinessesRoute = require("./businesses");
 
 const constructorMethod = (app) => {
   app.use("/", UsersRoute);
   app.use("/home", HomepageRoute);
-  app.use("/employee", EmployeeRoute);
+  app.use("/manager", ManagerRoute);
   app.use("/businesses", BusinessesRoute);
 
   app.use("*", (req, res) => {

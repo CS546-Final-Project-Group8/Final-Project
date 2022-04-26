@@ -1,13 +1,12 @@
-<h1>This is Employee dashboard</h1>
+<h1>Manager Dashboard</h1>
 
 {{#if allEmployees}}
-<h2>Existing Employees</h2>
+<h2>Employee Management</h2>
 {{!-- loop through allEmployees object --}}
 <table id="employeesTable">
     <thead>
         <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
+        <th>Name</th>
         <th>Email</th>
         <th>Phone</th>
         <th>Address</th>
@@ -17,8 +16,7 @@
     <tbody>
         {{#each allEmployees}}
         <tr>
-        <td>{{firstName}}</td>
-        <td>{{lastName}}</td>
+        <td>{{firstName}} {{lastName}}</td>
         <td>{{email}}</td>
         <td>{{phone}}</td>
         <td>{{address}}</td>
@@ -40,15 +38,15 @@
 
 <button id="newEmployee">Create New Employee</button>
 {{!-- form to create new employee --}}
-<form hidden id="newEmployeeForm" action="/employee/new" method="POST">
+<form hidden id="newEmployeeForm" action="/manager/new" method="POST">
     <label for="email">Email : </label>
-    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="email">
+    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="Email">
     <label for="password">Password : </label>
-    <input required type="password" id = "password" name="password" value="{{password}}" placeholder="password">
+    <input required type="password" id = "password" name="password" value="{{password}}" placeholder="Password">
     <label for="firstName">First Name : </label>
-    <input required type="text" id = "firstName" name="firstName" value="{{firstName}}" placeholder="firstName">
+    <input required type="text" id = "firstName" name="firstName" value="{{firstName}}" placeholder="First Name">
     <label for="lastName">Last Name : </label>
-    <input required type="text" id = "lastName" name="lastName" value="{{lastName}}" placeholder="lastName">
+    <input required type="text" id = "lastName" name="lastName" value="{{lastName}}" placeholder="Last Name">
     <label for="gender">Gender :</label>
     <select name="gender" id="gender">
         <option value="Male">Male</option>
@@ -59,15 +57,15 @@
         <option value="Prefer Not to Say">Prefer Not to Say</option>
     </select>
     <label for="address">Address :</label>
-    <input required type="text" id = "address" name="address" value="{{address}}" placeholder="address">
+    <input required type="text" id = "address" name="address" value="{{address}}" placeholder="Address">
     <label for="city">City :</label>
-    <input required type="text" id = "city" name="city" value="{{city}}" placeholder="city">
+    <input required type="text" id = "city" name="city" value="{{city}}" placeholder="City">
     <label for="state">State :</label>
-    <input required type="text" id = "state" name="state" value="{{state}}" placeholder="state">
+    <input required type="text" id = "state" name="state" value="{{state}}" placeholder="State">
     <label for="zip">Zip :</label>
-    <input required type="text" id = "zip" name="zip" value="{{zip}}" placeholder="zip">
+    <input required type="text" id = "zip" name="zip" value="{{zip}}" placeholder="Zip">
     <label for="phoneNumber">Phone Number :</label>
-    <input required type="text" id = "phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="phoneNumber">
+    <input required type="text" id = "phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="Phone Number">
     <label for="employmentStatus">Employment Status :</label>
     <select name="employmentStatus" id="employmentStatus">
         <option selected value="Full-Time">Full-Time</option>
@@ -83,17 +81,17 @@
         <option selected value="true">True</option>
         <option value="false">False</option>
     </select>
-    <label for="hourlyPay">hourlyPay</label>
-    <input required type="number" id = "hourlyPay" name="hourlyPay" value="{{hourlyPay}}" placeholder="hourlyPay">
-    <label for="startDate">Start Date</label>
-    <input required type="date" id = "startDate" name="startDate" value="{{startDate}}" placeholder="startDate">
-    <label for="isManager">Is Manager</label>
+    <label for="hourlyPay">Hourly Pay :</label>
+    <input required type="number" id = "hourlyPay" name="hourlyPay" value="{{hourlyPay}}" placeholder="Hourly Pay">
+    <label for="startDate">Start Date :</label>
+    <input required type="date" id = "startDate" name="startDate" value="{{startDate}}" placeholder="Start Date">
+    <label for="isManager">Is Manager :</label>
     <select name="isManager" id="isManager">
         <option value="true">True</option>
         <option value="false" selected>False</option>
     </select>
     <br>
-    <button id="cancelEmployee">cancel</button>
+    <button id="cancelEmployee">Cancel</button>
     <button type="submit" id="createEmployee">Create Employee</button>
 </form>
 {{!-- if error --}}
