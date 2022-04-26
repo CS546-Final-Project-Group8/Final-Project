@@ -1,14 +1,25 @@
-<h1>Login Page</h1>
-<form id = "login-form" action="/login" method="post">
-    <label for="businessEmail">Business Email : </label>
-    <input required type="text" id = "businessEmail" name="businessEmail" value="{{businessEmail}}" placeholder="business email">
-    <label for="email">Email : </label>
-    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="employee email">
-    <label for="password">Password : </label>
-    <input required type="password" id = "password" name="password" value="{{password}}" placeholder="password">
-    <button type="submit" id="checkLogin" >Login</button>
-</form>
-{{#if error}}
-    <p class="error">{{error}}</p>
-{{/if}}
-<a href="/businesses/signup">Need to register for new business? Click here to sign-up</a>
+<div class="login-container">
+	<h2>Login</h2>
+
+	<form id="login-form" action="/login" method="post">
+		<label class="login-labels" for="businessEmail">Business Email : </label>
+		<br />
+		<input required type="text" id="businessEmail" name="businessEmail" value="{{businessEmail}}" placeholder="business email" />
+		<br />
+		<label for="email">Email : </label>
+		<br />
+		<input required type="text" id="email" name="email" value="{{email}}" placeholder="employee email" />
+		<br />
+		<label for="password">Password : </label>
+		<br />
+		<input required type="password" id="password" name="password" value="{{password}}" placeholder="password" />
+		<br />
+		<button type="submit" id="checkLogin">Login</button>
+	</form>
+
+	<a href="/businesses/signup">Need to register for new business? Click here to sign-up</a>
+
+	{{#if error}}
+		<p class="error">{{error}}</p>
+	{{/if}}
+</div>

@@ -4,12 +4,92 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   padding: 20px 40px;
+  width: 100%;
+  height: 100%;
+}
+
+#logo {
+  font-weight: 600;
+  font-style: italic;
+  width: fit-content;
+  margin: 10px;
+}
+
+.login-container {
+  margin: 5% auto auto auto;
+  width: 500px;
+  height: 400px;
+  display: grid;
+  justify-items: center;
+  text-align: left;
+  background-color: white;
+  border-radius: 7px;
+  box-shadow: 1px 1px 2px 2px grey;
+}
+
+.login-container label {
+  font-weight: 550;
+  margin: 8px 0px 0px 0px;
+}
+
+.login-container button {
+  width: 100%;
+  margin: 15px 0px 5px 0px;
+}
+
+#signup-container {
+  margin: 2% auto auto auto;
+  width: 700px;
+  height: 500px;
+  display: grid;
+  justify-items: center;
+  text-align: left;
+  background-color: white;
+  border-radius: 7px;
+  box-shadow: 1px 1px 2px 2px grey;
+}
+
+#signup-container button {
+  width: 20%;
+  margin: 0 auto;
+  display: block;
+}
+
+#signup-container label {
+  font-weight: 550;
+  margin: 8px 0px 0px 0px;
+}
+
+#signup-container input {
+  margin-right: 20px;
+}
+
+#signup-container select {
+  width: 90%;
+}
+
+#signup-list {
+  display: flex;
+}
+
+#signup-list li{
+  list-style: none;
+}
+
+#signup-list textarea {
+  resize: none;
 }
 
 .error {
   color: red;
+  display: block;
 }
 
 table {
