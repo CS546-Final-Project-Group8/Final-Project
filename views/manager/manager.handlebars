@@ -3,7 +3,7 @@
 {{#if allEmployees}}
 	<h2>Employee Management</h2>
 	{{! loop through allEmployees object }}
-	<table id="employeesTable">
+	<table id="employeesTable" class="table table-striped table-hover">
 		<thead>
 			<tr>
 				<th>Name</th>
@@ -30,68 +30,108 @@
 {{/if}}
 {{#if isBusiness}}
 	<input type="bool" hidden id="isBusiness" value="{{isBusiness}}" />
-	<button hidden id="backToHome">Back to Home</button>
+	<button hidden class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
 {{else}}
-	<button id="backToHome">Back to Home</button>
+	<button class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
 {{/if}}
 
-<button id="newEmployee">Create New Employee</button>
+<button class="btn btn-outline-primary" id="newEmployee">Create New Employee</button>
+
 {{! form to create new employee }}
 <form hidden id="newEmployeeForm" action="/manager/new" method="POST">
-	<label for="email">Email : </label>
-	<input required type="text" id="email" name="email" value="{{email}}" placeholder="Email" />
-	<label for="password">Password : </label>
-	<input required type="password" id="password" name="password" value="{{password}}" placeholder="Password" />
-	<label for="firstName">First Name : </label>
-	<input required type="text" id="firstName" name="firstName" value="{{firstName}}" placeholder="First Name" />
-	<label for="lastName">Last Name : </label>
-	<input required type="text" id="lastName" name="lastName" value="{{lastName}}" placeholder="Last Name" />
-	<label for="gender">Gender :</label>
-	<select name="gender" id="gender">
-		<option value="Male">Male</option>
-		<option value="Female">Female</option>
-		<option value="Transgender">Transgender</option>
-		<option value="Gender Neutral">Gender Neutral</option>
-		<option value="Non-Binary">Non-Binary</option>
-		<option value="Prefer Not to Say">Prefer Not to Say</option>
-	</select>
-	<label for="address">Address :</label>
-	<input required type="text" id="address" name="address" value="{{address}}" placeholder="Address" />
-	<label for="city">City :</label>
-	<input required type="text" id="city" name="city" value="{{city}}" placeholder="City" />
-	<label for="state">State :</label>
-	<input required type="text" id="state" name="state" value="{{state}}" placeholder="State" />
-	<label for="zip">Zip :</label>
-	<input required type="text" id="zip" name="zip" value="{{zip}}" placeholder="Zip" />
-	<label for="phoneNumber">Phone Number :</label>
-	<input required type="text" id="phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="Phone Number" />
-	<label for="employmentStatus">Employment Status :</label>
-	<select name="employmentStatus" id="employmentStatus">
-		<option selected value="Full-Time">Full-Time</option>
-		<option value="Part-Time">Part-Time</option>
-		<option value="Contract">Contract</option>
-		<option value="Intern">Intern</option>
-		<option value="Temporary">Temporary</option>
-		<option value="Volunteer">Volunteer</option>
-		<option value="Other">Other</option>
-	</select>
-	<label for="isActiveEmployee">Is Active Employee :</label>
-	<select name="isActiveEmployee" id="isActiveEmployee">
-		<option selected value="true">True</option>
-		<option value="false">False</option>
-	</select>
-	<label for="hourlyPay">Hourly Pay :</label>
-	<input required type="number" id="hourlyPay" name="hourlyPay" value="{{hourlyPay}}" placeholder="Hourly Pay" />
-	<label for="startDate">Start Date :</label>
-	<input required type="date" id="startDate" name="startDate" value="{{startDate}}" placeholder="Start Date" />
-	<label for="isManager">Is Manager :</label>
-	<select name="isManager" id="isManager">
-		<option value="true">True</option>
-		<option value="false" selected>False</option>
-	</select>
-	<br />
-	<button id="cancelEmployee">Cancel</button>
-	<button type="submit" id="createEmployee">Create Employee</button>
+	<div class="row">
+		<div class="col-12 mb-3">
+			<label for="email" class="form-label">Email</label>
+			<input required type="email" class="form-control" id="email" name="email" value="{{email}}" placeholder="Email" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label for="password" class="form-label">Password</label>
+			<input required type="password" class="form-control" id="password" name="password" value="{{password}}" placeholder="Password" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label for="confirmPassword" class="form-label">Confirm Password</label>
+			<input required type="password" class="form-control" id="confirmPassword" name="confirmPassword" value="{{confirmPassword}}" placeholder="Confirm Password" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label for="firstName" class="form-label">First Name</label>
+			<input required type="text" class="form-control" id="firstName" name="firstName" value="{{firstName}}" placeholder="First Name" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label for="lastName" class="form-label">Last Name</label>
+			<input required type="text" class="form-control" id="lastName" name="lastName" value="{{lastName}}" placeholder="Last Name" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label for="gender" class="form-label">Gender</label>
+			<select class="form-select" aria-label="Default select example" name="gender" id="gender">
+				<option value="Male">Male</option>
+				<option value="Female">Female</option>
+				<option value="Transgender">Transgender</option>
+				<option value="Gender Neutral">Gender Neutral</option>
+				<option value="Non-Binary">Non-Binary</option>
+				<option value="Prefer Not to Say">Prefer Not to Say</option>
+			</select>
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="address">Address</label>
+			<input required type="text" class="form-control" id="address" name="address" value="{{address}}" placeholder="Address" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="city">City</label>
+			<input required type="text" class="form-control" id="city" name="city" value="{{city}}" placeholder="City" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="state">State</label>
+			<input required type="text" class="form-control" id="state" name="state" value="{{state}}" placeholder="State" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="zip">Zip</label>
+			<input required type="text" class="form-control" id="zip" name="zip" value="{{zip}}" placeholder="Zip" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="phoneNumber">Phone Number</label>
+			<input required type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="Phone Number" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="employmentStatus">Employment Status</label>
+			<select class="form-select" aria-label="Default select example" name="employmentStatus" id="employmentStatus">
+				<option selected value="Full-Time">Full-Time</option>
+				<option value="Part-Time">Part-Time</option>
+				<option value="Contract">Contract</option>
+				<option value="Intern">Intern</option>
+				<option value="Temporary">Temporary</option>
+				<option value="Volunteer">Volunteer</option>
+				<option value="Other">Other</option>
+			</select>
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="isActiveEmployee">Is Active Employee</label>
+			<select class="form-select" aria-label="Default select example" name="isActiveEmployee" id="isActiveEmployee">
+				<option selected value="true">True</option>
+				<option value="false">False</option>
+			</select>
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="hourlyPay">Hourly Pay</label>
+			<input required type="number" class="form-control" id="hourlyPay" name="hourlyPay" value="{{hourlyPay}}" placeholder="Hourly Pay" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="startDate">Start Date</label>
+			<input required type="date" class="form-control" id="startDate" name="startDate" value="{{startDate}}" placeholder="Start Date" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="isManager">Is Manager :</label>
+			<select class="form-select" aria-label="Default select example" name="isManager" id="isManager">
+				<option value="true">True</option>
+				<option value="false" selected>False</option>
+			</select>
+		</div>
+		<div class="col-md-3 mb-3" style="margin-top: 2rem;">
+			<button style="width: -webkit-fill-available;" class="btn btn-outline-success" type="submit" id="createEmployee">Create Employee</button>
+		</div>
+		<div class="col-md-3 mb-3" style="margin-top: 2rem;">
+			<button class="btn btn-outline-danger" id="cancelEmployee">Cancel</button>
+		</div>
+	</div>
 </form>
 {{! if error }}
 {{#if error}}

@@ -1,25 +1,28 @@
-<div class="login-container">
-	<h2>Login</h2>
+<h1>Login Page</h1>
+<form id="login-form" action="/login" method="post">
+	<div class="row">
+		<div class="col-12 mb-3">
+			<label class="form-label" for="businessEmail">Business Email</label>
+			<input required type="email" class="form-control" id="businessEmail" name="businessEmail" value="{{businessEmail}}" placeholder="Business Email" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="email">Email</label>
+			<input required type="email" class="form-control" id="email" name="email" value="{{email}}" placeholder="Email" />
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="form-label" for="password">Password</label>
+			<input required type="password" class="form-control" id="password" name="password" value="{{password}}" placeholder="Password" />
+		</div>
+		<button style="margin: auto; width:500px;" type="submit" class="btn btn-primary" id="checkLogin">Login</button>
 
-	<form id="login-form" action="/login" method="post">
-		<label class="login-labels" for="businessEmail">Business Email : </label>
-		<br />
-		<input required type="text" id="businessEmail" name="businessEmail" value="{{businessEmail}}" placeholder="business email" />
-		<br />
-		<label for="email">Email : </label>
-		<br />
-		<input required type="text" id="email" name="email" value="{{email}}" placeholder="employee email" />
-		<br />
-		<label for="password">Password : </label>
-		<br />
-		<input required type="password" id="password" name="password" value="{{password}}" placeholder="password" />
-		<br />
-		<button type="submit" id="checkLogin">Login</button>
-	</form>
+		{{! error }}
+		{{#if error}}
+			<p style="text-align: center;" class="error">{{error}}</p>
+		{{/if}}
+	</div>
+</form>
 
-	<a href="/businesses/signup">Need to register for new business? Click here to sign-up</a>
-
-	{{#if error}}
-		<p class="error">{{error}}</p>
-	{{/if}}
-</div>
+<ul style="margin-top: 20px;">
+	<li><a href="/businesses/login">Business Login</a></li>
+	<li><a href="/businesses/signup">Create a new business account? Click here to sign up</a></li>
+</ul>

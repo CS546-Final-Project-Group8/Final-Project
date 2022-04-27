@@ -30,12 +30,16 @@ router.post("/signup", async (req, res) => {
       let email = req.body.email.toLowerCase().trim();
       await validate.checkPassword(req.body.password);
       let password = req.body.password.trim();
+      await validate.checkPassword(req.body.confirmPassword);
+      let confirmPassword = req.body.confirmPassword.trim();
       await validate.checkString(req.body.address);
       let address = req.body.address.trim();
       await validate.checkString(req.body.city);
       let city = req.body.city.trim();
       await validate.checkState(req.body.state);
       let state = req.body.state.trim();
+      await validate.checkZip(req.body.zip);
+      let zip = req.body.zip.trim();
       await validate.checkPhone(req.body.phoneNumber);
       let phoneNumber = req.body.phoneNumber.trim();
       await validate.checkString(req.body.about);
@@ -44,9 +48,11 @@ router.post("/signup", async (req, res) => {
         businessName,
         email,
         password,
+        confirmPassword,
         address,
         city,
         state,
+        zip,
         phoneNumber,
         about
       );
@@ -62,9 +68,11 @@ router.post("/signup", async (req, res) => {
           businessName: req.body.businessName,
           email: req.body.email,
           password: req.body.password,
+          confirmPassword: req.body.confirmPassword,
           address: req.body.address,
           city: req.body.city,
           state: req.body.state,
+          zip: req.body.zip,
           phoneNumber: req.body.phoneNumber,
           about: req.body.about,
           title: "Business Signup",
@@ -76,9 +84,11 @@ router.post("/signup", async (req, res) => {
         businessName: req.body.businessName,
         email: req.body.email,
         password: req.body.password,
+        confirmPassword: req.body.confirmPassword,
         address: req.body.address,
         city: req.body.city,
         state: req.body.state,
+        zip: req.body.zip,
         phoneNumber: req.body.phoneNumber,
         about: req.body.about,
         title: "Business Signup",
