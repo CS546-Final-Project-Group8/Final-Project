@@ -48,6 +48,7 @@ router.post("/login", async (req, res) => {
         req.session.businessId = result.businessId;
         req.session.name = "AuthCookie";
         req.session.employeeId = result.employeeID;
+        req.session.employee = result.employee;
         res.redirect("/home");
       } else {
         return res.status(500).render("users/login", {
@@ -82,6 +83,38 @@ router.get("/logout", async (req, res) => {
     });
   } catch (e) {
     res.status(500).redirect("/login");
+  }
+});
+
+router.post("/clockIn", async (req, res) => {
+  if (!req.session.user) {
+    res.status(500).redirect("/login");
+    return;
+  }
+  await validate.checkString(req.body.comment);
+  const result = await users.clockIn(req.session.employeeId, req.body.comment);
+
+  if (result.succeeded) {
+    req.session.employee.currentStatus = "clockedIn";
+    res.redirect("/home");
+  } else {
+    res.status(500).redirect("/home");
+  }
+});
+
+router.post("/clockOut", async (req, res) => {
+  if (!req.session.user) {
+    res.status(500).redirect("/login");
+    return;
+  }
+  await validate.checkString(req.body.comment);
+  const result = await users.clockOut(req.session.employeeId, req.body.comment);
+
+  if (result.succeeded) {
+    req.session.employee.currentStatus = "clockedOut";
+    res.redirect("/home");
+  } else {
+    res.status(500).redirect("/home");
   }
 });
 
