@@ -75,8 +75,8 @@ let checkDate = async (date) => {
       throw "Error: Value for day should be between 1 and 30";
     }
   } // february
-  else if (month == 2) {
-    if (year % 4 == 0) {
+  else if (month === 2) {
+    if (year % 4 === 0) {
       if (day < 1 || day > 29) {
         throw "Error: Value for day should be between 1 and 29";
       }
@@ -98,7 +98,7 @@ let checkDate = async (date) => {
       throw (
         "Error: Value for month should be less than or equal to " + currentMonth
       );
-    } else if (month == currentMonth) {
+    } else if (month === currentMonth) {
       let currentDay = new Date().getDate();
       if (day > currentDay) {
         throw (
@@ -124,8 +124,7 @@ let checkEmail = async (email) => {
 // function checkPassword(password) this function checks if the password is valid
 let checkPassword = async (password) => {
   await checkString(password);
-  if (password.length < 8)
-    throw "Error: Password should be at least 8 characters long";
+  if (password.length < 8) throw "Error: Password should be at least 8 characters long";
 };
 
 // function checkState(state) this function checks if the state is valid
@@ -183,7 +182,7 @@ let checkState = async (state) => {
     "WI",
     "WY",
   ];
-  if (!states.includes(state)) {
+  if (!states.includes(state.toUpperCase())) {
     throw "Error: Invalid state, please enter state in 2 letter format";
   }
 };
@@ -220,16 +219,7 @@ let checkID = async (id) => {
 
 // let checkGender(gender), check if gender is valid
 let checkGender = async (gender) => {
-  if (
-    [
-      "male",
-      "female",
-      "transgender",
-      "gender neutral",
-      "non-binary",
-      "prefer not to say",
-    ].includes(gender.toLowerCase().trim())
-  ) {
+  if (["male", "female", "transgender", "gender neutral", "non-binary", "prefer not to say"].includes(gender.toLowerCase().trim())) {
     return true;
   } else {
     throw "Please choose a gender from provided options";

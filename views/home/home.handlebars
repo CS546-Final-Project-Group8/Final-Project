@@ -1,14 +1,12 @@
-<h2>This is the Home Page for the application</h2>
+<h1>Employee Dashboard</h1>
 
-<p>My email is {{user}}</p>
+<p>Logged in as {{user}}</p>
 {{#if isAdmin}}
-    <form action="/employee" method="GET">
-    <button type="submit" id="EmployeeDashboard">Employee Dashboard</button>
-</form>
+	<form action="/manager" method="GET">
+		<button type="submit" id="ManagerDashboard">Manager Dashboard</button>
+	</form>
 {{/if}}
 
-
-
 <footer>
-    <a href="/logout">Logout</a>
+	<a href="/logout">Logout</a>
 </footer>
