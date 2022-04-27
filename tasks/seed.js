@@ -11,9 +11,11 @@ let main = async () => {
       "Starbucks",
       "starbucks@gmail.com",
       "Starbucks",
+      "Starbucks",
       "123 Main St",
       "Los Angeles",
       "CA",
+      "90210",
       "1234567890",
       "We sell coffee"
     );
@@ -21,9 +23,11 @@ let main = async () => {
       "McDonalds",
       "McDonalds@gmail.com",
       "McDonalds",
+      "McDonalds",
       "124 Bleecker St",
       "New York",
       "NY",
+      "10001",
       "5555555555",
       "We sell burgers"
     );
@@ -31,9 +35,11 @@ let main = async () => {
       "Pizza Hut",
       "pizzahut@gmail.com",
       "PizzaHut",
+      "PizzaHut",
       "125 Broadway",
       "New York",
       "NY",
+      "10001",
       "8888888888",
       "We sell pizza"
     );
@@ -41,6 +47,7 @@ let main = async () => {
       business1.businessID, //businessID
       "staremp1@gmail.com", //email
       "staremp1", //password
+      "staremp1", // confirmPassword
       "John", //firstName
       "Doe", //lastName
       "male", //gender
@@ -51,7 +58,9 @@ let main = async () => {
       "Full-time", //employment type
       "true", //employment status
       "55", // hourly pay rate
-      new Date().toISOString().slice(0, 10), //start date
+      new Date(new Date().setDate(new Date().getDate() - 1))
+        .toISOString()
+        .slice(0, 10), //start date
       "true" // is manager
     );
 
@@ -59,6 +68,7 @@ let main = async () => {
       business1.businessID, //businessID
       "staremp2@gmail.com", //email
       "staremp2", //password
+      "staremp2", // confirmPassword
       "Jane", //firstName
       "Doe", //lastName
       "female", // gender
@@ -69,7 +79,9 @@ let main = async () => {
       "part-time", // employment type
       "true", // employement status
       "55", // hourly pay rate
-      new Date().toISOString().slice(0, 10), // start date
+      new Date(new Date().setDate(new Date().getDate() - 1))
+        .toISOString()
+        .slice(0, 10), //start date
       "false" // is manager
     );
 
@@ -77,6 +89,7 @@ let main = async () => {
       business1.businessID, //businessID
       "staremp3@gmail.com", //email
       "staremp3", //password
+      "staremp3", // confirmPassword
       "Alex", //firstName
       "Smith", //lastName
       "transgender", //gender
@@ -87,7 +100,9 @@ let main = async () => {
       "Contract", // employment type
       "true", // employement status
       "35", // hourly pay rate
-      new Date().toISOString().slice(0, 10), // start date
+      new Date(new Date().setDate(new Date().getDate() - 1))
+        .toISOString()
+        .slice(0, 10), //start date
       "false" // is manager
     );
 
@@ -95,6 +110,7 @@ let main = async () => {
       business2.businessID, //businessID
       "macdemp1@gmail.com", //email
       "macdemp1", //password
+      "macdemp1", // confirmPassword
       "Pete", //firstName
       "Cook", //lastName
       "male", // gender
@@ -105,7 +121,9 @@ let main = async () => {
       "full-time", // employment type
       "true", // employement status
       "45", // hourly pay rate
-      new Date().toISOString().slice(0, 10), // start date
+      new Date(new Date().setDate(new Date().getDate() - 1))
+        .toISOString()
+        .slice(0, 10), //start date
       "true" // is manager
     );
 
@@ -113,6 +131,7 @@ let main = async () => {
       business2.businessID, //businessID
       "macdemp2@gmail.com", //email
       "macdemp2", //password
+      "macdemp2", // confirmPassword
       "John", //firstName
       "Smith", //lastName
       "male", // gender
@@ -123,7 +142,9 @@ let main = async () => {
       "full-time", // employment type
       "true", // employement status
       "45", // hourly pay rate
-      new Date().toISOString().slice(0, 10), // start date
+      new Date(new Date().setDate(new Date().getDate() - 1))
+        .toISOString()
+        .slice(0, 10), //start date
       "false" // is manager
     );
 
