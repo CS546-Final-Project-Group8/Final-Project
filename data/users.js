@@ -6,11 +6,12 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const validate = require("../validate/index.js");
 
-// function createEmployee(businessId, email, password, firstName, lastName, gender,  address, city, state, phone, employmentStatus, isActiveEmployee, hourlyPay, startDate, isManager) this function creates an employee in monogoDB database
+// function createEmployee(businessId, email, password, confirmPassword, firstName, lastName, gender,  address, city, state, phone, employmentStatus, isActiveEmployee, hourlyPay, startDate, isManager) this function creates an employee in monogoDB database
 let createEmployee = async (
   businessId,
   email,
   password,
+  confirmPassword,
   firstName,
   lastName,
   gender,
@@ -30,6 +31,9 @@ let createEmployee = async (
   email = email.toLowerCase().trim();
   await validate.checkPassword(password);
   password = password.trim();
+  await validate.checkPassword(confirmPassword);
+  confirmPassword = confirmPassword.trim();
+  if (password !== confirmPassword) throw "Passwords do not match";
   await validate.checkString(firstName);
   firstName = firstName.trim();
   await validate.checkString(lastName);

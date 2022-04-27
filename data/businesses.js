@@ -5,14 +5,16 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const validate = require("../validate/index.js");
 
-// function createBusiness(businessName, email, password, address, city, state, phone, about) this function creates a business in monogoDB database
+// function createBusiness(businessName, email, password, confirmPassword address, city, state, zip, phone, about) this function creates a business in monogoDB database
 let createBusiness = async (
   businessName,
   email,
   password,
+  confirmPassword,
   address,
   city,
   state,
+  zip,
   phone,
   about
 ) => {
@@ -22,12 +24,17 @@ let createBusiness = async (
   email = email.toLowerCase().trim();
   await validate.checkPassword(password);
   password = password.trim();
+  await validate.checkPassword(confirmPassword);
+  confirmPassword = confirmPassword.trim();
+  if (password !== confirmPassword) throw "Passwords do not match";
   await validate.checkString(address);
   address = address.trim();
   await validate.checkString(city);
   city = city.trim();
   await validate.checkState(state);
   state = state.trim();
+  await validate.checkZip(zip);
+  zip = zip.trim();
   await validate.checkPhone(phone);
   phone = phone.trim();
   await validate.checkString(about);
@@ -42,6 +49,7 @@ let createBusiness = async (
     address: address,
     city: city,
     state: state,
+    zip: zip,
     phone: phone,
     about: about,
     isOpen: true,

@@ -28,6 +28,8 @@ router.post("/new", async (req, res) => {
       let email = req.body.email.toLowerCase().trim();
       await validate.checkPassword(req.body.password);
       let password = req.body.password.trim();
+      await validate.checkPassword(req.body.confirmPassword);
+      let confirmPassword = req.body.confirmPassword.trim();
       await validate.checkString(req.body.firstName);
       let firstName = req.body.firstName.trim();
       await validate.checkString(req.body.lastName);
@@ -56,6 +58,7 @@ router.post("/new", async (req, res) => {
         businessId,
         email,
         password,
+        confirmPassword,
         firstName,
         lastName,
         gender,
@@ -70,11 +73,12 @@ router.post("/new", async (req, res) => {
         isManager
       );
       if (result.employeeInserted) {
-        res.redirect("/employee");
+        res.redirect("/manager");
       } else {
-        return res.status(500).render("employee/employee", {
+        return res.status(500).render("manager/manager", {
           email: req.body.email,
           password: req.body.password,
+          confirmPassword: req.body.confirmPassword,
           firstName: req.body.firstName,
           lastName: req.body.lastName,
           gender: req.body.gender,
@@ -93,9 +97,10 @@ router.post("/new", async (req, res) => {
         });
       }
     } catch (e) {
-      res.status(400).render("employee/employee", {
+      res.status(400).render("manager/manager", {
         email: req.body.email,
         password: req.body.password,
+        confirmPassword: req.body.confirmPassword,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         gender: req.body.gender,

@@ -1,15 +1,19 @@
 <h1>Business Login Page</h1>
 
-<form action="/businesses/login" method="POST">
-    <label for="email">Business Email : </label>
-    <input required type="text" id = "email" name="email" value="{{email}}" placeholder="Email">
-    <label for="password">Password : </label>
-    <input required type="password" id = "password" name="password" value="{{password}}" placeholder="Password">
+<form id="businessLogin" action="/businesses/login" method="POST">
+    <div class="form-floating mb-3">
+        <input required type="email" class="form-control" id = "email" name="email" value="{{email}}" placeholder="Email">
+        <label for="email">Business Email</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input required type="password" class="form-control" id = "password" name="password" value="{{password}}" placeholder="Password">
+        <label for="password">Password</label>
+    </div>
     
-    <button type="submit" id="checkLogin">Login</button>
+    <button type="submit" class="btn btn-primary" id="checkLogin">Login</button>
 </form>
 
-<ul>
+<ul style="margin-top: 20px;">
     <li><a href="/login">Employee Login</a></li>
     <li><a href="/businesses/signup">Create a new business account? Click here to sign up</a></li>
 </ul>
