@@ -36,3 +36,13 @@ td {
 #businessLogin {
   width: 350px;
 }
+
+#timeClock {
+  border: 1px solid;
+  text-align: center;
+  width: 400px;
+}
+
+#time {
+  font-size: 30px;
+}

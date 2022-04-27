@@ -85,6 +85,8 @@ let createEmployee = async (
     hourlyPay: hourlyPay,
     startDate: startDate,
     isManager: isManager,
+    currentStatus: "clockedOut",
+    timeEntries: [],
   };
 
   //if businessId and email are unique, create employee
@@ -92,27 +94,20 @@ let createEmployee = async (
     businessId: businessId,
     email: email,
   });
-  if (employee) throw "employee already exists";
+  if (employee) throw "Employee already exists";
 
   const insertInfo = await employeesCollection.insertOne(newEmployee);
-  if (insertInfo.insertedCount === 0)
-    throw "Could not add employee to database";
+  if (insertInfo.insertedCount === 0) throw "Could not add employee to database";
 
   // add employeeID to business collection
   const newEmployeeId = insertInfo.insertedId.toString();
   if (!isManager) {
-    const updateInfo = await businessCollection.updateOne(
-      { _id: ObjectId(businessId) },
-      { $push: { employees: newEmployeeId } }
-    );
+    const updateInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $push: { employees: newEmployeeId } });
     if (updateInfo.modifiedCount === 0) {
       throw "Could not add manager to business";
     }
   } else {
-    const updateInfo = await businessCollection.updateOne(
-      { _id: ObjectId(businessId) },
-      { $push: { managers: newEmployeeId } }
-    );
+    const updateInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $push: { managers: newEmployeeId } });
     if (updateInfo.modifiedCount === 0) {
       throw "Could not add employee to business";
     }
@@ -146,23 +141,23 @@ let checkEmployee = async (businessEmail, email, password) => {
   });
   if (!employee) throw "Either the email or password is invalid";
 
-  const passwordStatus = await bcrypt.compare(
-    password,
-    employee.hashedPassword
-  );
+  const passwordStatus = await bcrypt.compare(password, employee.hashedPassword);
 
   if (!passwordStatus) throw "Either the email or password is invalid";
+
+  employee.hashedPassword = null;
 
   return {
     authenticated: true,
     employeeID: employee._id,
     businessId: employee.businessId,
     isAdmin: employee.isManager,
+    employee: employee,
   };
 };
 
 let getAllEmployees = async (businessId) => {
-  validate.checkID(businessId);
+  await validate.checkID(businessId);
   const employeesCollection = await employees();
   const Allemployees = await employeesCollection
     .find({
@@ -175,8 +170,59 @@ let getAllEmployees = async (businessId) => {
   return Allemployees;
 };
 
+let clockIn = async (employeeId, comment) => {
+  await validate.checkID(employeeId);
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
+  if (!employee) throw "Employee not found";
+
+  if (employee.currentStatus !== "clockedOut") {
+    throw "Employee must be clocked out to clock in!";
+  }
+  const userCollection = await employees();
+  let userUpdateInfo = {
+    currentStatus: "clockedIn",
+  };
+  const timeEntry = {
+    dateTime: new Date(),
+    status: "clockIn",
+    comment: comment,
+  };
+
+  const updateInfo = await userCollection.updateOne({ _id: ObjectId(employeeId) }, { $set: userUpdateInfo, $addToSet: { timeEntries: timeEntry } });
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+
+  return { succeeded: true };
+};
+
+let clockOut = async (employeeId, comment) => {
+  await validate.checkID(employeeId);
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
+  if (!employee) throw "Employee not found";
+
+  if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "meal")) {
+    throw "Employee must be clocked in / on meal break to clock out!";
+  }
+  const userCollection = await employees();
+  let userUpdateInfo = {
+    currentStatus: "clockedOut",
+  };
+  const timeEntry = {
+    dateTime: new Date(),
+    status: "clockOut",
+    comment: comment,
+  };
+  const updateInfo = await userCollection.updateOne({ _id: ObjectId(employeeId) }, { $set: userUpdateInfo, $addToSet: { timeEntries: timeEntry } });
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+
+  return { succeeded: true };
+};
+
 module.exports = {
   createEmployee,
   checkEmployee,
   getAllEmployees,
+  clockIn,
+  clockOut,
 };
