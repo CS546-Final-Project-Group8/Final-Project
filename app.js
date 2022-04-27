@@ -14,7 +14,7 @@ app.use(
 
 const configRoutes = require("./routes");
 const static = express.static(__dirname + "/public");
-const exphbs = require("express-handlebars");
+exphbs = require("express-handlebars");
 
 app.use("/public", static);
 app.use(express.json());
@@ -26,6 +26,16 @@ app.use(express.urlencoded({ extended: true }));
 
 app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
+
+var hbs = exphbs.create({});
+
+hbs.handlebars.registerHelper("if_eq", function (a, b, opts) {
+  if (a == b) {
+    return opts.fn(this);
+  } else {
+    return opts.inverse(this);
+  }
+});
 
 configRoutes(app);
 

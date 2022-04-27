@@ -9,6 +9,7 @@ router.use("/", async (req, res) => {
       isAdmin: req.session.isAdmin,
       businessId: req.session.businessId,
       employeeId: req.session.employeeId,
+      employee: req.session.employee,
     });
   } else if (req.session.user && req.session.isBusiness) {
     res.redirect("/manager");
