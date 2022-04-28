@@ -7,42 +7,9 @@ let main = async () => {
   try {
     let db = await dbConnection.connectToDb();
     await db.dropDatabase();
-    let business1 = await businesses.createBusiness(
-      "Starbucks",
-      "starbucks@gmail.com",
-      "Starbucks",
-      "Starbucks",
-      "123 Main St",
-      "Los Angeles",
-      "CA",
-      "90210",
-      "1234567890",
-      "We sell coffee"
-    );
-    let business2 = await businesses.createBusiness(
-      "McDonalds",
-      "McDonalds@gmail.com",
-      "McDonalds",
-      "McDonalds",
-      "124 Bleecker St",
-      "New York",
-      "NY",
-      "10001",
-      "5555555555",
-      "We sell burgers"
-    );
-    let business3 = await businesses.createBusiness(
-      "Pizza Hut",
-      "pizzahut@gmail.com",
-      "PizzaHut",
-      "PizzaHut",
-      "125 Broadway",
-      "New York",
-      "NY",
-      "10001",
-      "8888888888",
-      "We sell pizza"
-    );
+    let business1 = await businesses.createBusiness("Starbucks", "starbucks@gmail.com", "Starbucks", "Starbucks", "123 Main St", "Los Angeles", "CA", "90210", "1234567890", "We sell coffee");
+    let business2 = await businesses.createBusiness("McDonalds", "McDonalds@gmail.com", "McDonalds", "McDonalds", "124 Bleecker St", "New York", "NY", "10001", "5555555555", "We sell burgers");
+    let business3 = await businesses.createBusiness("Pizza Hut", "pizzahut@gmail.com", "PizzaHut", "PizzaHut", "125 Broadway", "New York", "NY", "10001", "8888888888", "We sell pizza");
     let starbuctsEmployee1 = await employees.createEmployee(
       business1.businessID, //businessID
       "staremp1@gmail.com", //email
@@ -58,10 +25,10 @@ let main = async () => {
       "Full-time", //employment type
       "true", //employment status
       "55", // hourly pay rate
-      new Date(new Date().setDate(new Date().getDate() - 1))
-        .toISOString()
-        .slice(0, 10), //start date
-      "true" // is manager
+      new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
+      "true", // is manager
+      "clockedOut", //currentStatus
+      [] //timeEntries
     );
 
     let starbuctsEmployee2 = await employees.createEmployee(
@@ -79,10 +46,10 @@ let main = async () => {
       "part-time", // employment type
       "true", // employement status
       "55", // hourly pay rate
-      new Date(new Date().setDate(new Date().getDate() - 1))
-        .toISOString()
-        .slice(0, 10), //start date
-      "false" // is manager
+      new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
+      "false", // is manager
+      "clockedOut", //currentStatus
+      [] //timeEntries
     );
 
     let starbuctsEmployee3 = await employees.createEmployee(
@@ -100,10 +67,10 @@ let main = async () => {
       "Contract", // employment type
       "true", // employement status
       "35", // hourly pay rate
-      new Date(new Date().setDate(new Date().getDate() - 1))
-        .toISOString()
-        .slice(0, 10), //start date
-      "false" // is manager
+      new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
+      "false", // is manager
+      "clockedOut", //currentStatus
+      [] //timeEntries
     );
 
     let McDonaldsEmployee1 = await employees.createEmployee(
@@ -121,10 +88,10 @@ let main = async () => {
       "full-time", // employment type
       "true", // employement status
       "45", // hourly pay rate
-      new Date(new Date().setDate(new Date().getDate() - 1))
-        .toISOString()
-        .slice(0, 10), //start date
-      "true" // is manager
+      new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
+      "true", // is manager
+      "clockedOut", //currentStatus
+      [] //timeEntries
     );
 
     let McDonaldsEmployee2 = await employees.createEmployee(
@@ -142,10 +109,10 @@ let main = async () => {
       "full-time", // employment type
       "true", // employement status
       "45", // hourly pay rate
-      new Date(new Date().setDate(new Date().getDate() - 1))
-        .toISOString()
-        .slice(0, 10), //start date
-      "false" // is manager
+      new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
+      "false", // is manager
+      "clockedOut", //currentStatus
+      [] //timeEntries
     );
 
     dbConnection.closeConnection();
