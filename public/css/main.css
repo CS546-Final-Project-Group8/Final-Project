@@ -39,6 +39,8 @@ td {
 
 #timeClock {
   border: 1px solid;
+  border-radius: 10px;
+  margin: 20px 0px;
   text-align: center;
   width: 400px;
 }

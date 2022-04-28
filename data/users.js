@@ -184,7 +184,7 @@ let clockIn = async (employeeId, comment) => {
     currentStatus: "clockedIn",
   };
   const timeEntry = {
-    dateTime: new Date(),
+    dateTime: new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString(),
     status: "clockIn",
     comment: comment,
   };
@@ -209,7 +209,7 @@ let clockOut = async (employeeId, comment) => {
     currentStatus: "clockedOut",
   };
   const timeEntry = {
-    dateTime: new Date(),
+    dateTime: new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString(),
     status: "clockOut",
     comment: comment,
   };
