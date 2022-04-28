@@ -2,10 +2,10 @@
 
 <p>Hello, {{employee.firstName}} {{employee.lastName}}!</p>
 
-<button id="showEmployeeInfo">Show Account information</button>
+<button class="btn btn-outline-primary" id="showEmployeeInfo">Show Account Information</button>
 
 <div hidden id="employeeInfo">
-    <button id="hideEmployeeInfo">Hide Account information</button>
+    <button class="btn btn-outline-primary" id="hideEmployeeInfo">Hide Account Information</button>
     <ul>
         <li>Name: {{employee.firstName}} {{employee.lastName}}</li>
         <li>Gender: {{employee.gender}}</li>
@@ -15,30 +15,37 @@
 </div>
 
 {{#if isAdmin}}
-<p>You are an administrator:</p>
+<p class="mt-5">You are an administrator:</p>
 <form action="/manager" method="GET">
-    <button type="submit" class="btn btn-outline-primary" id="ManagerDashboard">Manager Dashboard</button>
+    <button type="submit" class="btn btn-outline-primary" id="ManagerDashboard">Go to Manager Dashboard</button>
 </form>
 {{/if}}
 
 <div id="timeClock">
     <p id="time"></p>
     {{#if_eq employee.currentStatus "clockedOut"}}
-    <p>Current status: Clocked out</p>
-    <form action="/clockIn" method="POST">
-        <label for="comment">Comment: </label>
-        <input id="comment" name="comment" type="text" placeholder="(optional)" />
-        <br />
-        <button type="submit">Clock in</button>
+    <p>Current status: <span style="font-weight: bold;">Clocked out</span></p>
+    <form action="/clockIn" style="margin: 30px;" method="POST">
+        <div class="row">
+            <div class="col-8">
+                <label class="form-label" for="comment">Comment</label>
+                <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
+            </div>
+            
+            <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" type="submit">Clock in</button>
+        </div>
     </form>
     {{/if_eq}}
     {{#if_eq employee.currentStatus "clockedIn"}}
-    <p>Current status: Clocked in</p>
-    <form action="/clockOut" method="POST">
-        <label for="comment">Comment: </label>
-        <input id="comment" name="comment" type="text" placeholder="(optional)" />
-        <br />
-        <button type="submit">Clock out</button>
+    <p>Current status: <span style="font-weight: bold;">Clocked in</span></p>
+    <form action="/clockOut" style="margin: 30px;"  method="POST">
+        <div class="row">
+            <div class="col-8">
+                <label class="form-label" for="comment">Comment</label>
+                <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
+            </div>
+            <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;"  type="submit">Clock out</button>
+        </div>
     </form>
     {{/if_eq}}
 </div>
