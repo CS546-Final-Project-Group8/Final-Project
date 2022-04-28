@@ -11,14 +11,15 @@
 	</div>
 
 	<button type="submit" class="btn btn-primary" id="checkLogin">Login</button>
+
+	<div id="errorDiv" hidden></div>
+	{{! error }}
+	{{#if error}}
+		<p class="error">{{error}}</p>
+	{{/if}}
 </form>
 
 <ul style="margin-top: 20px;">
 	<li><a href="/login">Employee Login</a></li>
 	<li><a href="/businesses/signup">Create a new business account? Click here to sign up</a></li>
 </ul>
-
-{{! error }}
-{{#if error}}
-	<p class="error">{{error}}</p>
-{{/if}}
