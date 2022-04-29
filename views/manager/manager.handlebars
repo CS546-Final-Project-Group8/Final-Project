@@ -1,3 +1,8 @@
+<div class="alert alert-success alert-dismissible fade show" id="alert" hidden role="alert">
+    <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
 <h1>Manager Dashboard</h1>
 
 {{#if allEmployees}}
@@ -12,6 +17,7 @@
         <th>Phone</th>
         <th>Address</th>
         <th>Action</th>
+        <th style="width: 200px;">Promote</th>
         </tr>
     </thead>
     <tbody>
@@ -24,6 +30,11 @@
         <td>{{address}}</td>
         <td>
             <a href="#" class="editEmployee" id="{{_id}}">Edit</a>
+        </td>
+        <td>
+            {{#if_eq isManager false}}
+                <button class="promoteEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote as Manager</button>
+            {{/if_eq}}
         </td>
         </tr>
         {{/each}}
@@ -118,7 +129,7 @@
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label" for="startDate">Start Date</label>
-            <input required type="date" class="form-control" id = "startDate" name="startDate" value="{{startDate}}" placeholder="Start Date">
+            <input required type="date" class="form-control" id = "startDate" name="startDate" value="{{startDate}}">
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label" for="isManager">Is Manager :</label>
@@ -139,3 +150,5 @@
 {{#if error}}
     <p class="error">{{error}}</p>
 {{/if}}
+
+<script src="../../public/js/manager.js"></script>

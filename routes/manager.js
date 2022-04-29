@@ -123,4 +123,27 @@ router.post("/new", async (req, res) => {
   }
 });
 
+router.put("/promoteEmployee", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      await validate.checkID(req.session.businessId);
+      let businessId = req.session.businessId.toLowerCase().trim();
+      await validate.checkID(req.body.employeeId);
+      let employeeId = req.body.employeeId.toLowerCase().trim();
+
+      const result = await users.promoteEmployee(employeeId);
+      if (result.employeePromoted) {
+        res.status(200).send("Employee promoted");
+      } else {
+        res.status(500).send("Internal Server Error");
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(400).send(e);
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
 module.exports = router;
