@@ -12,6 +12,11 @@ app.use(
   })
 );
 
+app.use(function (req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
+
 const configRoutes = require("./routes");
 const static = express.static(__dirname + "/public");
 exphbs = require("express-handlebars");

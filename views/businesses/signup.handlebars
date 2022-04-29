@@ -1,55 +1,57 @@
 <h1>Business Signup Page</h1>
 
-<form action="/businesses/signup" style="margin: 30px;" method="POST">
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="businessName">Business Name</label>
-            <input required type="text" class="form-control" id = "businessName" name="businessName" value="{{businessName}}" placeholder="Business Name">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="email">Email</label>
-            <input required type="email" class="form-control" id = "email" name="email" value="{{email}}" placeholder="Email">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="password">Password</label>
-            <input required type="password" class="form-control" id = "password" name="password" value="{{password}}" placeholder="Password">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="password">Confirm Password</label>
-            <input required type="password" class="form-control" id = "confirmPassword" name="confirmPassword" value="{{confirmPassword}}" placeholder="Confirm Password">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="address">Address</label>
-            <input required type="text" class="form-control" id = "address" name="address" value="{{address}}" placeholder="Address">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="city">City</label>
-            <input required type="text" class="form-control" id = "city" name="city" value="{{city}}" placeholder="City">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="state">State</label>
-            <input required type="text" class="form-control" id = "state" name="state" value="{{state}}" placeholder="State">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="zip">Zip</label>
-            <input required type="text" class="form-control" id = "zip" name="zip" value="{{zip}}" placeholder="Zip">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="phoneNumber">Phone Number :</label>
-            <input required type="text" class="form-control" id = "phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="Phone Number">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label" for="about">About :</label>
-            <input required type="text" class="form-control" id = "about" name="about" value="{{about}}" placeholder="About the business">
-        </div>
-        <button style="margin: auto;" type="submit" class="btn btn-outline-success col-6" id="checkSignup">Sign up</button>
-        {{!-- error --}}
-        {{#if error}}
-            <p style="text-align: center;" class="error">{{error}}</p>
-        {{/if}}
+<form id="businessSignUp" action="/businesses/signup" style="margin: 30px;" method="POST">
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="businessName">Business Name</label>
+      <input required type="text" class="form-control" id="businessName" name="businessName" value="{{businessName}}" placeholder="Business Name" />
     </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="email">Email</label>
+      <input required type="email" class="form-control" id="email" name="email" value="{{email}}" placeholder="Email" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="password">Password</label>
+      <input required type="password" class="form-control" id="password" name="password" value="{{password}}" placeholder="Password" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="password">Confirm Password</label>
+      <input required type="password" class="form-control" id="confirmPassword" name="confirmPassword" value="{{confirmPassword}}" placeholder="Confirm Password" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="address">Address</label>
+      <input required type="text" class="form-control" id="address" name="address" value="{{address}}" placeholder="Address" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="city">City</label>
+      <input required type="text" class="form-control" id="city" name="city" value="{{city}}" placeholder="City" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="state">State</label>
+      <input required type="text" class="form-control" id="state" name="state" value="{{state}}" placeholder="State" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="zip">Zip</label>
+      <input required type="text" class="form-control" id="zip" name="zip" value="{{zip}}" placeholder="Zip" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="phoneNumber">Phone Number :</label>
+      <input required type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="{{phoneNumber}}" placeholder="Phone Number" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="about">About :</label>
+      <input required type="text" class="form-control" id="about" name="about" value="{{about}}" placeholder="About the business" />
+    </div>
+    <button style="margin: auto;" type="submit" class="btn btn-outline-success col-6" id="checkSignup">Sign up</button>
+
+    <div id="errorDiv" class="text-center" hidden></div>
+    {{! error }}
+    {{#if error}}
+      <p style="text-align: center;" class="error">{{error}}</p>
+    {{/if}}
+  </div>
 </form>
 
 <div class="row">
-    <a class="col-4" style="margin: auto;" href="/businesses/login">Already have a business account? Click here to log in</a>
+  <a class="col-4" style="margin: auto;" href="/businesses/login">Already have a business account? Click here to log in</a>
 </div>

@@ -1,24 +1,25 @@
 <h1>Business Login Page</h1>
 
 <form id="businessLogin" action="/businesses/login" method="POST">
-    <div class="form-floating mb-3">
-        <input required type="email" class="form-control" id = "email" name="email" value="{{email}}" placeholder="Email">
-        <label for="email">Business Email</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input required type="password" class="form-control" id = "password" name="password" value="{{password}}" placeholder="Password">
-        <label for="password">Password</label>
-    </div>
-    
-    <button type="submit" class="btn btn-primary" id="checkLogin">Login</button>
+  <div class="form-floating mb-3">
+    <input required type="email" class="form-control" id="email" name="email" value="{{email}}" placeholder="Email" />
+    <label for="email">Business Email</label>
+  </div>
+  <div class="form-floating mb-3">
+    <input required type="password" class="form-control" id="password" name="password" value="{{password}}" placeholder="Password" />
+    <label for="password">Password</label>
+  </div>
+
+  <button type="submit" class="btn btn-primary" id="checkLogin">Login</button>
+
+  <div id="errorDiv" class="text-center" hidden></div>
+  {{! error }}
+  {{#if error}}
+    <p class="error">{{error}}</p>
+  {{/if}}
 </form>
 
 <ul style="margin-top: 20px;">
-    <li><a href="/login">Employee Login</a></li>
-    <li><a href="/businesses/signup">Create a new business account? Click here to sign up</a></li>
+  <li><a href="/login">Employee Login</a></li>
+  <li><a href="/businesses/signup">Create a new business account? Click here to sign up</a></li>
 </ul>
-
-{{!-- error --}}
-{{#if error}}
-    <p class="error">{{error}}</p>
-{{/if}}
