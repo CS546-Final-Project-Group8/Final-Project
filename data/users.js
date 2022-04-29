@@ -219,10 +219,37 @@ let clockOut = async (employeeId, comment) => {
   return { succeeded: true };
 };
 
+// let promoteEmployee(employeeId) this function promotes an employee to manager
+let promoteEmployee = async (employeeId) => {
+  await validate.checkID(employeeId);
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
+  if (!employee) throw "Employee not found";
+
+  if (employee.isManager) throw "Employee is already a manager";
+
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(employee.businessId) });
+  if (!business) throw "Business not found";
+
+  const updateInfo = await businessCollection.updateOne({ _id: ObjectId(employee.businessId) }, { $addToSet: { managers: employeeId }, $pull: { employees: employeeId } });
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+
+  const userUpdateInfo = {
+    isManager: true,
+  };
+
+  const updateInfo2 = await employeeCollection.updateOne({ _id: ObjectId(employeeId) }, { $set: userUpdateInfo });
+  if (!updateInfo2.matchedCount && !updateInfo2.modifiedCount) throw "Update failed";
+
+  return { employeePromoted: true };
+};
+
 module.exports = {
   createEmployee,
   checkEmployee,
   getAllEmployees,
   clockIn,
   clockOut,
+  promoteEmployee,
 };
