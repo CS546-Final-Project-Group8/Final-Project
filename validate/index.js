@@ -49,10 +49,10 @@ let checkBoolean = async (bool) => {
 
 let checkDate = async (date) => {
   await checkString(date);
+  date = date.trim();
   // validate Date in YYYY-MM-DD format
   let arr = date.split("-");
-  if (arr.length !== 3)
-    throw "Error: Date should contain 3 values of month, day, year in YYYY-MM-DD format";
+  if (arr.length !== 3) throw "Error: Date should contain 3 values of month, day, year in YYYY-MM-DD format";
 
   let year = parseInt(arr[0]);
   let month = parseInt(arr[1]);
@@ -62,8 +62,7 @@ let checkDate = async (date) => {
     throw "Error: Invalid characters present in releaseDate";
   }
 
-  if (month > 12 || month < 1)
-    throw "Error: month of Date should be between 1 and 12";
+  if (month > 12 || month < 1) throw "Error: month of Date should be between 1 and 12";
   // months with 31 days
   if ([1, 3, 5, 7, 8, 10, 12].includes(month)) {
     if (day < 1 || day > 31) {
@@ -95,15 +94,11 @@ let checkDate = async (date) => {
   } else if (year === currentYear) {
     let currentMonth = new Date().getMonth() + 1;
     if (month > currentMonth) {
-      throw (
-        "Error: Value for month should be less than or equal to " + currentMonth
-      );
+      throw "Error: Value for month should be less than or equal to " + currentMonth;
     } else if (month === currentMonth) {
       let currentDay = new Date().getDate();
       if (day > currentDay) {
-        throw (
-          "Error: Value for day should be less than or equal to " + currentDay
-        );
+        throw "Error: Value for day should be less than or equal to " + currentDay;
       }
     }
   }
@@ -112,8 +107,8 @@ let checkDate = async (date) => {
 // function cheackEmail(email) this function checks if the email is valid
 let checkEmail = async (email) => {
   await checkString(email);
-  let re =
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  email = email.trim();
+  let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (!re.test(String(email).toLowerCase())) {
     throw "Invalid, Enter a proper email";
   } else {
@@ -124,12 +119,14 @@ let checkEmail = async (email) => {
 // function checkPassword(password) this function checks if the password is valid
 let checkPassword = async (password) => {
   await checkString(password);
+  password = password.trim();
   if (password.length < 8) throw "Error: Password should be at least 8 characters long";
 };
 
 // function checkState(state) this function checks if the state is valid
 let checkState = async (state) => {
   await checkString(state);
+  state = state.trim();
   let states = [
     "AL",
     "AK",
@@ -190,6 +187,7 @@ let checkState = async (state) => {
 // function checkZip(zip) this function checks if the zip is valid
 let checkZip = async (zip) => {
   await checkString(zip);
+  zip = zip.trim();
   let re = /^\d{5}$/;
   if (!re.test(zip)) {
     throw "Error: Invalid zip code, please enter zip code in 5 digit format";
@@ -201,6 +199,7 @@ let checkZip = async (zip) => {
 // function checkPhone(phone) this function checks if the phone is valid
 let checkPhone = async (phone) => {
   await checkString(phone);
+  phone = phone.trim();
   let re = /^\d{10}$/;
   if (!re.test(phone)) {
     throw "Error: Invalid phone number, please enter phone number in 10 digit format";
@@ -227,17 +226,7 @@ let checkGender = async (gender) => {
 };
 
 let checkEmploymentStatus = async (employmentStatus) => {
-  if (
-    [
-      "full-time",
-      "part-time",
-      "contract",
-      "intern",
-      "temporary",
-      "volunteer",
-      "other",
-    ].includes(employmentStatus.toLowerCase().trim())
-  ) {
+  if (["full-time", "part-time", "contract", "intern", "temporary", "volunteer", "other"].includes(employmentStatus.toLowerCase().trim())) {
     return true;
   } else {
     throw "Please choose an employment status from provided options";
