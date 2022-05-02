@@ -6,7 +6,13 @@
 <h1>Manager Dashboard</h1>
 
 {{#if allEmployees}}
-<h2>Employee Management</h2>
+
+{{!-- create a search box to filter employees --}}
+<div class="form-group row">
+    <h2 class="col-6">Employee Management</h2>
+    <input type="text" class="form-control col-4" id="searchEmployee" placeholder="Search for an employee">
+</div>
+
 {{!-- loop through allEmployees object --}}
 <table id="employeesTable" class="table table-striped table-hover">
     <thead>
