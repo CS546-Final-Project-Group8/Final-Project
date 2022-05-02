@@ -87,34 +87,60 @@ router.get("/logout", async (req, res) => {
 });
 
 router.post("/clockIn", async (req, res) => {
-  if (!req.session.user) {
-    res.status(500).redirect("/login");
-    return;
-  }
-  await validate.checkString(req.body.comment);
-  const result = await users.clockIn(req.session.employeeId, req.body.comment);
+  try {
+    if (!req.session.isBusiness && req.session.user) {
+      await validate.checkString(req.body.comment);
+      const result = await users.clockIn(req.session.employeeId, req.body.comment);
 
-  if (result.succeeded) {
-    req.session.employee.currentStatus = "clockedIn";
-    res.redirect("/home");
-  } else {
-    res.status(500).redirect("/home");
+      if (result.succeeded) {
+        req.session.employee.currentStatus = "clockedIn";
+        res.redirect("/home");
+      } else {
+        // render error in home page
+        res.render("home/home", {
+          title: "Home",
+          user: req.session.user,
+          isAdmin: req.session.isAdmin,
+          businessId: req.session.businessId,
+          employeeId: req.session.employeeId,
+          employee: req.session.employee,
+          error: "Could not clock in, please try again.",
+        });
+      }
+    } else {
+      res.redirect("/home");
+    }
+  } catch (e) {
+    res.status(400).redirect("/home");
   }
 });
 
 router.post("/clockOut", async (req, res) => {
-  if (!req.session.user) {
-    res.status(500).redirect("/login");
-    return;
-  }
-  await validate.checkString(req.body.comment);
-  const result = await users.clockOut(req.session.employeeId, req.body.comment);
+  try {
+    if (!req.session.isBusiness && req.session.user) {
+      await validate.checkString(req.body.comment);
+      const result = await users.clockOut(req.session.employeeId, req.body.comment);
 
-  if (result.succeeded) {
-    req.session.employee.currentStatus = "clockedOut";
-    res.redirect("/home");
-  } else {
-    res.status(500).redirect("/home");
+      if (result.succeeded) {
+        req.session.employee.currentStatus = "clockedOut";
+        res.redirect("/home");
+      } else {
+        // render error in home page
+        res.render("home/home", {
+          title: "Home",
+          user: req.session.user,
+          isAdmin: req.session.isAdmin,
+          businessId: req.session.businessId,
+          employeeId: req.session.employeeId,
+          employee: req.session.employee,
+          error: "Could not clock out, please try again.",
+        });
+      }
+    } else {
+      res.redirect("/home");
+    }
+  } catch (e) {
+    res.status(400).redirect("/home");
   }
 });
 

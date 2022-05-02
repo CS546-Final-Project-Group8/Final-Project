@@ -132,8 +132,6 @@ router.post("/new", async (req, res) => {
 router.put("/promoteEmployee", async (req, res) => {
   if (req.session.isAdmin) {
     try {
-      await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
       await validate.checkID(req.body.employeeId);
       let employeeId = req.body.employeeId.toLowerCase().trim();
 
