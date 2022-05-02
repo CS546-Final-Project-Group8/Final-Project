@@ -10,8 +10,7 @@ $(".promoteEmployee").click(function () {
     success: function (data) {
       if (data === "Employee promoted") {
         // get element with value of employeeId
-        var element = $("[value='" + employeeId + "']");
-        // remove element from DOM
+        var element = $("[value=" + employeeId + "]");
         element.remove();
         // show alert that employee has been promoted for 3 seconds
         $("#alertText").text("Successfully promoted employee to manager.");
@@ -30,7 +29,6 @@ $(".promoteEmployee").click(function () {
   });
 });
 
-// write client side javascript here
 $("#newEmployee").on("click", async () => {
   // hide the button
   $("#newEmployee").attr("hidden", true);
@@ -67,14 +65,27 @@ $("#backToHome").on("click", async () => {
   window.location.href = "/home";
 });
 
-// on load of page, get all employees
-$(document).ready(function () {
-  let employeeNames = [];
-  // traverse the first column of the table and store the employee names
-  $("#employeeTable")
-    .find("td:first-child")
-    .each(function () {
-      employeeNames.push($(this).text());
-    });
-  console.log(employeeNames);
+// on change of search bar, filter the table
+$("#searchEmployee").on("keyup", function () {
+  var value = $(this).val().toLowerCase();
+  var table = $("#employeesTable");
+  var rows = table.find("tr");
+
+  rows.each(function () {
+    // get the name of the employee
+    var name = $(this).find("td:first").text().toLowerCase();
+    if (name.includes(value)) {
+      $(this).attr("hidden", false);
+      $("#noEmployeeFound").attr("hidden", true);
+    } else {
+      $(this).attr("hidden", true);
+    }
+  });
+  // make the header visible
+  $("#employeesTableHeader").attr("hidden", false);
+  // if no employee is found, display message
+  if ($("#employeesTable tr:visible").length === 1) {
+    $("#employeesTableHeader").attr("hidden", true);
+    $("#noEmployeeFound").attr("hidden", false);
+  }
 });
