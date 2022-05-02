@@ -93,7 +93,7 @@
     if (password != confirmPassword) throw "Passwords do not match";
     if (!states.includes(state.toUpperCase())) throw "State must be entered in 2 letter format";
     if (!zipRE.test(zip)) throw "Zip code must be entered in 5 digit format";
-    if (!phoneRE.test(phone)) throw "Phone number must be entered in 10 digit format";
+    if (!phoneRE.test(phoneNumber)) throw "Phone number must be entered in 10 digit format";
   }
 
   //Checks for input errors on "user/login" form and displays error msg to user if error detected
