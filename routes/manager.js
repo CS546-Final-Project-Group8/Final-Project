@@ -7,12 +7,18 @@ router.get("/", async (req, res) => {
   if (req.session.isAdmin) {
     validate.checkID(req.session.businessId);
     let allEmployees = await users.getAllEmployees(req.session.businessId);
+
+    const employeeNames = allEmployees.map((employee) => {
+      return employee.firstName + " " + employee.lastName;
+    });
+
     res.render("manager/manager", {
       user: req.session.user,
       isAdmin: req.session.isAdmin,
       isBusiness: req.session.isBusiness,
       title: "Manager Dashboard",
       allEmployees: allEmployees,
+      employeeNames: employeeNames,
     });
   } else {
     res.redirect("/home");
@@ -126,8 +132,6 @@ router.post("/new", async (req, res) => {
 router.put("/promoteEmployee", async (req, res) => {
   if (req.session.isAdmin) {
     try {
-      await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
       await validate.checkID(req.body.employeeId);
       let employeeId = req.body.employeeId.toLowerCase().trim();
 

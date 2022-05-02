@@ -147,6 +147,8 @@ let checkEmployee = async (businessEmail, email, password) => {
 
   employee.hashedPassword = null;
 
+  employee._id = employee._id.toString();
+
   return {
     authenticated: true,
     employeeID: employee._id,
