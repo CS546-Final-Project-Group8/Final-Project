@@ -76,7 +76,6 @@ $("#searchEmployee").on("keyup", function () {
     var name = $(this).find("td:first").text().toLowerCase();
     if (name.includes(value)) {
       $(this).attr("hidden", false);
-      $("#noEmployeeFound").attr("hidden", true);
     } else {
       $(this).attr("hidden", true);
     }
@@ -87,5 +86,7 @@ $("#searchEmployee").on("keyup", function () {
   if ($("#employeesTable tr:visible").length === 1) {
     $("#employeesTableHeader").attr("hidden", true);
     $("#noEmployeeFound").attr("hidden", false);
+  } else {
+    $("#noEmployeeFound").attr("hidden", true);
   }
 });
