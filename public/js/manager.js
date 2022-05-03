@@ -11,19 +11,54 @@ $(".promoteEmployee").click(function () {
       if (data === "Employee promoted") {
         // get element with value of employeeId
         var element = $("[value=" + employeeId + "]");
-        element.remove();
+        element.text("Demote as Employee");
         // show alert that employee has been promoted for 3 seconds
         $("#alertText").text("Successfully promoted employee to manager.");
         $("#alert").attr("hidden", false);
         setTimeout(function () {
           $("#alert").attr("hidden", true);
-        }, 3000);
+          location.reload();
+        }, 1000);
       } else {
         $("#alertText").text("Internal Server Error");
         $("#alert").attr("hidden", false);
         setTimeout(function () {
           $("#alert").attr("hidden", true);
-        }, 3000);
+        }, 1000);
+      }
+    },
+  });
+});
+
+// write logic for demote employee here
+$(".demoteEmployee").click(function () {
+  var employeeId = $(this).attr("value");
+  $.ajax({
+    url: "/manager/demoteEmployee",
+    type: "PUT",
+    data: {
+      employeeId: employeeId,
+    },
+    success: function (data) {
+      if (data === "Employee demoted") {
+        var element = $("[value=" + employeeId + "]");
+        element.text("Promote as Manager");
+        $("#alertText").text("Successfully demoted employee.");
+        $("#alert").attr("hidden", false);
+        setTimeout(function () {
+          $("#alert").attr("hidden", true);
+          // reload page
+          location.reload();
+        }, 1000);
+      } else if (data === "redirect to home") {
+        window.location.href = "/home";
+      } else {
+        $("#alertText").text("Internal Server Error, please try again.");
+        $("#alert").attr("hidden", false);
+        setTimeout(function () {
+          $("#alert").attr("hidden", true);
+          location.reload();
+        }, 1000);
       }
     },
   });
@@ -84,7 +119,6 @@ $("#searchEmployee").on("keyup", function () {
   $("#employeesTableHeader").attr("hidden", false);
   // if no employee is found, display message
   if ($("#employeesTable tr:visible").length === 1) {
-    $("#employeesTableHeader").attr("hidden", true);
     $("#noEmployeeFound").attr("hidden", false);
   } else {
     $("#noEmployeeFound").attr("hidden", true);
