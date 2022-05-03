@@ -1,0 +1,28 @@
+<h1>Login Page</h1>
+<form id = "login-form" action="/login" method="post">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <label class="form-label" for="businessEmail">Business Email</label>
+            <input required type="email" class="form-control" id = "businessEmail" name="businessEmail" value="{{businessEmail}}" placeholder="Business Email">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input required type="email" class="form-control" id = "email" name="email" value="{{email}}" placeholder="Email">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input required type="password" class="form-control" id = "password" name="password" value="{{password}}" placeholder="Password">
+        </div>
+        <button style="margin: auto; width:500px;" type="submit" class="btn btn-primary" id="checkLogin" >Login</button>
+        
+        {{!-- error --}}
+        {{#if error}}
+            <p style="text-align: center;" class="error">{{error}}</p>
+        {{/if}}
+    </div>
+</form>
+
+<ul style="margin-top: 20px;">
+    <li><a href="/businesses/login">Business Login</a></li>
+    <li><a href="/businesses/signup">Create a new business account? Click here to sign up</a></li>
+</ul>
