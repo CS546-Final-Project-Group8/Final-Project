@@ -49,6 +49,11 @@ td {
   font-size: 30px;
 }
 
+.row {
+  display: grid;
+  text-align: center;
+}
+
 #employeesTable td a::before {
   content: "";
   display: block;

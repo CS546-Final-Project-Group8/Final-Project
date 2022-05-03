@@ -4,14 +4,11 @@
 </div>
 
 <h1>Manager Dashboard</h1>
-
-{{#if allEmployees}}
+<br />
+<h2>Employee Management</h2>
 
 {{!-- create a search box to filter employees --}}
 <div class="form-group row">
-    <div class="col-6">
-        <h2>Employee Management</h2>
-    </div>
     <div class="col-6">
         <input type="text" class="form-control" id="searchEmployee" placeholder="Search for an employee">
     </div>
@@ -67,12 +64,15 @@
             {{#if_eq isManager false}}
                 <button class="promoteEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote as Manager</button>
             {{/if_eq}}
-        </td>
+          </td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="100%">There are no employees.</td>
         </tr>
       {{/each}}
     </tbody>
-  </table>
-{{/if}}
+</table>
 
 {{#if isBusiness}}
   <input type="bool" hidden id="isBusiness" value="{{isBusiness}}" />

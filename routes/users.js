@@ -96,6 +96,7 @@ router.post("/clockIn", async (req, res) => {
         req.session.employee.currentStatus = "clockedIn";
         res.redirect("/home");
       } else {
+        let shifts = await users.getShifts(req.session.employeeId);
         // render error in home page
         res.render("home/home", {
           title: "Home",
@@ -104,6 +105,7 @@ router.post("/clockIn", async (req, res) => {
           businessId: req.session.businessId,
           employeeId: req.session.employeeId,
           employee: req.session.employee,
+          shifts: shifts,
           error: "Could not clock in, please try again.",
         });
       }
@@ -125,6 +127,7 @@ router.post("/clockOut", async (req, res) => {
         req.session.employee.currentStatus = "clockedOut";
         res.redirect("/home");
       } else {
+        let shifts = await users.getShifts(req.session.employeeId);
         // render error in home page
         res.render("home/home", {
           title: "Home",
@@ -133,7 +136,70 @@ router.post("/clockOut", async (req, res) => {
           businessId: req.session.businessId,
           employeeId: req.session.employeeId,
           employee: req.session.employee,
+          shifts: shifts,
           error: "Could not clock out, please try again.",
+        });
+      }
+    } else {
+      res.redirect("/home");
+    }
+  } catch (e) {
+    res.status(400).redirect("/home");
+  }
+});
+
+router.post("/clockOutLunch", async (req, res) => {
+  try {
+    if (!req.session.isBusiness && req.session.user) {
+      await validate.checkString(req.body.comment);
+      const result = await users.clockOutLunch(req.session.employeeId, req.body.comment);
+
+      if (result.succeeded) {
+        req.session.employee.currentStatus = "meal";
+        res.redirect("/home");
+      } else {
+        let shifts = await users.getShifts(req.session.employeeId);
+        // render error in home page
+        res.render("home/home", {
+          title: "Home",
+          user: req.session.user,
+          isAdmin: req.session.isAdmin,
+          businessId: req.session.businessId,
+          employeeId: req.session.employeeId,
+          employee: req.session.employee,
+          shifts: shifts,
+          error: "Could not clock out lunch, please try again.",
+        });
+      }
+    } else {
+      res.redirect("/home");
+    }
+  } catch (e) {
+    res.status(400).redirect("/home");
+  }
+});
+
+router.post("/clockInLunch", async (req, res) => {
+  try {
+    if (!req.session.isBusiness && req.session.user) {
+      await validate.checkString(req.body.comment);
+      const result = await users.clockInLunch(req.session.employeeId, req.body.comment);
+
+      if (result.succeeded) {
+        req.session.employee.currentStatus = "clockedIn";
+        res.redirect("/home");
+      } else {
+        let shifts = await users.getShifts(req.session.employeeId);
+        // render error in home page
+        res.render("home/home", {
+          title: "Home",
+          user: req.session.user,
+          isAdmin: req.session.isAdmin,
+          businessId: req.session.businessId,
+          employeeId: req.session.employeeId,
+          employee: req.session.employee,
+          shifts: shifts,
+          error: "Could not clock in lunch, please try again.",
         });
       }
     } else {
