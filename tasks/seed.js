@@ -21,6 +21,7 @@ let main = async () => {
       "245 Main St", //address
       "Los Angeles", //city
       "CA", //state
+      "90210", //zip
       "6432587410", //phone
       "Full-time", //employment type
       "true", //employment status
@@ -42,6 +43,7 @@ let main = async () => {
       "245 Main St", // address
       "Los Angeles", // city
       "CA", // state
+      "90210", //zip
       "6432587411", // phone
       "part-time", // employment type
       "true", // employement status
@@ -63,6 +65,7 @@ let main = async () => {
       "246 Main St", // address
       "Los Angeles", // city
       "CA", // state
+      "90210", //zip
       "6432587412", // phone
       "Contract", // employment type
       "true", // employement status
@@ -84,6 +87,7 @@ let main = async () => {
       "125 Bleecker St", //address
       "New York", //city
       "NY", //state
+      "10001", //zip
       "5555555001", //phone
       "full-time", // employment type
       "true", // employement status
@@ -105,6 +109,7 @@ let main = async () => {
       "125 Bleecker St", //address
       "New York", //city
       "NY", //state
+      "10001", //zip
       "5555555001", //phone
       "full-time", // employment type
       "true", // employement status
