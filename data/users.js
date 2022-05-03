@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const validate = require("../validate/index.js");
 
-// function createEmployee(businessId, email, password, confirmPassword, firstName, lastName, gender,  address, city, state, phone, employmentStatus, isActiveEmployee, hourlyPay, startDate, isManager) this function creates an employee in monogoDB database
+// function createEmployee(businessId, email, password, confirmPassword, firstName, lastName, gender,  address, city, state, zip, phone, employmentStatus, isActiveEmployee, hourlyPay, startDate, isManager) this function creates an employee in monogoDB database
 let createEmployee = async (
   businessId,
   email,
@@ -18,6 +18,7 @@ let createEmployee = async (
   address,
   city,
   state,
+  zip,
   phone,
   employmentStatus,
   isActiveEmployee,
@@ -46,6 +47,8 @@ let createEmployee = async (
   city = city.trim();
   await validate.checkState(state);
   state = state.trim();
+  await validate.checkZip(zip);
+  zip = zip.trim();
   await validate.checkPhone(phone);
   phone = phone.trim();
   await validate.checkNumber(hourlyPay);
@@ -79,6 +82,7 @@ let createEmployee = async (
     address: address,
     city: city,
     state: state,
+    zip: zip,
     phone: phone,
     employmentStatus: employmentStatus,
     isActiveEmployee: isActiveEmployee,
@@ -114,6 +118,84 @@ let createEmployee = async (
   }
 
   return { employeeInserted: true, employeeID: newEmployeeId };
+};
+
+// function updateEmployee(employeeId, businessId, email, firstName, lastName, gender,  address, city, state, zip, phone, employmentStatus, isActiveEmployee, hourlyPay, startDate, isManager) this function updates an employee's account info in monogoDB database
+let updateEmployee = async (employeeId, businessId, email, firstName, lastName, gender, address, city, state, zip, phone, employmentStatus, isActiveEmployee, hourlyPay, startDate, isManager) => {
+  // Validation
+  await validate.checkID(employeeId);
+  employeeId = employeeId.trim();
+  await validate.checkID(businessId);
+  businessId = businessId.trim();
+  await validate.checkEmail(email);
+  email = email.toLowerCase().trim();
+  await validate.checkString(firstName);
+  firstName = firstName.trim();
+  await validate.checkString(lastName);
+  lastName = lastName.trim();
+  await validate.checkGender(gender);
+  gender = gender.trim();
+  await validate.checkString(address);
+  address = address.trim();
+  await validate.checkString(city);
+  city = city.trim();
+  await validate.checkState(state);
+  state = state.trim();
+  await validate.checkZip(zip);
+  zip = zip.trim();
+  await validate.checkPhone(phone);
+  phone = phone.trim();
+  await validate.checkNumber(hourlyPay);
+  hourlyPay = parseInt(hourlyPay);
+  await validate.checkDate(startDate);
+  startDate = startDate.trim();
+  await validate.checkEmploymentStatus(employmentStatus);
+  employmentStatus = employmentStatus.trim();
+  await validate.checkBoolean(isActiveEmployee);
+  isActiveEmployee = isActiveEmployee.trim();
+  await validate.checkBoolean(isManager);
+  isManager = isManager.toLowerCase().trim() === "true";
+
+  // Check if businessId exists
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({
+    _id: ObjectId(businessId),
+  });
+  if (!business) throw "Business not found";
+
+  // Check employee exists
+  const employeesCollection = await employees();
+  const employee = await employeesCollection.findOne({
+    businessId: businessId,
+    _id: ObjectId(employeeId),
+  });
+  if (!employee) throw "Couldn't update an employee that does not exist";
+  const updatedEmployee = await employeesCollection.findOneAndUpdate(
+    {
+      businessId: businessId,
+      _id: ObjectId(employeeId),
+    },
+    {
+      $set: {
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        gender: gender,
+        address: address,
+        city: city,
+        state: state,
+        zip: zip,
+        phone: phone,
+        employmentStatus: employmentStatus,
+        isActiveEmployee: isActiveEmployee,
+        hourlyPay: hourlyPay,
+        startDate: startDate,
+        isManager: isManager,
+      },
+    },
+    { returnDocument: "after" }
+  );
+  return updatedEmployee.value;
 };
 
 // function checkEmployee(businessEmail, email, password) this function checks if the email and password are correct
@@ -170,6 +252,31 @@ let getAllEmployees = async (businessId) => {
     employee._id = employee._id.toString();
   }
   return Allemployees;
+};
+
+let getEmployee = async (businessId, employeeId) => {
+  await validate.checkID(employeeId);
+  await validate.checkID(businessId);
+  const employeesCollection = await employees();
+  const employee = await employeesCollection.findOne({
+    businessId: businessId,
+    _id: ObjectId(employeeId),
+  });
+  if (!employee) throw `Employee with ObjectID: '${employeeId}' was not found.`;
+  employee._id = employee._id.toString();
+  return employee;
+};
+
+let deleteEmployee = async (businessId, employeeId) => {
+  await validate.checkID(employeeId);
+  await validate.checkID(businessId);
+  const employeesCollection = await employees();
+  const deleteInfo = await employeesCollection.deleteOne({
+    businessId: businessId,
+    _id: ObjectId(employeeId),
+  });
+  if (deleteInfo.deletedCount === 0) throw "Could not delete employee";
+  return { succeeded: true };
 };
 
 let clockIn = async (employeeId, comment) => {
@@ -249,8 +356,11 @@ let promoteEmployee = async (employeeId) => {
 
 module.exports = {
   createEmployee,
+  updateEmployee,
   checkEmployee,
   getAllEmployees,
+  getEmployee,
+  deleteEmployee,
   clockIn,
   clockOut,
   promoteEmployee,

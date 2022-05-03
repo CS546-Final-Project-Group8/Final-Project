@@ -5,7 +5,7 @@ const session = require("express-session");
 app.use(
   session({
     name: "AuthCookie",
-    secret: "secret to bcrypt password",
+    secret: "4kAQJRzpPSJ27pttoqejyh8RsjfMFEJXeGqBCL5p4ow4HkszhbXjux8kWWr9BYpC",
     saveUninitialized: true,
     resave: false,
     cookie: { maxAge: 600000 },
@@ -25,15 +25,12 @@ app.use("/public", static);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// MIDDLEWARE CODE STARTS HERE
-
-// MIDDLEWARE CODE ENDS HERE
-
 app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 var hbs = exphbs.create({});
 
+hbs.handlebars.registerHelper("dateFormat", require("handlebars-dateformat"));
 hbs.handlebars.registerHelper("if_eq", function (a, b, opts) {
   if (a == b) {
     return opts.fn(this);
