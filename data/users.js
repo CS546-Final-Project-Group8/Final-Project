@@ -310,8 +310,8 @@ let clockOut = async (employeeId, comment) => {
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
 
-  if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "meal")) {
-    throw "Employee must be clocked in / on meal break to clock out!";
+  if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "lunch")) {
+    throw "Employee must be clocked in / on lunch break to clock out!";
   }
   const userCollection = await employees();
   let userUpdateInfo = {
@@ -322,6 +322,56 @@ let clockOut = async (employeeId, comment) => {
     status: "clockOut",
     comment: comment,
   };
+  const updateInfo = await userCollection.updateOne({ _id: ObjectId(employeeId) }, { $set: userUpdateInfo, $addToSet: { timeEntries: timeEntry } });
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+
+  return { succeeded: true };
+};
+
+let clockInLunch = async (employeeId, comment) => {
+  await validate.checkID(employeeId);
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
+  if (!employee) throw "Employee not found";
+
+  if (employee.currentStatus !== "meal") {
+    throw "Employee must be on lunch break to clock in from lunch!";
+  }
+  const userCollection = await employees();
+  let userUpdateInfo = {
+    currentStatus: "clockedIn",
+  };
+  const timeEntry = {
+    dateTime: new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString(),
+    status: "lunchIn",
+    comment: comment,
+  };
+
+  const updateInfo = await userCollection.updateOne({ _id: ObjectId(employeeId) }, { $set: userUpdateInfo, $addToSet: { timeEntries: timeEntry } });
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+
+  return { succeeded: true };
+};
+
+let clockOutLunch = async (employeeId, comment) => {
+  await validate.checkID(employeeId);
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
+  if (!employee) throw "Employee not found";
+
+  if (employee.currentStatus !== "clockedIn") {
+    throw "Employee must be clocked in to clock out for lunch!";
+  }
+  const userCollection = await employees();
+  let userUpdateInfo = {
+    currentStatus: "meal",
+  };
+  const timeEntry = {
+    dateTime: new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString(),
+    status: "lunchOut",
+    comment: comment,
+  };
+
   const updateInfo = await userCollection.updateOne({ _id: ObjectId(employeeId) }, { $set: userUpdateInfo, $addToSet: { timeEntries: timeEntry } });
   if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
 
@@ -354,6 +404,48 @@ let promoteEmployee = async (employeeId) => {
   return { employeePromoted: true };
 };
 
+let getShifts = async (employeeId) => {
+  await validate.checkID(employeeId);
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
+  if (!employee) throw "Employee not found";
+
+  let timeEntries = employee.timeEntries;
+
+  timeEntries.sort((a, b) => (a.dateTime > b.dateTime ? 1 : -1));
+
+  shifts = [];
+  lastClockIn = null;
+  lastLunch = null;
+  let lunchhours = 0;
+  timeEntries.forEach((entry) => {
+    if (lastClockIn == null) lastClockIn = entry.dateTime;
+    if (entry.status == "clockIn") {
+      lastClockIn = entry.dateTime;
+      lunchhours = 0;
+    } else if (entry.status == "clockOut") {
+      let current = new Date(entry.dateTime);
+      let prev = new Date(lastClockIn);
+      let shift = {};
+      shift["date"] = current.toLocaleString().split(",")[0];
+      shift["hours"] = (current - prev) / 1000 / 60 / 60 - lunchhours;
+      shift["lunchHours"] = lunchhours;
+      shift["hoursString"] = Math.round(shift["hours"] * 1000) / 1000 + " hours";
+      shift["lunchHoursString"] = Math.round(shift["lunchHours"] * 1000) / 1000 + " hours";
+      shifts.push(shift);
+    } else if (entry.status == "lunchIn") {
+      let current = new Date(entry.dateTime);
+      let prev = new Date(lastLunch.dateTime);
+      lunchhours = (current - prev) / 1000 / 60 / 60;
+      lastLunch = null;
+    } else if (entry.status == "lunchOut") {
+      lastLunch = entry;
+    }
+  });
+
+  return shifts;
+};
+
 module.exports = {
   createEmployee,
   updateEmployee,
@@ -363,5 +455,8 @@ module.exports = {
   deleteEmployee,
   clockIn,
   clockOut,
+  clockInLunch,
+  clockOutLunch,
   promoteEmployee,
+  getShifts,
 };

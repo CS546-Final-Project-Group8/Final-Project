@@ -27,24 +27,42 @@
     <p>Current status: <span style="font-weight: bold;">Clocked out</span></p>
     <form action="/clockIn" style="margin: 30px;" method="POST">
         <div class="row">
-            <div class="col-8">
+            <div>
                 <label class="form-label" for="comment">Comment</label>
                 <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
             </div>
-            
-            <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" type="submit">Clock in</button>
+            <span id="buttons">
+                <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" type="submit">Clock in</button>
+            </span>
         </div>
     </form>
     {{/if_eq}}
     {{#if_eq employee.currentStatus "clockedIn"}}
     <p>Current status: <span style="font-weight: bold;">Clocked in</span></p>
-    <form action="/clockOut" style="margin: 30px;"  method="POST">
+    <form style="margin: 30px;" method="POST">
         <div class="row">
-            <div class="col-8">
+            <div>
                 <label class="form-label" for="comment">Comment</label>
                 <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
             </div>
-            <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;"  type="submit">Clock out</button>
+            <span id="buttons">
+                <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockOut" type="submit">Clock out</button>
+                <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockOutLunch" type="submit">Lunch out</button>
+            </span>
+        </div>
+    </form>
+    {{/if_eq}}
+    {{#if_eq employee.currentStatus "meal"}}
+    <p>Current status: <span style="font-weight: bold;">Meal Break</span></p>
+    <form style="margin: 30px;" method="POST">
+        <div class="row">
+            <div>
+                <label class="form-label" for="comment">Comment</label>
+                <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
+            </div>
+            <span id="buttons">
+                <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockInLunch" type="submit">Lunch in</button>
+            </span>
         </div>
     </form>
     {{/if_eq}}
@@ -53,6 +71,32 @@
         <p class="error">{{error}}</p>
     {{/if}}
 </div>
+
+<h2>Previous Shifts</h2>
+
+<table id="shiftsTable" class="table table-striped">
+    <thead>
+        <tr>
+        <th>Date</th>
+        <th>Hours Worked</th>
+        <th>Lunch Hours</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each shifts}}
+        <tr>
+            <td>{{date}}</td>
+            <td>{{hoursString}}</td>
+            <td>{{lunchHoursString}}</td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="100%">There are no shifts since last payroll calculation.</td>
+        </tr>
+        {{/each}}
+        </tr>
+    </tbody>
+</table>
 
 
 <script src="../../public/js/home.js" ></script>
