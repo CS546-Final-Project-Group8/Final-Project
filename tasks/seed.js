@@ -7,9 +7,9 @@ let main = async () => {
   try {
     let db = await dbConnection.connectToDb();
     await db.dropDatabase();
-    let business1 = await businesses.createBusiness("Starbucks", "starbucks@gmail.com", "Starbucks", "Starbucks", "123 Main St", "Los Angeles", "CA", "90210", "1234567890", "We sell coffee");
+    let business1 = await businesses.createBusiness("Starbucks", "starbucks@gmail.com", "starbucks", "starbucks", "123 Main St", "Los Angeles", "CA", "90210", "1234567890", "We sell coffee");
     let business2 = await businesses.createBusiness("McDonalds", "McDonalds@gmail.com", "McDonalds", "McDonalds", "124 Bleecker St", "New York", "NY", "10001", "5555555555", "We sell burgers");
-    let business3 = await businesses.createBusiness("Pizza Hut", "pizzahut@gmail.com", "PizzaHut", "PizzaHut", "125 Broadway", "New York", "NY", "10001", "8888888888", "We sell pizza");
+    let business3 = await businesses.createBusiness("Pizza Hut", "pizzahut@gmail.com", "pizzahut", "pizzahut", "125 Broadway", "New York", "NY", "10001", "8888888888", "We sell pizza");
     let starbuctsEmployee1 = await employees.createEmployee(
       business1.businessID, //businessID
       "staremp1@gmail.com", //email

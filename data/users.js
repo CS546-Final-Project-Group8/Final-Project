@@ -103,19 +103,7 @@ let createEmployee = async (
   const insertInfo = await employeesCollection.insertOne(newEmployee);
   if (insertInfo.insertedCount === 0) throw "Could not add employee to database";
 
-  // add employeeID to business collection
   const newEmployeeId = insertInfo.insertedId.toString();
-  if (!isManager) {
-    const updateInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $push: { employees: newEmployeeId } });
-    if (updateInfo.modifiedCount === 0) {
-      throw "Could not add manager to business";
-    }
-  } else {
-    const updateInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $push: { managers: newEmployeeId } });
-    if (updateInfo.modifiedCount === 0) {
-      throw "Could not add employee to business";
-    }
-  }
 
   return { employeeInserted: true, employeeID: newEmployeeId };
 };
@@ -391,9 +379,6 @@ let promoteEmployee = async (employeeId) => {
   const business = await businessCollection.findOne({ _id: ObjectId(employee.businessId) });
   if (!business) throw "Business not found";
 
-  const updateInfo = await businessCollection.updateOne({ _id: ObjectId(employee.businessId) }, { $addToSet: { managers: employeeId }, $pull: { employees: employeeId } });
-  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
-
   const userUpdateInfo = {
     isManager: true,
   };
@@ -402,6 +387,28 @@ let promoteEmployee = async (employeeId) => {
   if (!updateInfo2.matchedCount && !updateInfo2.modifiedCount) throw "Update failed";
 
   return { employeePromoted: true };
+};
+
+let demoteEmployee = async (employeeId) => {
+  await validate.checkID(employeeId);
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
+  if (!employee) throw "Employee not found";
+
+  if (!employee.isManager) throw "Employee is not a manager";
+
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(employee.businessId) });
+  if (!business) throw "Business not found";
+
+  const userUpdateInfo = {
+    isManager: false,
+  };
+
+  const updateInfo2 = await employeeCollection.updateOne({ _id: ObjectId(employeeId) }, { $set: userUpdateInfo });
+  if (!updateInfo2.matchedCount && !updateInfo2.modifiedCount) throw "Update failed";
+
+  return { employeeDemoted: true };
 };
 
 let getShifts = async (employeeId) => {
@@ -458,5 +465,6 @@ module.exports = {
   clockInLunch,
   clockOutLunch,
   promoteEmployee,
+  demoteEmployee,
   getShifts,
 };

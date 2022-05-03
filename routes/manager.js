@@ -147,7 +147,33 @@ router.put("/promoteEmployee", async (req, res) => {
     } catch (e) {
       console.log(e);
       res.status(400).send(e);
-    } 
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
+router.put("/demoteEmployee", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      await validate.checkID(req.body.employeeId);
+      let employeeId = req.body.employeeId.toLowerCase().trim();
+
+      const result = await users.demoteEmployee(employeeId);
+
+      if (result.employeeDemoted && req.body.employeeId === req.session.employeeId) {
+        req.session.isAdmin = false;
+        req.session.isEmployee = true;
+        res.status(200).send("redirect to home");
+      } else if (result.employeeDemoted) {
+        res.status(200).send("Employee demoted");
+      } else {
+        res.redirect("/home");
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(400).send(e);
+    }
   } else {
     res.redirect("/home");
   }
