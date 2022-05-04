@@ -265,10 +265,19 @@ router.delete("/employee/:employee_id", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       await validate.checkID(req.params.employee_id);
+      let employee_id = req.params.employee_id.toLowerCase().trim();
+      if (employee_id === req.session.employeeId) {
+        res.status(200).send("You cannot delete yourself");
+        return;
+      }
       await validate.checkID(req.session.businessId);
-      const deleteResult = await users.deleteEmployee(req.session.businessId, req.params.employee_id);
-      if (deleteResult.succeeded) res.sendStatus(200);
-      else res.status(500).json({ error: "Internal Server Error" });
+      let business_id = req.session.businessId.toLowerCase().trim();
+      const deleteResult = await users.deleteEmployee(business_id, employee_id);
+      if (deleteResult.succeeded) {
+        res.status(200).send("Employee deleted");
+      } else {
+        res.status(500).send("Internal Server Error");
+      }
     } catch (e) {
       res.status(400).render("manager/manager", {
         title: "Employee",
