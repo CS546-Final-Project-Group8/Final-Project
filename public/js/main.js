@@ -128,14 +128,25 @@ $("#confirmDeleteEmployee").on("click", async function (event) {
     type: "DELETE",
   })
     .done((data) => {
-      if (data.error) console.log("Error deleting employee: ", data.error);
-      else {
+      if (data === "You cannot delete yourself") {
+        $("#deleteEmployeeModal").hide();
+        alert(data);
+      } else if (data.error) {
+        $("#deleteEmployeeModal").hide();
+        alert(data.error);
+      } else {
         $(`tr[employee-id=${employeeId}]`).remove();
         $("#deleteEmployeeModal").attr("employee-id", "");
         $("#deleteEmployeeModal").hide();
+        // check if there are no employees left
+        if ($("#employeesTable tr").length === 1) {
+          $("#noEmployeeFound").attr("hidden", false);
+        }
       }
     })
-    .fail((req, status, error) => console.log(error));
+    .fail((req, status, error) => {
+      console.log(error);
+    });
 });
 
 $("#backToHome").on("click", async () => {

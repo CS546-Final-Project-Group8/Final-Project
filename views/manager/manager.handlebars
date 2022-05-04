@@ -62,11 +62,11 @@
             <a href="#" class="viewEmployee" employee-id="{{_id}}"><i class="fa-solid fa-clock"></i></a>
           </td>
           <td>
-            {{#if_eq isManager false}}
-                <button class="promoteEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote as Manager</button>
+            {{#if isManager}}
+              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Demote as Employee</button>
             {{else}}
-                <button class="demoteEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Demote as Employee</button>
-            {{/if_eq}}
+              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote as Manager</button>
+            {{/if}}
           </td>
         </tr>
         {{else}}

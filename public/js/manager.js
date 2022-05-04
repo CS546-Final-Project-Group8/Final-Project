@@ -1,67 +1,67 @@
-$(".promoteEmployee").click(function () {
+$(".updateEmployee").click(function () {
   // send ajax request to promote employee
-  var employeeId = $(this).attr("value");
-  $.ajax({
-    url: "/manager/promoteEmployee",
-    type: "PUT",
-    data: {
-      employeeId: employeeId,
-    },
-    success: function (data) {
-      if (data === "Employee promoted") {
-        // get element with value of employeeId
-        var element = $("[value=" + employeeId + "]");
-        element.text("Demote as Employee");
-        // show alert that employee has been promoted for 3 seconds
-        $("#alertText").text("Successfully promoted employee to manager.");
-        $("#alert").attr("hidden", false);
-        setTimeout(function () {
-          $("#alert").attr("hidden", true);
-          location.reload();
-        }, 1000);
-      } else {
-        $("#alertText").text("Internal Server Error");
-        $("#alert").attr("hidden", false);
-        setTimeout(function () {
-          $("#alert").attr("hidden", true);
-        }, 1000);
-      }
-    },
-  });
-});
+  let employeeId = $(this).attr("value");
+  let element = $("[value=" + employeeId + "]");
 
-// write logic for demote employee here
-$(".demoteEmployee").click(function () {
-  var employeeId = $(this).attr("value");
-  $.ajax({
-    url: "/manager/demoteEmployee",
-    type: "PUT",
-    data: {
-      employeeId: employeeId,
-    },
-    success: function (data) {
-      if (data === "Employee demoted") {
-        var element = $("[value=" + employeeId + "]");
-        element.text("Promote as Manager");
-        $("#alertText").text("Successfully demoted employee.");
-        $("#alert").attr("hidden", false);
-        setTimeout(function () {
-          $("#alert").attr("hidden", true);
-          // reload page
-          location.reload();
-        }, 1000);
-      } else if (data === "redirect to home") {
-        window.location.href = "/home";
-      } else {
-        $("#alertText").text("Internal Server Error, please try again.");
-        $("#alert").attr("hidden", false);
-        setTimeout(function () {
-          $("#alert").attr("hidden", true);
-          location.reload();
-        }, 1000);
-      }
-    },
-  });
+  if (element.text() === "Promote as Manager") {
+    $.ajax({
+      url: "/manager/promoteEmployee",
+      type: "PUT",
+      data: {
+        employeeId: employeeId,
+      },
+      success: function (data) {
+        if (data === "Employee promoted") {
+          // get element with value of employeeId
+          element = $("[value=" + employeeId + "]");
+          element.text("Demote as Employee");
+          let trQuery = `tr[employee-id=${employeeId}] `;
+          $(trQuery + " .employeeManager").text("Manager");
+          // show alert that employee has been promoted for 3 seconds
+          $("#alertText").text("Successfully promoted employee to manager.");
+          $("#alert").attr("hidden", false);
+          setTimeout(function () {
+            $("#alert").attr("hidden", true);
+          }, 2000);
+        } else {
+          $("#alertText").text("Internal Server Error");
+          $("#alert").attr("hidden", false);
+          setTimeout(function () {
+            $("#alert").attr("hidden", true);
+          }, 2000);
+        }
+      },
+    });
+  } else if (element.text() === "Demote as Employee") {
+    $.ajax({
+      url: "/manager/demoteEmployee",
+      type: "PUT",
+      data: {
+        employeeId: employeeId,
+      },
+      success: function (data) {
+        if (data === "Employee demoted") {
+          element = $("[value=" + employeeId + "]");
+          element.text("Promote as Manager");
+          let trQuery = `tr[employee-id=${employeeId}] `;
+          $(trQuery + " .employeeManager").text("Employee");
+          $("#alertText").text("Successfully demoted manager to employee.");
+          $("#alert").attr("hidden", false);
+          setTimeout(function () {
+            $("#alert").attr("hidden", true);
+          }, 2000);
+        } else if (data === "redirect to home") {
+          window.location.href = "/home";
+        } else {
+          $("#alertText").text("Internal Server Error, please try again.");
+          $("#alert").attr("hidden", false);
+          setTimeout(function () {
+            $("#alert").attr("hidden", true);
+          }, 2000);
+        }
+      },
+    });
+  }
 });
 
 $("#newEmployee").on("click", async () => {
