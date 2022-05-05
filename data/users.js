@@ -140,7 +140,7 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
   await validate.checkEmploymentStatus(employmentStatus);
   employmentStatus = employmentStatus.trim();
   await validate.checkBoolean(isActiveEmployee);
-  isActiveEmployee = isActiveEmployee.trim();
+  isActiveEmployee = isActiveEmployee.toLowerCase().trim() === "true";
 
   // Check if businessId exists
   const businessCollection = await businesses();
@@ -280,6 +280,7 @@ let clockIn = async (employeeId, comment) => {
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   if (employee.currentStatus !== "clockedOut") {
     throw "Employee must be clocked out to clock in!";
@@ -308,6 +309,7 @@ let clockOut = async (employeeId, comment) => {
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "lunch")) {
     throw "Employee must be clocked in / on lunch break to clock out!";
@@ -335,6 +337,7 @@ let clockInLunch = async (employeeId, comment) => {
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   if (employee.currentStatus !== "meal") {
     throw "Employee must be on lunch break to clock in from lunch!";
@@ -363,9 +366,18 @@ let clockOutLunch = async (employeeId, comment) => {
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
+
+  let timeEntries = employee.timeEntries;
+
+  timeEntries.sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1));
+
+  if (timeEntries[0].status == "lunchIn") {
+    throw "You have already clocked lunch for this shift.";
+  }
 
   if (employee.currentStatus !== "clockedIn") {
-    throw "Employee must be clocked in to clock out for lunch!";
+    throw "Critical error: You must be clocked in to clock out for lunch!";
   }
   const userCollection = await employees();
   let userUpdateInfo = {
@@ -454,11 +466,16 @@ let getShifts = async (employeeId) => {
       let current = new Date(entry.dateTime);
       let prev = new Date(lastClockIn);
       let shift = {};
+      shift["comment"] = entry.comment;
       shift["date"] = current.toLocaleString().split(",")[0];
       shift["hours"] = (current - prev) / 1000 / 60 / 60 - lunchhours;
       shift["lunchHours"] = lunchhours;
-      shift["hoursString"] = Math.round(shift["hours"] * 1000) / 1000 + " hours";
-      shift["lunchHoursString"] = Math.round(shift["lunchHours"] * 1000) / 1000 + " hours";
+
+      shiftMinutes = Math.floor(((shift["hours"] * 60) % 60) * 100) / 100;
+      shiftHours = Math.floor(shift["hours"]);
+
+      shift["hoursString"] = String(shiftHours).padStart(2, "0") + "h " + String(shiftMinutes.toFixed(2)).padStart(2, "0") + "m";
+      shift["lunchHoursString"] = String(Math.floor(lunchhours)).padStart(2, "0") + "h " + String((lunchhours * 60).toFixed(2)).padStart(2, "0") + "m";
       shifts.push(shift);
     } else if (entry.status == "lunchIn") {
       let current = new Date(entry.dateTime);

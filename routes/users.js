@@ -113,7 +113,15 @@ router.post("/clockIn", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
-    res.status(400).redirect("/home");
+    res.status(400).render("home/home", {
+      title: "Home",
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      businessId: req.session.businessId,
+      employeeId: req.session.employeeId,
+      employee: req.session.employee,
+      error: e,
+    });
   }
 });
 
@@ -144,7 +152,15 @@ router.post("/clockOut", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
-    res.status(400).redirect("/home");
+    res.status(400).render("home/home", {
+      title: "Home",
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      businessId: req.session.businessId,
+      employeeId: req.session.employeeId,
+      employee: req.session.employee,
+      error: e,
+    });
   }
 });
 
@@ -168,14 +184,24 @@ router.post("/clockOutLunch", async (req, res) => {
           employeeId: req.session.employeeId,
           employee: req.session.employee,
           shifts: shifts,
-          error: "Could not clock out lunch, please try again.",
+          error: result.e ?? "Could not clock out lunch, please try again.",
         });
       }
     } else {
       res.redirect("/home");
     }
   } catch (e) {
-    res.status(400).redirect("/home");
+    let shifts = await users.getShifts(req.session.employeeId);
+    res.status(400).render("home/home", {
+      title: "Home",
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      businessId: req.session.businessId,
+      employeeId: req.session.employeeId,
+      employee: req.session.employee,
+      shifts: shifts,
+      error: e,
+    });
   }
 });
 
@@ -206,7 +232,15 @@ router.post("/clockInLunch", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
-    res.status(400).redirect("/home");
+    res.status(400).render("home/home", {
+      title: "Home",
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      businessId: req.session.businessId,
+      employeeId: req.session.employeeId,
+      employee: req.session.employee,
+      error: e,
+    });
   }
 });
 
