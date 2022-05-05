@@ -73,6 +73,7 @@ $("#newEmployee").on("click", async () => {
   $("#backToHome").attr("hidden", true);
   // hide search bar
   $("#searchEmployee").attr("hidden", true);
+  $("#searchEmployeeLabel").attr("hidden", true);
   // show the form
   $("#newEmployeeForm").removeAttr("hidden");
 });
@@ -93,6 +94,7 @@ $("#cancelEmployee").on("click", async () => {
   }
   // show search bar
   $("#searchEmployee").removeAttr("hidden");
+  $("#searchEmployeeLabel").removeAttr("hidden");
 });
 
 $("#backToHome").on("click", async () => {

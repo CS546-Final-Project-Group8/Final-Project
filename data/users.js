@@ -487,7 +487,7 @@ let getShifts = async (employeeId) => {
     }
   });
 
-  return shifts;
+  return shifts.reverse();
 };
 
 module.exports = {

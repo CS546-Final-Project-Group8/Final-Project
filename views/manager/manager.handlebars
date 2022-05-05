@@ -11,11 +11,15 @@
          <h2>Employee Management</h2>
      </div>
     <div class="col-6">
+      <div style="display: flex;">
+        <label for="searchEmployee" id="searchEmployeeLabel" class="col-form-label" style="margin-right: 5px;">Search</label>
         <input type="text" class="form-control" id="searchEmployee" placeholder="Search for an employee">
         {{!-- show the matching results --}}
         <div id="searchResults">
           
         </div>
+      </div>
+        
 
     </div>
 </div>
@@ -62,8 +66,8 @@
             <td class="employeeManager">Employee</td>
           {{/if}}
           <td>
-            <a href="#" class="editEmployee" data-employee-id="{{_id}}"><i style="margin-bottom: 10px;" class="fa-solid fa-pen"></i></a>
-            <a href="#" class="deleteEmployee" data-employee-id="{{_id}}"><i class="fa-solid fa-trash"></i></a>
+            <i data-employee-id="{{_id}}" class="editEmployee bi bi-pencil-square"></i>
+            <i data-employee-id="{{_id}}" class="deleteEmployee bi bi-trash-fill"></i>
           </td>
           <td>
             {{#if isManager}}
@@ -75,7 +79,7 @@
         </tr>
         {{else}}
         <tr>
-            <td colspan="100%">There are no employees.</td>
+            <td colspan="12">There are no employees.</td>
         </tr>
       {{/each}}
     </tbody>
@@ -94,29 +98,29 @@
 <button class="btn btn-outline-primary" id="newEmployee">Create New Employee</button>
 
 {{! form to edit an employee }}
-<div id="editEmployeeModal" class="modal" display="none">
+<div id="editEmployeeModal" class="modal" >
   <div class="modal-content">
     <div class="modal-header">
-      <h4 class="modal-title">Edit Employee</h4>
+      <h3 class="modal-title">Edit Employee</h4>
     </div>
     <div class="modal-body">
       <form id="editEmployeeForm">
         <div class="row">
           <div class="col-12 mb-3">
-            <label for="email" class="form-label">Email</label>
+            <label for="editEmail" class="form-label">Email</label>
             <input required type="email" class="form-control" id="editEmail" name="email" placeholder="Email" />
           </div>
           <div class="col-md-6 mb-3">
-            <label for="firstName" class="form-label">First Name</label>
+            <label for="editFirstName" class="form-label">First Name</label>
             <input required type="text" class="form-control" id="editFirstName" name="firstName" placeholder="First Name" />
           </div>
           <div class="col-md-6 mb-3">
-            <label for="lastName" class="form-label">Last Name</label>
+            <label for="editLastName" class="form-label">Last Name</label>
             <input required type="text" class="form-control" id="editLastName" name="lastName" placeholder="Last Name" />
           </div>
           <div class="col-md-6 mb-3">
-            <label for="gender" class="form-label">Gender Identity</label>
-            <select required class="form-select" aria-label="Default select example" name="gender" id="editGender">
+            <label for="editGender" class="form-label">Gender Identity</label>
+            <select class="form-select" aria-label="Default select example" name="gender" id="editGender">
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Transgender">Transgender</option>
@@ -126,28 +130,28 @@
             </select>
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="address">Address</label>
+            <label class="form-label" for="editAddress">Address</label>
             <input required type="text" class="form-control" id="editAddress" name="address" placeholder="Address" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="city">City</label>
+            <label class="form-label" for="editCity">City</label>
             <input required type="text" class="form-control" id="editCity" name="city" placeholder="City" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="state">State</label>
+            <label class="form-label" for="editState">State</label>
             <input required type="text" class="form-control" id="editState" name="state" placeholder="State" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="zip">Zip</label>
+            <label class="form-label" for="editZip">Zip</label>
             <input required type="text" class="form-control" id="editZip" name="zip" placeholder="Zip" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="phoneNumber">Phone Number</label>
+            <label class="form-label" for="editPhoneNumber">Phone Number</label>
             <input required type="text" class="form-control" id="editPhoneNumber" name="phoneNumber" placeholder="Phone Number" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="employmentStatus">Employment Status</label>
-            <select required class="form-select" aria-label="Default select example" name="employmentStatus" id="editEmploymentStatus">
+            <label class="form-label" for="editEmploymentStatus">Employment Status</label>
+            <select class="form-select" aria-label="Default select example" name="employmentStatus" id="editEmploymentStatus">
               <option value="Full-Time">Full-Time</option>
               <option value="Part-Time">Part-Time</option>
               <option value="Contract">Contract</option>
@@ -158,19 +162,19 @@
             </select>
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="isActiveEmployee">Is Active Employee</label>
-            <select required class="form-select" aria-label="Default select example" name="isActiveEmployee" id="editIsActiveEmployee">
+            <label class="form-label" for="editIsActiveEmployee">Is Active Employee</label>
+            <select class="form-select" aria-label="Default select example" name="isActiveEmployee" id="editIsActiveEmployee">
               <option value="true">True</option>
               <option value="false">False</option>
             </select>
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="hourlyPay">Hourly Pay</label>
+            <label class="form-label" for="editHourlyPay">Hourly Pay</label>
             <input required type="number" class="form-control" id="editHourlyPay" name="hourlyPay" placeholder="Hourly Pay" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="startDate">Start Date</label>
-            <input required type="date" class="form-control" id="editStartDate" name="startDate" placeholder="Start Date" />
+            <label class="form-label" for="editStartDate">Start Date</label>
+            <input required type="date" class="form-control" id="editStartDate" name="startDate" />
           </div>
           <p id="modalErrorMessage" class="error" hidden></p>
         </div>
@@ -183,7 +187,7 @@
   </div>
 </div>
 
-<div id="deleteEmployeeModal" class="modal" display="none">
+<div id="deleteEmployeeModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
       <h4 class="modal-title">Are you sure?</h4>
@@ -277,7 +281,7 @@
     </div>
     <div class="col-md-6 mb-3">
       <label class="form-label" for="startDate">Start Date</label>
-      <input required type="date" class="form-control" id="startDate" name="startDate" value="{{startDate}}" placeholder="Start Date" />
+      <input required type="date" class="form-control" id="startDate" name="startDate" value="{{startDate}}" />
     </div>
     <div class="col-md-6 mb-3">
       <label class="form-label" for="isManager">Is Manager</label>

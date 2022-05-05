@@ -401,6 +401,7 @@ $("#cancelEditEmployee").on("click", async (event) => {
   $("#modalErrorMessage").attr("hidden", true);
   // reset the contents of the modal
   resetModal();
+  location.reload(); // this is done to avoid render error i got for select tag when editing employee
 });
 
 let resetModal = () => {
