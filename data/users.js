@@ -368,8 +368,16 @@ let clockOutLunch = async (employeeId, comment) => {
   if (!employee) throw "Employee not found";
   if (employee.isActiveEmployee === false) throw "Employee is not active";
 
+  let timeEntries = employee.timeEntries;
+
+  timeEntries.sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1));
+
+  if (timeEntries[0].status == "lunchIn") {
+    throw "You have already clocked lunch for this shift.";
+  }
+
   if (employee.currentStatus !== "clockedIn") {
-    throw "Employee must be clocked in to clock out for lunch!";
+    throw "Critical error: You must be clocked in to clock out for lunch!";
   }
   const userCollection = await employees();
   let userUpdateInfo = {
@@ -458,11 +466,16 @@ let getShifts = async (employeeId) => {
       let current = new Date(entry.dateTime);
       let prev = new Date(lastClockIn);
       let shift = {};
+      shift["comment"] = entry.comment;
       shift["date"] = current.toLocaleString().split(",")[0];
       shift["hours"] = (current - prev) / 1000 / 60 / 60 - lunchhours;
       shift["lunchHours"] = lunchhours;
-      shift["hoursString"] = Math.round(shift["hours"] * 1000) / 1000 + " hours";
-      shift["lunchHoursString"] = Math.round(shift["lunchHours"] * 1000) / 1000 + " hours";
+
+      shiftMinutes = Math.floor(((shift["hours"] * 60) % 60) * 100) / 100;
+      shiftHours = Math.floor(shift["hours"]);
+
+      shift["hoursString"] = String(shiftHours).padStart(2, "0") + "h " + String(shiftMinutes.toFixed(2)).padStart(2, "0") + "m";
+      shift["lunchHoursString"] = String(Math.floor(lunchhours)).padStart(2, "0") + "h " + String((lunchhours * 60).toFixed(2)).padStart(2, "0") + "m";
       shifts.push(shift);
     } else if (entry.status == "lunchIn") {
       let current = new Date(entry.dateTime);
