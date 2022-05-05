@@ -5,21 +5,31 @@ const users = require("../data/users.js");
 
 router.get("/", async (req, res) => {
   if (req.session.isAdmin) {
-    validate.checkID(req.session.businessId);
-    let allEmployees = await users.getAllEmployees(req.session.businessId);
+    try {
+      validate.checkID(req.session.businessId);
+      let allEmployees = await users.getAllEmployees(req.session.businessId);
 
-    const employeeNames = allEmployees.map((employee) => {
-      return employee.firstName + " " + employee.lastName;
-    });
+      const employeeNames = allEmployees.map((employee) => {
+        return employee.firstName + " " + employee.lastName;
+      });
 
-    res.render("manager/manager", {
-      user: req.session.user,
-      isAdmin: req.session.isAdmin,
-      isBusiness: req.session.isBusiness,
-      title: "Manager Dashboard",
-      allEmployees: allEmployees,
-      employeeNames: employeeNames,
-    });
+      res.render("manager/manager", {
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        isBusiness: req.session.isBusiness,
+        title: "Manager Dashboard",
+        allEmployees: allEmployees,
+        employeeNames: employeeNames,
+      });
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        isBusiness: req.session.isBusiness,
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
   } else {
     res.redirect("/home");
   }

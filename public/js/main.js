@@ -26,56 +26,6 @@ $("#cancelEmployee").on("click", async () => {
   }
 });
 
-$(document).on("click", ".editEmployee", async function (event) {
-  event.preventDefault();
-  $("#editEmployeeModal").show();
-  let employeeId = $(this).attr("employee-id");
-  // TODO use client side validation to check the employee id
-  $.ajax({
-    url: `manager/employee/${employeeId}`,
-    type: "GET",
-  }).done((data) => {
-    if (data.error) console.log("Error getting employee while editing: ", data.error);
-    const employee = data;
-    $("#editEmployeeModal").attr("employee-id", employeeId);
-    $("#editEmail").val(employee.email);
-    $("#editFirstName").val(employee.firstName);
-    $("#editLastName").val(employee.lastName);
-    const gender = $("#editGender");
-    gender.find("option").each(function () {
-      if ($(this).val().toLowerCase() === employee.gender.toLowerCase()) {
-        $(this).attr("selected", true);
-      }
-    });
-    $("#editAddress").val(employee.address);
-    $("#editCity").val(employee.city);
-    $("#editState").val(employee.state);
-    $("#editZip").val(employee.zip);
-    $("#editPhoneNumber").val(employee.phone);
-    // find relevent option for employment Status from select
-    const employmentStatus = $("#editEmploymentStatus");
-    employmentStatus.find("option").each(function () {
-      if ($(this).val().toLowerCase() === employee.employmentStatus.toLowerCase()) {
-        $(this).attr("selected", true);
-      }
-    });
-    const isActiveEmployee = $("#editIsActiveEmployee");
-    isActiveEmployee.find("option").each(function () {
-      if ($(this).val().toLowerCase() == employee.isActiveEmployee) {
-        $(this).attr("selected", true);
-      }
-    });
-    $("#editHourlyPay").val(employee.hourlyPay);
-    $("#editStartDate").val(employee.startDate);
-    $("#editIsManager").val(employee.isManager.toString());
-  });
-});
-
-$("#cancelEditEmployee").on("click", async (event) => {
-  event.preventDefault();
-  $("#editEmployeeModal").hide();
-});
-
 $(document).on("click", ".deleteEmployee", async function (event) {
   event.preventDefault();
   $("#deleteEmployeeModal").attr("employee-id", $(this).attr("employee-id"));

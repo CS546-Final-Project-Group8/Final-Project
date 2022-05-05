@@ -4,19 +4,23 @@ const validate = require("../validate/index.js");
 const users = require("../data/users.js");
 
 router.use("/", async (req, res) => {
-  if (req.session.user && !req.session.isBusiness) {
-    let shifts = await users.getShifts(req.session.employeeId);
-    res.render("home/home", {
-      user: req.session.user,
-      isAdmin: req.session.isAdmin,
-      businessId: req.session.businessId,
-      employeeId: req.session.employeeId,
-      employee: req.session.employee,
-      shifts: shifts,
-    });
-  } else if (req.session.user && req.session.isBusiness) {
-    res.redirect("/manager");
-  } else {
+  try {
+    if (req.session.user && !req.session.isBusiness) {
+      let shifts = await users.getShifts(req.session.employeeId);
+      res.render("home/home", {
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        businessId: req.session.businessId,
+        employeeId: req.session.employeeId,
+        employee: req.session.employee,
+        shifts: shifts,
+      });
+    } else if (req.session.user && req.session.isBusiness) {
+      res.redirect("/manager");
+    } else {
+      res.redirect("/login");
+    }
+  } catch (err) {
     res.redirect("/login");
   }
 });

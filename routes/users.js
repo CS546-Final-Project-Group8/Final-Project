@@ -113,7 +113,15 @@ router.post("/clockIn", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
-    res.status(400).redirect("/home");
+    res.status(400).render("home/home", {
+      title: "Home",
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      businessId: req.session.businessId,
+      employeeId: req.session.employeeId,
+      employee: req.session.employee,
+      error: e,
+    });
   }
 });
 
@@ -144,7 +152,15 @@ router.post("/clockOut", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
-    res.status(400).redirect("/home");
+    res.status(400).render("home/home", {
+      title: "Home",
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      businessId: req.session.businessId,
+      employeeId: req.session.employeeId,
+      employee: req.session.employee,
+      error: e,
+    });
   }
 });
 
@@ -175,7 +191,15 @@ router.post("/clockOutLunch", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
-    res.status(400).redirect("/home");
+    res.status(400).render("home/home", {
+      title: "Home",
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      businessId: req.session.businessId,
+      employeeId: req.session.employeeId,
+      employee: req.session.employee,
+      error: e,
+    });
   }
 });
 
@@ -206,7 +230,15 @@ router.post("/clockInLunch", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
-    res.status(400).redirect("/home");
+    res.status(400).render("home/home", {
+      title: "Home",
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      businessId: req.session.businessId,
+      employeeId: req.session.employeeId,
+      employee: req.session.employee,
+      error: e,
+    });
   }
 });
 

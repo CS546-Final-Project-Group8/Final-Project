@@ -271,6 +271,57 @@ $(document).ready(function () {
   });
 });
 
+$(document).on("click", ".editEmployee", async function (event) {
+  event.preventDefault();
+  let employeeId = $(this).attr("employee-id");
+  $.ajax({
+    url: `manager/employee/${employeeId}`,
+    type: "GET",
+  }).done((data) => {
+    if (data.error) console.log("Error getting employee while editing: ", data.error);
+    const employee = data;
+    console.log("employee: ", employee);
+    $("#editEmployeeModal").attr("employee-id", employeeId);
+    $("#editEmail").val(employee.email);
+    $("#editFirstName").val(employee.firstName);
+    $("#editLastName").val(employee.lastName);
+    const gender = $("#editGender");
+    gender.find("option").each(function () {
+      if ($(this).val().toLowerCase() === employee.gender.toLowerCase()) {
+        $(this).attr("selected", true);
+      } else {
+        $(this).attr("selected", false);
+      }
+    });
+    $("#editAddress").val(employee.address);
+    $("#editCity").val(employee.city);
+    $("#editState").val(employee.state);
+    $("#editZip").val(employee.zip);
+    $("#editPhoneNumber").val(employee.phone);
+    // find relevent option for employment Status from select
+    const employmentStatus = $("#editEmploymentStatus");
+    employmentStatus.find("option").each(function () {
+      if ($(this).val().toLowerCase() === employee.employmentStatus.toLowerCase()) {
+        $(this).attr("selected", true);
+      } else {
+        $(this).attr("selected", false);
+      }
+    });
+    const isActiveEmployee = $("#editIsActiveEmployee");
+    isActiveEmployee.find("option").each(function () {
+      // stringify employee.isActiveEmployee from boolean to string
+      if (JSON.stringify(employee.isActiveEmployee).toLowerCase() === $(this).val().toLowerCase()) {
+        $(this).attr("selected", true);
+      } else {
+        $(this).attr("selected", false);
+      }
+    });
+    $("#editHourlyPay").val(employee.hourlyPay);
+    $("#editStartDate").val(employee.startDate);
+    $("#editEmployeeModal").show();
+  });
+});
+
 $("#saveEditEmployee").on("click", async (event) => {
   event.preventDefault();
   let employeeId = $("#editEmployeeModal").attr("employee-id");
@@ -335,11 +386,12 @@ $("#saveEditEmployee").on("click", async (event) => {
           $(trQuery + " .employeeGender").text(data.gender);
           $(trQuery + " .employeeHourlyPay").text("$" + data.hourlyPay);
           $(trQuery + " .employeeEmployment").text(data.employmentStatus);
-          $(trQuery + " .employeeActive").text(data.isActiveEmployee === "true" ? "Yes" : "No");
+          $(trQuery + " .employeeActive").text(data.isActiveEmployee === true ? "Yes" : "No");
           startDate = new Date(data.startDate);
           $(trQuery + " .employeeStart").text(startDate.toLocaleDateString("en-US"));
           $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
           $("#editEmployeeModal").hide();
+          resetModal();
         }
       })
       .fail((req, status, error) => console.log(error));
@@ -349,3 +401,19 @@ $("#saveEditEmployee").on("click", async (event) => {
     $("#modalErrorMessage").attr("hidden", false);
   }
 });
+
+$("#cancelEditEmployee").on("click", async (event) => {
+  event.preventDefault();
+  $("#editEmployeeModal").hide();
+  $("#modalErrorMessage").attr("hidden", true);
+  // reset the contents of the modal
+  resetModal();
+});
+
+let resetModal = () => {
+  // reset modal back to original state
+  $(".modal-body input").val("");
+  $(".modal-body select").val("");
+  $(".modal-body select option").removeAttr("selected");
+  $("#modalErrorMessage").attr("hidden", true);
+};

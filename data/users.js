@@ -140,7 +140,7 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
   await validate.checkEmploymentStatus(employmentStatus);
   employmentStatus = employmentStatus.trim();
   await validate.checkBoolean(isActiveEmployee);
-  isActiveEmployee = isActiveEmployee.trim();
+  isActiveEmployee = isActiveEmployee.toLowerCase().trim() === "true";
 
   // Check if businessId exists
   const businessCollection = await businesses();
@@ -280,6 +280,7 @@ let clockIn = async (employeeId, comment) => {
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   if (employee.currentStatus !== "clockedOut") {
     throw "Employee must be clocked out to clock in!";
@@ -308,6 +309,7 @@ let clockOut = async (employeeId, comment) => {
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "lunch")) {
     throw "Employee must be clocked in / on lunch break to clock out!";
@@ -335,6 +337,7 @@ let clockInLunch = async (employeeId, comment) => {
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   if (employee.currentStatus !== "meal") {
     throw "Employee must be on lunch break to clock in from lunch!";
@@ -363,6 +366,7 @@ let clockOutLunch = async (employeeId, comment) => {
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
   if (!employee) throw "Employee not found";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   if (employee.currentStatus !== "clockedIn") {
     throw "Employee must be clocked in to clock out for lunch!";
