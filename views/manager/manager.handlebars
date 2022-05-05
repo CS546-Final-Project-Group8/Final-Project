@@ -12,6 +12,11 @@
      </div>
     <div class="col-6">
         <input type="text" class="form-control" id="searchEmployee" placeholder="Search for an employee">
+        {{!-- show the matching results --}}
+        <div id="searchResults">
+          
+        </div>
+
     </div>
 </div>
 
@@ -45,11 +50,11 @@
           <td class="employeeGender">{{gender}}</td>
           <td class="employeeHourlyPay">${{hourlyPay}}</td>
           <td class="employeeEmployment">{{employmentStatus}}</td>
-          {{#if_eq isActiveEmployee "true"}}
+          {{#if isActiveEmployee}}
             <td class="employeeActive">Yes</td>
           {{else}}
             <td class="employeeActive">No</td>
-          {{/if_eq}}
+          {{/if}}
           <td class="employeeStart">{{dateFormat startDate "M/D/YYYY"}}</td>
           {{#if isManager}}
             <td class="employeeManager">Manager</td>
@@ -57,9 +62,8 @@
             <td class="employeeManager">Employee</td>
           {{/if}}
           <td>
-            <a href="#" class="editEmployee" employee-id="{{_id}}"><i class="fa-solid fa-pen"></i></a>
+            <a href="#" class="editEmployee" employee-id="{{_id}}"><i style="margin-bottom: 10px;" class="fa-solid fa-pen"></i></a>
             <a href="#" class="deleteEmployee" employee-id="{{_id}}"><i class="fa-solid fa-trash"></i></a>
-            <a href="#" class="viewEmployee" employee-id="{{_id}}"><i class="fa-solid fa-clock"></i></a>
           </td>
           <td>
             {{#if isManager}}
@@ -90,7 +94,7 @@
 <button class="btn btn-outline-primary" id="newEmployee">Create New Employee</button>
 
 {{! form to edit an employee }}
-<div id="editEmployeeModal" class="modal" display="none" employee-id="">
+<div id="editEmployeeModal" class="modal" display="none">
   <div class="modal-content">
     <div class="modal-header">
       <h4 class="modal-title">Edit Employee</h4>
@@ -112,7 +116,7 @@
           </div>
           <div class="col-md-6 mb-3">
             <label for="gender" class="form-label">Gender Identity</label>
-            <select class="form-select" aria-label="Default select example" name="gender" id="editGender">
+            <select required class="form-select" aria-label="Default select example" name="gender" id="editGender">
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Transgender">Transgender</option>
@@ -143,8 +147,8 @@
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label" for="employmentStatus">Employment Status</label>
-            <select class="form-select" aria-label="Default select example" name="employmentStatus" id="editEmploymentStatus">
-              <option selected value="Full-Time">Full-Time</option>
+            <select required class="form-select" aria-label="Default select example" name="employmentStatus" id="editEmploymentStatus">
+              <option value="Full-Time">Full-Time</option>
               <option value="Part-Time">Part-Time</option>
               <option value="Contract">Contract</option>
               <option value="Intern">Intern</option>
@@ -155,8 +159,8 @@
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label" for="isActiveEmployee">Is Active Employee</label>
-            <select class="form-select" aria-label="Default select example" name="isActiveEmployee" id="editIsActiveEmployee">
-              <option selected value="true">True</option>
+            <select required class="form-select" aria-label="Default select example" name="isActiveEmployee" id="editIsActiveEmployee">
+              <option value="true">True</option>
               <option value="false">False</option>
             </select>
           </div>
@@ -168,13 +172,7 @@
             <label class="form-label" for="startDate">Start Date</label>
             <input required type="date" class="form-control" id="editStartDate" name="startDate" placeholder="Start Date" />
           </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="isManager">Is Manager</label>
-            <select class="form-select" aria-label="Default select example" name="isManager" id="editIsManager">
-              <option value="true">True</option>
-              <option value="false" selected>False</option>
-            </select>
-          </div>
+          <p id="modalErrorMessage" class="error" hidden></p>
         </div>
       </form>
     </div>
@@ -185,7 +183,7 @@
   </div>
 </div>
 
-<div id="deleteEmployeeModal" class="modal" display="none" employee-id="">
+<div id="deleteEmployeeModal" class="modal" display="none">
   <div class="modal-content">
     <div class="modal-header">
       <h4 class="modal-title">Are you sure?</h4>
@@ -296,10 +294,12 @@
     </div>
   </div>
 </form>
-
+<p class="error" hidden id="errormessage"></p>
 {{!-- if error --}}
 {{#if error}}
     <p class="error">{{error}}</p>
 {{/if}}
 
+
+<script src="../../public/js/managerPageValidation.js" ></script>
 <script src="../../public/js/manager.js"></script>

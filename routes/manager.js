@@ -226,8 +226,6 @@ router.patch("/employee/:employee_id", async (req, res) => {
       let employmentStatus = req.body.employmentStatus.trim();
       await validate.checkBoolean(req.body.isActiveEmployee);
       let isActiveEmployee = req.body.isActiveEmployee.trim();
-      await validate.checkBoolean(req.body.isManager);
-      let isManager = req.body.isManager.trim();
       validate.checkID(req.params.employee_id);
       validate.checkID(req.session.businessId);
       let updateResult = await users.updateEmployee(
@@ -245,8 +243,7 @@ router.patch("/employee/:employee_id", async (req, res) => {
         employmentStatus,
         isActiveEmployee,
         hourlyPay,
-        startDate,
-        isManager
+        startDate
       );
       if (updateResult) res.status(200).json(updateResult);
       else res.status(500).json({ error: "Internal Server Error" });

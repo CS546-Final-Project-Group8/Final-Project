@@ -17,13 +17,13 @@ let main = async () => {
       "staremp1", // confirmPassword
       "John", //firstName
       "Doe", //lastName
-      "male", //gender
+      "Male", //gender
       "245 Main St", //address
       "Los Angeles", //city
       "CA", //state
       "90210", //zip
       "6432587410", //phone
-      "Full-time", //employment type
+      "Full-Time", //employment type
       "true", //employment status
       "55", // hourly pay rate
       new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
@@ -39,13 +39,13 @@ let main = async () => {
       "staremp2", // confirmPassword
       "Jane", //firstName
       "Doe", //lastName
-      "female", // gender
+      "Female", // gender
       "245 Main St", // address
       "Los Angeles", // city
       "CA", // state
       "90210", //zip
       "6432587411", // phone
-      "part-time", // employment type
+      "Part-Time", // employment type
       "true", // employement status
       "55", // hourly pay rate
       new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
@@ -61,7 +61,7 @@ let main = async () => {
       "staremp3", // confirmPassword
       "Alex", //firstName
       "Smith", //lastName
-      "transgender", //gender
+      "Transgender", //gender
       "246 Main St", // address
       "Los Angeles", // city
       "CA", // state
@@ -83,13 +83,13 @@ let main = async () => {
       "macdemp1", // confirmPassword
       "Pete", //firstName
       "Cook", //lastName
-      "male", // gender
+      "Male", // gender
       "125 Bleecker St", //address
       "New York", //city
       "NY", //state
       "10001", //zip
       "5555555001", //phone
-      "full-time", // employment type
+      "Full-Time", // employment type
       "true", // employement status
       "45", // hourly pay rate
       new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
@@ -105,13 +105,13 @@ let main = async () => {
       "macdemp2", // confirmPassword
       "John", //firstName
       "Smith", //lastName
-      "male", // gender
+      "Male", // gender
       "125 Bleecker St", //address
       "New York", //city
       "NY", //state
       "10001", //zip
       "5555555001", //phone
-      "full-time", // employment type
+      "Full-Time", // employment type
       "true", // employement status
       "45", // hourly pay rate
       new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString().slice(0, 10), //start date
