@@ -15,7 +15,7 @@ $(".updateEmployee").click(function () {
           // get element with value of employeeId
           element = $("[value=" + employeeId + "]");
           element.text("Demote as Employee");
-          let trQuery = `tr[employee-id=${employeeId}] `;
+          let trQuery = `tr[data-employee-id=${employeeId}] `;
           $(trQuery + " .employeeManager").text("Manager");
           // show alert that employee has been promoted for 3 seconds
           $("#alertText").text("Successfully promoted employee to manager.");
@@ -43,7 +43,7 @@ $(".updateEmployee").click(function () {
         if (data === "Employee demoted") {
           element = $("[value=" + employeeId + "]");
           element.text("Promote as Manager");
-          let trQuery = `tr[employee-id=${employeeId}] `;
+          let trQuery = `tr[data-employee-id=${employeeId}] `;
           $(trQuery + " .employeeManager").text("Employee");
           $("#alertText").text("Successfully demoted manager to employee.");
           $("#alert").attr("hidden", false);

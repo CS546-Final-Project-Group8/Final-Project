@@ -155,7 +155,6 @@ router.put("/promoteEmployee", async (req, res) => {
         res.status(500).send("Internal Server Error");
       }
     } catch (e) {
-      console.log(e);
       res.status(400).send(e);
     }
   } else {
@@ -181,7 +180,6 @@ router.put("/demoteEmployee", async (req, res) => {
         res.redirect("/home");
       }
     } catch (e) {
-      console.log(e);
       res.status(400).send(e);
     }
   } else {

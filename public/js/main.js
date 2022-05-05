@@ -28,19 +28,19 @@ $("#cancelEmployee").on("click", async () => {
 
 $(document).on("click", ".deleteEmployee", async function (event) {
   event.preventDefault();
-  $("#deleteEmployeeModal").attr("employee-id", $(this).attr("employee-id"));
+  $("#deleteEmployeeModal").attr("data-employee-id", $(this).attr("data-employee-id"));
   $("#deleteEmployeeModal").show();
 });
 
 $("#cancelDeleteEmployee").on("click", async function (event) {
   event.preventDefault();
-  $("#deleteEmployeeModal").attr("employee-id", "");
+  $("#deleteEmployeeModal").attr("data-employee-id", "");
   $("#deleteEmployeeModal").hide();
 });
 
 $("#confirmDeleteEmployee").on("click", async function (event) {
   event.preventDefault();
-  let employeeId = $("#deleteEmployeeModal").attr("employee-id");
+  let employeeId = $("#deleteEmployeeModal").attr("data-employee-id");
   // TODO client-side validation HERE
   $.ajax({
     url: `manager/employee/${employeeId}`,
@@ -54,8 +54,8 @@ $("#confirmDeleteEmployee").on("click", async function (event) {
         $("#deleteEmployeeModal").hide();
         alert(data.error);
       } else {
-        $(`tr[employee-id=${employeeId}]`).remove();
-        $("#deleteEmployeeModal").attr("employee-id", "");
+        $(`tr[data-employee-id=${employeeId}]`).remove();
+        $("#deleteEmployeeModal").attr("data-employee-id", "");
         $("#deleteEmployeeModal").hide();
         // check if there are no employees left
         if ($("#employeesTable tr").length === 1) {

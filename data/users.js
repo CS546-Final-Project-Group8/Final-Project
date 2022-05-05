@@ -181,7 +181,7 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
     { returnDocument: "after" }
   );
   if (!updatedEmployee) throw "Couldn't update employee";
-  console.log(updatedEmployee.value);
+  updatedEmployee.value.hashedPassword = null;
   return updatedEmployee.value;
 };
 

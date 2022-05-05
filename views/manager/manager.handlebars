@@ -41,7 +41,7 @@
     </thead>
     <tbody>
       {{#each allEmployees}}
-        <tr employee-id="{{_id}}">
+        <tr data-employee-id="{{_id}}">
           <td class="employeeName">{{firstName}} {{lastName}}</td>
           <td class="employeeStatus">{{currentStatus}}</td>
           <td class="employeeEmail">{{email}}</td>
@@ -62,8 +62,8 @@
             <td class="employeeManager">Employee</td>
           {{/if}}
           <td>
-            <a href="#" class="editEmployee" employee-id="{{_id}}"><i style="margin-bottom: 10px;" class="fa-solid fa-pen"></i></a>
-            <a href="#" class="deleteEmployee" employee-id="{{_id}}"><i class="fa-solid fa-trash"></i></a>
+            <a href="#" class="editEmployee" data-employee-id="{{_id}}"><i style="margin-bottom: 10px;" class="fa-solid fa-pen"></i></a>
+            <a href="#" class="deleteEmployee" data-employee-id="{{_id}}"><i class="fa-solid fa-trash"></i></a>
           </td>
           <td>
             {{#if isManager}}
