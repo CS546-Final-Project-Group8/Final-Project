@@ -29,7 +29,6 @@ $("#cancelEmployee").on("click", async () => {
 $(document).on("click", ".editEmployee", async function (event) {
   event.preventDefault();
   $("#editEmployeeModal").show();
-  console.log($(this));
   let employeeId = $(this).attr("employee-id");
   // TODO use client side validation to check the employee id
   $.ajax({
@@ -42,14 +41,30 @@ $(document).on("click", ".editEmployee", async function (event) {
     $("#editEmail").val(employee.email);
     $("#editFirstName").val(employee.firstName);
     $("#editLastName").val(employee.lastName);
-    $("#editGender").val(employee.gender);
+    const gender = $("#editGender");
+    gender.find("option").each(function () {
+      if ($(this).val().toLowerCase() === employee.gender.toLowerCase()) {
+        $(this).attr("selected", true);
+      }
+    });
     $("#editAddress").val(employee.address);
     $("#editCity").val(employee.city);
     $("#editState").val(employee.state);
     $("#editZip").val(employee.zip);
     $("#editPhoneNumber").val(employee.phone);
-    $("#editEmploymentStatus").val(employee.employmentStatus);
-    $("#editIsActiveEmployee").val(employee.isActiveEmployee);
+    // find relevent option for employment Status from select
+    const employmentStatus = $("#editEmploymentStatus");
+    employmentStatus.find("option").each(function () {
+      if ($(this).val().toLowerCase() === employee.employmentStatus.toLowerCase()) {
+        $(this).attr("selected", true);
+      }
+    });
+    const isActiveEmployee = $("#editIsActiveEmployee");
+    isActiveEmployee.find("option").each(function () {
+      if ($(this).val().toLowerCase() == employee.isActiveEmployee) {
+        $(this).attr("selected", true);
+      }
+    });
     $("#editHourlyPay").val(employee.hourlyPay);
     $("#editStartDate").val(employee.startDate);
     $("#editIsManager").val(employee.isManager.toString());
@@ -59,52 +74,6 @@ $(document).on("click", ".editEmployee", async function (event) {
 $("#cancelEditEmployee").on("click", async (event) => {
   event.preventDefault();
   $("#editEmployeeModal").hide();
-});
-
-$("#saveEditEmployee").on("click", async (event) => {
-  event.preventDefault();
-  let employeeId = $("#editEmployeeModal").attr("employee-id");
-  // TODO client side validation goes here BEFORE patching
-  $.ajax({
-    url: `manager/employee/${employeeId}`,
-    type: "PATCH",
-    data: {
-      email: $("#editEmail").val(),
-      firstName: $("#editFirstName").val(),
-      lastName: $("#editLastName").val(),
-      gender: $("#editGender").val(),
-      address: $("#editAddress").val(),
-      city: $("#editCity").val(),
-      state: $("#editState").val(),
-      zip: $("#editZip").val(),
-      phoneNumber: $("#editPhoneNumber").val(),
-      employmentStatus: $("#editEmploymentStatus").val(),
-      isActiveEmployee: $("#editIsActiveEmployee").val(),
-      hourlyPay: $("#editHourlyPay").val(),
-      startDate: $("#editStartDate").val(),
-      isManager: $("#editIsManager").val(),
-    },
-  })
-    .done((data) => {
-      if (data.error) console.log("Error updating employee: ", data.error);
-      else {
-        let trQuery = `tr[employee-id=${employeeId}] `;
-        $(trQuery + " .employeeName").text(data.firstName + " " + data.lastName);
-        $(trQuery + " .employeeStatus").text(data.currentStatus);
-        $(trQuery + " .employeeEmail").text(data.email);
-        $(trQuery + " .employeePhone").text(data.phone);
-        $(trQuery + " .employeeAddress").text(`${data.address}, ${data.city} ${data.state}, ${data.zip}`);
-        $(trQuery + " .employeeGender").text(data.gender);
-        $(trQuery + " .employeeHourlyPay").text("$" + data.hourlyPay);
-        $(trQuery + " .employeeEmployment").text(data.employmentStatus);
-        $(trQuery + " .employeeActive").text(data.isActiveEmployee === "true" ? "Yes" : "No");
-        const startDate = new Date(data.startDate);
-        $(trQuery + " .employeeStart").text(startDate.toLocaleDateString("en-US"));
-        $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
-        $("#editEmployeeModal").hide();
-      }
-    })
-    .fail((req, status, error) => console.log(error));
 });
 
 $(document).on("click", ".deleteEmployee", async function (event) {

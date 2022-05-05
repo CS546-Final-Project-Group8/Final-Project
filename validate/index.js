@@ -32,7 +32,7 @@ let checkBoolean = async (bool) => {
     throw "Error: Invalid boolean, please enter a boolean";
   }
   if (typeof bool === "string") {
-    if (bool === "true" || bool === "false") {
+    if (bool.toLowerCase() === "true" || bool.toLowerCase() === "false") {
       return true;
     } else {
       throw "Error: Invalid boolean, please enter a boolean";
@@ -102,6 +102,7 @@ let checkDate = async (date) => {
       }
     }
   }
+  return true;
 };
 
 // function cheackEmail(email) this function checks if the email is valid

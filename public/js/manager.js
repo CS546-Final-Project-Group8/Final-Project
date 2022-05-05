@@ -100,27 +100,51 @@ $("#backToHome").on("click", async () => {
   window.location.href = "/home";
 });
 
-// on change of search bar, filter the table
-$("#searchEmployee").on("keyup", function () {
-  var value = $(this).val().toLowerCase();
-  var table = $("#employeesTable");
-  var rows = table.find("tr");
-
-  rows.each(function () {
-    // get the name of the employee
-    var name = $(this).find("td:first").text().toLowerCase();
-    if (name.includes(value)) {
-      $(this).attr("hidden", false);
-    } else {
-      $(this).attr("hidden", true);
-    }
-  });
-  // make the header visible
-  $("#employeesTableHeader").attr("hidden", false);
-  // if no employee is found, display message
-  if ($("#employeesTable tr:visible").length === 1) {
-    $("#noEmployeeFound").attr("hidden", false);
-  } else {
-    $("#noEmployeeFound").attr("hidden", true);
+// on clicking of enter, filter the table
+$("#searchEmployee").on("keyup", function (event) {
+  // check if value is empty
+  if ($("#searchEmployee").val() === "") {
+    // show all employees
+    $("#employeesTable tr").attr("hidden", false);
   }
+  if (event.keyCode === 13) {
+    var value = $(this).val().toLowerCase();
+    var table = $("#employeesTable");
+    var rows = table.find("tr");
+
+    rows.each(function () {
+      // get the name of the employee
+      var name = $(this).find("td:first").text().toLowerCase();
+      if (name.includes(value)) {
+        $(this).attr("hidden", false);
+      } else {
+        $(this).attr("hidden", true);
+      }
+    });
+    // make the header visible
+    $("#employeesTableHeader").attr("hidden", false);
+    // if no employee is found, display message
+    if ($("#employeesTable tr:visible").length === 1) {
+      $("#noEmployeeFound").attr("hidden", false);
+    } else {
+      $("#noEmployeeFound").attr("hidden", true);
+    }
+  }
+});
+
+// // on keyup of search bar, give recommendation to the user
+// $("#searchEmployee").on("keyup", function () {
+//   var value = $(this).val().toLowerCase();
+//   var currentFocus;
+// });
+
+// on load of page, get all employees
+let employeeNames = [];
+$(document).ready(function () {
+  // traverse the first column of the table and store the employee names
+  $("#employeesTable")
+    .find("td:first-child")
+    .each(function () {
+      employeeNames.push($(this).text());
+    });
 });
