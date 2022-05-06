@@ -8,6 +8,7 @@ router.use("/", async (req, res) => {
     if (req.session.user && !req.session.isBusiness) {
       let shifts = await users.getShifts(req.session.employeeId);
       res.render("home/home", {
+        title: "Home",
         user: req.session.user,
         isAdmin: req.session.isAdmin,
         businessId: req.session.businessId,

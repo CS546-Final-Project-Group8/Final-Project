@@ -155,8 +155,7 @@ router.put("/promoteEmployee", async (req, res) => {
         res.status(500).send("Internal Server Error");
       }
     } catch (e) {
-      console.log(e);
-      res.status(400).send(e);
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
@@ -181,8 +180,7 @@ router.put("/demoteEmployee", async (req, res) => {
         res.redirect("/home");
       }
     } catch (e) {
-      console.log(e);
-      res.status(400).send(e);
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
@@ -255,6 +253,10 @@ router.patch("/employee/:employee_id", async (req, res) => {
         hourlyPay,
         startDate
       );
+      if (updateResult.isActiveEmployee === false && req.session.employeeId === req.params.employee_id) {
+        req.session.isAdmin = false;
+        req.session.isEmployee = true;
+      }
       if (updateResult) res.status(200).json(updateResult);
       else res.status(500).json({ error: "Internal Server Error" });
     } catch (e) {
