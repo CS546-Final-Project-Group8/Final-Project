@@ -156,6 +156,11 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
     _id: ObjectId(employeeId),
   });
   if (!employee) throw "Couldn't update an employee that does not exist";
+
+  if (isActiveEmployee === false && employee.isManager === true) {
+    await demoteEmployee(employeeId);
+  }
+
   const updatedEmployee = await employeesCollection.findOneAndUpdate(
     {
       businessId: businessId,
@@ -404,6 +409,7 @@ let promoteEmployee = async (employeeId) => {
   if (!employee) throw "Employee not found";
 
   if (employee.isManager) throw "Employee is already a manager";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   const businessCollection = await businesses();
   const business = await businessCollection.findOne({ _id: ObjectId(employee.businessId) });

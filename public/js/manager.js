@@ -31,6 +31,10 @@ $(".updateEmployee").click(function () {
           }, 2000);
         }
       },
+      error: function (err) {
+        let data = JSON.parse(err.responseText);
+        alert(data.error);
+      },
     });
   } else if (element.text() === "Demote as Employee") {
     $.ajax({
@@ -59,6 +63,10 @@ $(".updateEmployee").click(function () {
             $("#alert").attr("hidden", true);
           }, 2000);
         }
+      },
+      error: function (err) {
+        let data = JSON.parse(err.responseText);
+        alert(data.error);
       },
     });
   }
