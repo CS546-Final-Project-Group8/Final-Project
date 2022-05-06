@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 const validate = require("../validate/index.js");
 const users = require("../data/users.js");
+const businesses = require("../data/businesses.js");
 
 router.get("/", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       validate.checkID(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
+      let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -20,6 +22,7 @@ router.get("/", async (req, res) => {
         title: "Manager Dashboard",
         allEmployees: allEmployees,
         employeeNames: employeeNames,
+        pastCalculations: pastCalculations,
       });
     } catch (e) {
       res.status(400).render("manager/manager", {
@@ -295,6 +298,46 @@ router.delete("/employee/:employee_id", async (req, res) => {
     }
   } else {
     res.redirect("/home");
+  }
+});
+
+router.post("/calculate", async (req, res) => {
+  businessId = req.session.employee.businessId;
+  await validate.checkID(businessId);
+
+  let payChecks = await businesses.calculatePay(businessId);
+
+  let pastCalculations = await businesses.getPastPayPeriods(businessId);
+
+  let allEmployees = await users.getAllEmployees(req.session.businessId);
+
+  const employeeNames = allEmployees.map((employee) => {
+    return employee.firstName + " " + employee.lastName;
+  });
+
+  if (payChecks.length > 0) {
+    res.render("manager/manager", {
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      isBusiness: req.session.isBusiness,
+      title: "Manager Dashboard",
+      allEmployees: allEmployees,
+      employeeNames: employeeNames,
+      payChecks: payChecks,
+      pastCalculations: pastCalculations,
+    });
+  } else {
+    res.render("manager/manager", {
+      user: req.session.user,
+      isAdmin: req.session.isAdmin,
+      isBusiness: req.session.isBusiness,
+      title: "Manager Dashboard",
+      allEmployees: allEmployees,
+      employeeNames: employeeNames,
+      payChecks: payChecks,
+      pastCalculations: pastCalculations,
+      error: "No shifts worked since last calculation.",
+    });
   }
 });
 

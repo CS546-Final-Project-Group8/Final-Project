@@ -39,6 +39,10 @@ hbs.handlebars.registerHelper("if_eq", function (a, b, opts) {
   }
 });
 
+hbs.handlebars.registerHelper("json", function (context) {
+  return JSON.stringify(context);
+});
+
 configRoutes(app);
 
 app.listen(3000, () => {

@@ -1,9 +1,11 @@
 const mongoCollections = require("../config/mongoCollections");
+const employees = mongoCollections.employees;
 const businesses = mongoCollections.businesses;
 const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const validate = require("../validate/index.js");
+const users = require("../data/users.js");
 
 // function createBusiness(businessName, email, password, confirmPassword address, city, state, zip, phone, about) this function creates a business in monogoDB database
 let createBusiness = async (businessName, email, password, confirmPassword, address, city, state, zip, phone, about) => {
@@ -42,6 +44,7 @@ let createBusiness = async (businessName, email, password, confirmPassword, addr
     phone: phone,
     about: about,
     isOpen: true,
+    calculations: [],
   };
   //if email already exists in mongoDB database
   const businessData = await businessCollection.findOne({ email: email });
@@ -69,7 +72,78 @@ let checkBusiness = async (email, password) => {
   return { authenticated: true, businessID: businessData._id, isAdmin: true };
 };
 
+let calculatePay = async (businessId) => {
+  await validate.checkID(businessId);
+
+  const employeeCollection = await employees();
+  let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
+
+  payChecks = [];
+  for (const e of emps) {
+    let shifts = await users.getShifts(e._id.toString());
+    if (shifts.length === 0) continue;
+
+    let totalHours = 0;
+    let totalLunchHours = 0;
+    let allComments = [];
+
+    shifts.forEach((shift) => {
+      totalHours += shift.hours;
+      totalLunchHours += shift.lunchHours;
+      if (shift.comments.length !== 0) {
+        allComments.push(shift.comments.flat());
+      }
+    });
+
+    let payCheck = {};
+    payCheck["employeeName"] = e.firstName + " " + e.lastName;
+    payCheck["allComments"] = allComments;
+    payCheck["totalHours"] = totalHours;
+
+    totalMinutes = Math.floor(((payCheck["totalHours"] * 60) % 60) * 100) / 100;
+    totalHours = Math.floor(payCheck["totalHours"]);
+
+    payCheck["totalHoursString"] = String(totalHours).padStart(2, "0") + "h " + String(totalMinutes.toFixed(2)).padStart(2, "0") + "m";
+    payCheck["totalLunchHours"] = totalLunchHours;
+    payCheck["totalLunchHoursString"] = String(Math.floor(totalLunchHours)).padStart(2, "0") + "h " + String((totalLunchHours * 60).toFixed(2)).padStart(2, "0") + "m";
+
+    payCheck["totalPay"] = payCheck["totalHours"] * e.hourlyPay;
+    payCheck["totalPayString"] = "$" + payCheck["totalPay"].toFixed(2);
+    payCheck["totalPayLunch"] = (payCheck["totalHours"] + payCheck["totalLunchHours"]) * e.hourlyPay;
+    payCheck["totalPayLunchString"] = "$" + payCheck["totalPayLunch"].toFixed(2);
+    payCheck["date"] = new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString();
+
+    payChecks.push(payCheck);
+
+    const userCollection = await employees();
+    let userUpdateInfo = {
+      timeEntries: [],
+    };
+    const updateInfo = await userCollection.updateOne({ _id: e._id }, { $addToSet: { timeEntriesOld: e.timeEntries }, $set: userUpdateInfo });
+    if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+  }
+
+  if (payChecks.length !== 0) {
+    const businessCollection = await businesses();
+    const updateInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $addToSet: { calculations: payChecks } });
+    if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+  }
+
+  return payChecks;
+};
+
+let getPastPayPeriods = async (businessId) => {
+  await validate.checkID(businessId);
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
+  if (!business) throw "Couldn't find business";
+
+  return business.calculations;
+};
+
 module.exports = {
   createBusiness,
   checkBusiness,
+  calculatePay,
+  getPastPayPeriods,
 };

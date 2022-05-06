@@ -8,10 +8,10 @@
 {{!-- create a search box to filter employees --}}
 <div class="form-group row">
   <div class="col-6">
-         <h2>Employee Management</h2>
+         <h2 style="margin-top:20px">Employee Management</h2>
      </div>
     <div class="col-6">
-      <div style="display: flex;">
+      <div style="display: flex;margin-top:20px">
         <label for="searchEmployee" id="searchEmployeeLabel" class="col-form-label" style="margin-right: 5px;">Search</label>
         <input type="text" class="form-control" id="searchEmployee" placeholder="Search for an employee">
         {{!-- show the matching results --}}
@@ -66,14 +66,14 @@
             <td class="employeeManager">Employee</td>
           {{/if}}
           <td>
-            <i data-employee-id="{{_id}}" class="editEmployee bi bi-pencil-square"></i>
-            <i data-employee-id="{{_id}}" class="deleteEmployee bi bi-trash-fill"></i>
+            <i data-employee-id="{{_id}}" class="editEmployee bi bi-pencil-square" style="cursor:pointer"></i>
+            <i data-employee-id="{{_id}}" class="deleteEmployee bi bi-trash-fill" style="cursor:pointer"></i>
           </td>
           <td>
             {{#if isManager}}
-              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Demote as Employee</button>
+              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Demote to Employee</button>
             {{else}}
-              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote as Manager</button>
+              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote to Manager</button>
             {{/if}}
           </td>
         </tr>
@@ -303,6 +303,78 @@
 {{#if error}}
     <p class="error">{{error}}</p>
 {{/if}}
+
+<hr />
+
+<h2 style="margin-top:15px">Payroll Calculation</h2>
+
+<div class="col-md-3 mb-3" style="margin-top: 1rem;">
+    <form action="/manager/calculate" method="POST" style="display:inline">
+        <button style="width: -webkit-fill-available;" class="btn btn-outline-success" type="submit" id="calculateButton">
+            {{#if pastCalculations}}
+            Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/D/YYYY"}}
+            {{else}}
+            Calculate Current Paychecks
+            {{/if}}
+        </button>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        {{#if pastCalculations}}
+        <h3 style="margin-top:20px">Past Pay Periods</h3>
+        <table id="pastCalculationsTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">#</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each pastCalculations}}
+                <tr>
+                    <td>{{@index}}</td>
+                    <td>
+                        <a title="Click to view calculation for {{dateFormat this.[0].date "MM/D/YYYY"}}" href="#" onclick="console.log('switch!');return false;">{{dateFormat this.[0].date "MM/D/YYYY"}}</a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
+    </div>
+    <div class="col-md-8">
+        {{#if payChecks}}
+        <h3 style="margin-top:20px">Paychecks for {{dateFormat payChecks.[0].date "MM/D/YYYY"}}</h3>
+        <table id="calculationTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Comments</th>
+                    <th>Work Hours</th>
+                    <th>Lunch Hours</th>
+                    <th>Pay</th>
+                    <th>Pay (with lunch)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each payChecks}}
+                <tr>
+                    <td>{{employeeName}}</td>
+                    <td>{{#each allComments}}{{this}}{{#unless @last}},&nbsp;{{/unless}}{{/each}}</td>
+                    <td>{{totalHoursString}}</td>
+                    <td>{{totalLunchHoursString}}</td>
+                    <td>{{totalPayString}}</td>
+                    <td>{{totalPayLunchString}}</td>
+                </tr>
+                {{/each}}
+                </tr>
+            </tbody>
+        </table>
+        {{/if}}
+    </div>
+</div>
 
 
 <script src="../../public/js/managerPageValidation.js" ></script>
