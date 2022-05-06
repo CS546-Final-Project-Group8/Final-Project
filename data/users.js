@@ -91,6 +91,7 @@ let createEmployee = async (
     isManager: isManager,
     currentStatus: "clockedOut",
     timeEntries: [],
+    timeEntiresOld: [],
   };
 
   //if businessId and email are unique, create employee
@@ -463,16 +464,25 @@ let getShifts = async (employeeId) => {
   lastClockIn = null;
   lastLunch = null;
   let lunchhours = 0;
+  shiftComments = [];
   timeEntries.forEach((entry) => {
     if (lastClockIn == null) lastClockIn = entry.dateTime;
     if (entry.status == "clockIn") {
       lastClockIn = entry.dateTime;
       lunchhours = 0;
+      if (entry.comment.trim() === "") {
+        shiftComments = [];
+      } else {
+        shiftComments = [entry.comment.trim()];
+      }
     } else if (entry.status == "clockOut") {
       let current = new Date(entry.dateTime);
       let prev = new Date(lastClockIn);
       let shift = {};
-      shift["comment"] = entry.comment;
+      if (entry.comment.trim() !== "") {
+        shiftComments.push(entry.comment.trim());
+      }
+      if (shiftComments !== null || shiftComments !== "" || shiftComments.length !== 0) shift["comments"] = shiftComments;
       shift["date"] = current.toLocaleString().split(",")[0];
       shift["hours"] = (current - prev) / 1000 / 60 / 60 - lunchhours;
       shift["lunchHours"] = lunchhours;
@@ -488,8 +498,14 @@ let getShifts = async (employeeId) => {
       let prev = new Date(lastLunch.dateTime);
       lunchhours = (current - prev) / 1000 / 60 / 60;
       lastLunch = null;
+      if (entry.comment.trim() !== "") {
+        shiftComments.push(entry.comment.trim());
+      }
     } else if (entry.status == "lunchOut") {
       lastLunch = entry;
+      if (entry.comment.trim() !== "") {
+        shiftComments.push(entry.comment.trim());
+      }
     }
   });
 
