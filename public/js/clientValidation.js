@@ -4,6 +4,7 @@
   const loginForm = document.getElementById("login-form");
   const businessLoginForm = document.getElementById("businessLogin");
   const businessSignUpForm = document.getElementById("businessSignUp");
+  const timeOffForm = document.getElementById("timeOffForm");
 
   //Checks validity of email
   function checkEmail(email) {
@@ -96,6 +97,12 @@
     if (!phoneRE.test(phoneNumber)) throw "Phone number must be entered in 10 digit format";
   }
 
+  //Error checking for "Request Time Off" form
+  function timeOffFormErrorCheck(date1, date2) {
+    if (!date1 || !date2) throw "Please complete all fields";
+    if (date1 > date2) throw "Start date must be before end date";
+  }
+
   //Checks for input errors on "user/login" form and displays error msg to user if error detected
   if (loginForm) {
     loginForm.addEventListener("submit", (event) => {
@@ -155,6 +162,26 @@
         event.preventDefault();
         errorDiv.innerHTML = e;
         errorDiv.hidden = false;
+      }
+    });
+  }
+
+  //Checks for input errors on "Request Time Off" Form
+  if (timeOffForm) {
+    timeOffForm.addEventListener("submit", (event) => {
+      const errorMsg = document.getElementById("timeOffErrorMsg");
+      const timeOffModal = document.getElementById("timeOffModal");
+      errorMsg.hidden = true;
+
+      try {
+        const startDate = document.getElementById("timeOffStartDate").value;
+        const endDate = document.getElementById("timeOffEndDate").value;
+        timeOffFormErrorCheck(startDate, endDate);
+        timeOffModal.style.display = "none";
+      } catch (e) {
+        event.preventDefault();
+        errorMsg.innerHTML = e;
+        errorMsg.hidden = false;
       }
     });
   }

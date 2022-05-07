@@ -212,3 +212,58 @@ $(document).ready(function () {
       employeeNames.push($(this).text());
     });
 });
+
+//Ajax for accepting/declining time off requests
+$("#timeOffRequestTable").on('click','.updateRequest', function () {
+  let objId = $(this).attr("value");
+  let element = $(this).attr('id');
+
+  if (element == "timeOffReqAccept") {
+    $.ajax({
+      url: "/manager/acceptTimeOffRequest",
+      type: "PUT",
+      data: {
+        objId: objId,
+      },
+      success: function (data) {
+        if (data == "Request accepted") {
+          // show alert that request had been accepted for 3 seconds
+          $("#timeOffRequestTable").load(" #timeOffRequestTable > *");
+          $("#timeOffAlertText").text("Successfully accepted request.");
+          $("#alertTimeOff").attr("hidden", false);
+        } else {
+          $("#timeOffAlertText").text("Internal Server Error");
+          $("#alertTimeOff").attr("hidden", false);
+          setTimeout(function () {
+            $("#alertTimeOff").attr("hidden", true);
+          }, 3000);
+        }
+      },
+    });
+  } else if (element == "timeOffReqDecline") {
+    $.ajax({
+      url: "/manager/declineTimeOffRequest",
+      type: "PUT",
+      data: {
+        objId: objId,
+      },
+      success: function (data) {
+        if (data === "Request declined") {
+          $("#timeOffRequestTable").load(" #timeOffRequestTable > *");
+          $("#timeOffAlertText").text("Successfully declined request.");
+          $("#alertTimeOff").attr("hidden", false);
+        } else {
+          $("#timeOffAlertText").text("Internal Server Error, please try again.");
+          $("#alertTimeOff").attr("hidden", false);
+          setTimeout(function () {
+            $("#alertTimeOff").attr("hidden", true);
+          }, 3000);
+        }
+      },
+    });
+  }
+});
+
+$("#timeOffAlertClose").on("click", async () => {
+  $("#alertTimeOff").attr("hidden", true);
+});

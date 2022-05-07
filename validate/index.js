@@ -234,6 +234,14 @@ let checkEmploymentStatus = async (employmentStatus) => {
   }
 };
 
+let checkTimeOffDates = async (startDate, endDate) => {
+  let date1 = startDate;
+  let date2 = endDate;
+  if (!date1 || !date2) throw "Please complete all fields";
+  if (date1 > date2) throw "Start date must be before end date";
+  return true;
+}
+
 module.exports = {
   checkString,
   checkNumber,
@@ -247,4 +255,5 @@ module.exports = {
   checkID,
   checkGender,
   checkEmploymentStatus,
+  checkTimeOffDates,
 };

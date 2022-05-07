@@ -9,12 +9,12 @@ router.get("/", async (req, res) => {
     try {
       validate.checkID(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
+      let allTimeOffRequests = await users.getTimeOffEntries(req.session.businessId);
       let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
       });
-
       res.render("manager/manager", {
         user: req.session.user,
         isAdmin: req.session.isAdmin,
@@ -23,6 +23,7 @@ router.get("/", async (req, res) => {
         title: "Manager Dashboard",
         allEmployees: allEmployees,
         employeeNames: employeeNames,
+        timeOffRequests: allTimeOffRequests,
         pastCalculations: pastCalculations,
       });
     } catch (e) {
@@ -350,6 +351,42 @@ router.delete("/employee/:employee_id", async (req, res) => {
     }
   } else {
     res.redirect("/home");
+  }
+});
+
+router.put("/acceptTimeOffRequest", async (req, res) => {
+  try {
+    await validate.checkID(req.body.objId);
+    let objId = req.body.objId.toLowerCase().trim();
+    await validate.checkID(req.session.businessId);
+    let businessId = req.session.businessId.toLowerCase().trim();
+    const result = await users.acceptTimeOffRequest(objId, businessId);
+    if (result.requestStatus) {
+      res.status(200).send("Request accepted");
+    } else {
+      res.status(500).send("Internal Server Error");
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e);
+  }
+});
+
+router.put("/declineTimeOffRequest", async (req, res) => {
+  try {
+    await validate.checkID(req.body.objId);
+    let objId = req.body.objId.toLowerCase().trim();
+    await validate.checkID(req.session.businessId);
+    let businessId = req.session.businessId.toLowerCase().trim();
+    const result = await users.declineTimeOffRequest(objId, businessId);
+    if (result.requestStatus) {
+      res.status(200).send("Request declined");
+    } else {
+      res.status(500).send("Internal Server Error");
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e);
   }
 });
 

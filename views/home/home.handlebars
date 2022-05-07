@@ -23,6 +23,71 @@
         </form>
         {{/if}}
 
+{{#unless isAdmin}}
+<div id="timeOffModal">
+  <div id="timeOffModalContent">
+    <span id="closeTimeOffModal">&times;</span>
+    <h4 style="margin-top: 10px;">Request Time Off</h4>
+    <br />
+    <form action="/home" method="POST" id="timeOffForm">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="timeOffStartDate">From: (Start Date)</label>
+          <input required type="date" class="form-control" id="timeOffStartDate" name="timeOffStartDate" value="" />
+          <br />
+          <label class="form-label" for="timeOffEndDate">To: (End Date)</label>
+          <input required type="date" class="form-control" id="timeOffEndDate" name="timeOffEndDate" value="" />
+          <br />
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-outline-success" type="submit" id="addTimeOffReq">Submit Request</button>
+          <p id="timeOffErrorMsg" class="small pt-3" hidden></p>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="timeOffUserEntries">
+    <h4 class="floatLeftTimeOff">Time Off Requests</h4>
+    <button class="btn btn-outline-primary" id="reqTimeOffBttn">Request Time Off</button>
+    <table class="table table-striped table-hover" id="userTimeOffReqTable">
+        <thead>
+            <tr>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each timeOffUserEntries}}
+                <tr>
+                    <td>{{dateFormat timeOffStartDate "M/D/YYYY"}}</td>
+                    <td>{{dateFormat timeOffEndDate "M/D/YYYY"}}</td>
+                    {{#unless requestAcknowledged}}
+                        <td>Pending</td>
+                    {{else}}
+                        {{#if requestAccepted}}
+                            <td>Accepted</td>
+                        {{else}}
+                            <td>Declined</td>
+                        {{/if}}
+                    {{/unless}}
+                    <td>
+                        <button class="deleteTimeOffRequest btn btn-primary" id="timeOffReqDelete" value={{objId}} style="line-height: inherit; padding: revert;">Delete</button>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="4">No time off requests</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+{{/unless}}
+
         <div class="mt-4" id="timeClock">
             <p id="time"></p>
             {{#if_eq employee.currentStatus "clockedOut"}}
@@ -104,6 +169,5 @@
         </table>
     </div>
 </div>
-
 
 <script src="../../public/js/home.js" ></script>

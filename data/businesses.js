@@ -43,6 +43,7 @@ let createBusiness = async (businessName, email, password, confirmPassword, addr
     zip: zip,
     phone: phone,
     about: about,
+    timeOff: [],
     storeOpen: true,
     calculations: [],
   };
