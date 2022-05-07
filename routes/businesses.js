@@ -119,6 +119,7 @@ router.post("/login", async (req, res) => {
         req.session.isAdmin = true;
         req.session.isBusiness = true;
         req.session.businessId = result.businessID;
+        req.session.storeOpen = result.storeStatus;
         req.session.name = "AuthCookie";
         res.redirect("/home");
       } else {
