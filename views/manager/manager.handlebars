@@ -214,7 +214,7 @@
           </tr>
           {{else}}
           <tr>
-              <td colspan="12">There are no employees.</td>
+              <td colspan="13">There are no employees.</td>
           </tr>
         {{/each}}
       </tbody>
@@ -337,9 +337,11 @@
     </div>
   </div>
 
+  {{#if activeEmployeesData}}
   <div id="piechart"></div>
+  {{/if}}
 
-  <h4>Time Off Requests</h4>
+  <h4 style="margin-top:20px">Time Off Requests</h4>
 <div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
   <p class="mb-0" id="timeOffAlertText"></p>
   <button type="button" class="btn-close" aria-label="Close" id="timeOffAlertClose"></button>
@@ -390,7 +392,10 @@
       </form>
         {{#if pastCalculations}}
         <button class="btn btn-outline-primary" id="estimateButton" onclick="estimatePayChecks()">Estimate Total Hours and Pay</button>
-        <div style="margin-left:20px;margin-top:25px;display: inline-block;vertical-align: middle; overflow-wrap: normal;"><p id="estimate"></p></div>
+        <div class="alert alert-primary alert-dismissible fade show" id="estimate" hidden role="alert" style="margin-top:25px">
+            <p class="mb-0" id="estimateText"></p>
+            <button type="button" class="btn-close" aria-label="Close" id="estimateAlertClose"></button>
+        </div>
         {{/if}}
   </div>
 

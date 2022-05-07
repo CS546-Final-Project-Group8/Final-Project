@@ -267,6 +267,10 @@ $("#timeOffAlertClose").on("click", async () => {
   $("#alertTimeOff").attr("hidden", true);
 });
 
+$("#estimateAlertClose").on("click", async () => {
+  $("#estimate").attr("hidden", true);
+});
+
 // onclick of estimate button, do ajax request to get estimated total paycheck amounts
 $("#estimateButton").on("click", function () {
   // send ajax request to get estimate
@@ -274,19 +278,8 @@ $("#estimateButton").on("click", function () {
     url: "/manager/estimateWages",
     type: "PUT",
     success: function (data) {
-      $("#estimate").text(data); /*
-      if (data !== "Estimate failed.") {
-        // change the text of the button
-        $("#estimate").text(data);
-      } else {
-        $("#alert").removeClass("alert-success");
-        $("#alert").addClass("alert-danger");
-        $("#alertText").text("Internal Server Error");
-        $("#alert").attr("hidden", false);
-        setTimeout(function () {
-          $("#alert").attr("hidden", true);
-        }, 3000);
-      }*/
+      $("#estimateText").text(data);
+      $("#estimate").attr("hidden", false);
     },
     error: function (err) {
       let data = JSON.parse(err.responseText);

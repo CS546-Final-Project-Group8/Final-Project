@@ -230,6 +230,7 @@ let getActiveEmployeesData = async (businessId) => {
       totalInactive += 1;
     }
   });
+  if (totalActive + totalInactive == 0) return null;
   return [
     ["Status", "Employees"],
     ["Active", totalActive],
