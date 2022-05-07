@@ -214,9 +214,9 @@ $(document).ready(function () {
 });
 
 //Ajax for accepting/declining time off requests
-$("#timeOffRequestTable").on('click','.updateRequest', function () {
+$("#timeOffRequestTable").on("click", ".updateRequest", function () {
   let objId = $(this).attr("value");
-  let element = $(this).attr('id');
+  let element = $(this).attr("id");
 
   if (element == "timeOffReqAccept") {
     $.ajax({
@@ -265,4 +265,32 @@ $("#timeOffRequestTable").on('click','.updateRequest', function () {
 
 $("#timeOffAlertClose").on("click", async () => {
   $("#alertTimeOff").attr("hidden", true);
+});
+
+// onclick of estimate button, do ajax request to get estimated total paycheck amounts
+$("#estimateButton").on("click", function () {
+  // send ajax request to get estimate
+  $.ajax({
+    url: "/manager/estimateWages",
+    type: "PUT",
+    success: function (data) {
+      $("#estimate").text(data); /*
+      if (data !== "Estimate failed.") {
+        // change the text of the button
+        $("#estimate").text(data);
+      } else {
+        $("#alert").removeClass("alert-success");
+        $("#alert").addClass("alert-danger");
+        $("#alertText").text("Internal Server Error");
+        $("#alert").attr("hidden", false);
+        setTimeout(function () {
+          $("#alert").attr("hidden", true);
+        }, 3000);
+      }*/
+    },
+    error: function (err) {
+      let data = JSON.parse(err.responseText);
+      alert(data.error);
+    },
+  });
 });

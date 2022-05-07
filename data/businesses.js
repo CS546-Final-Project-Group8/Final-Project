@@ -170,10 +170,56 @@ let toggleStoreStatus = async (businessId) => {
   return { storeOpen: !business.storeOpen };
 };
 
+let estimateWages = async (businessId, count) => {
+  await validate.checkID(businessId);
+  businessId = businessId.toLowerCase().trim();
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
+  if (!business) throw "Couldn't find business";
+
+  if (business.calculations.length < count) {
+    return { succeeded: false };
+  }
+
+  let totalWages = 0;
+  let totalWagesWithLunch = 0;
+  let employees = 0;
+  let totalHours = 0;
+  let totalLunchHours = 0;
+  for (let i = 0; i < count; i++) {
+    business.calculations[i].forEach((payCheck) => {
+      totalWages += payCheck.totalPay;
+      totalWagesWithLunch += payCheck.totalPayLunch;
+      totalHours += payCheck.totalHours;
+      totalLunchHours += payCheck.totalLunchHours;
+      employees += 1;
+    });
+  }
+  let amount = totalWages / employees;
+  let amountString = amount.toFixed(2);
+  let lunchAmount = totalWagesWithLunch / employees;
+  let lunchAmountString = lunchAmount.toFixed(2);
+  let totalHoursString = totalHours.toFixed(2);
+  let totalLunchHoursString = totalLunchHours.toFixed(2);
+  return {
+    succeeded: true,
+    count: count,
+    amount: amount,
+    amountString: amountString,
+    lunchAmount: lunchAmount,
+    lunchAmountString: lunchAmountString,
+    totalHours: totalHours,
+    totalHoursString: totalHoursString,
+    totalLunchHours: totalLunchHours,
+    totalLunchHoursString: totalHoursString,
+  };
+};
+
 module.exports = {
   createBusiness,
   checkBusiness,
   calculatePay,
   getPastPayPeriods,
   toggleStoreStatus,
+  estimateWages,
 };

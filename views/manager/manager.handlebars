@@ -354,9 +354,10 @@
 
   <h2 style="margin-top:15px">Payroll Calculation</h2>
 
-  <div class="col-md-3 mb-3" style="margin-top: 1rem;">
+  
+  <div class="col-md-12 mb-3" style="margin-top: 1rem;">
       <form action="/manager/calculate" method="POST" style="display:inline">
-          <button style="width: -webkit-fill-available;" class="btn btn-outline-success" type="submit" id="calculateButton">
+          <button class="btn btn-outline-success" type="submit" id="calculateButton">
               {{#if pastCalculations}}
               Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/D/YYYY"}}
               {{else}}
@@ -364,6 +365,10 @@
               {{/if}}
           </button>
       </form>
+        {{#if pastCalculations}}
+        <button class="btn btn-outline-primary" id="estimateButton" onclick="estimatePayChecks()">Estimate Total Hours and Pay</button>
+        <div style="margin-left:20px;margin-top:25px;display: inline-block;vertical-align: middle; overflow-wrap: normal;"><p id="estimate"></p></div>
+        {{/if}}
   </div>
 
   <div class="row">

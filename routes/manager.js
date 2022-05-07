@@ -468,4 +468,40 @@ router.put("/toggleStoreStatus", async (req, res) => {
   }
 });
 
+router.put("/estimateWages", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      await validate.checkID(req.session.businessId);
+      let businessId = req.session.businessId.toLowerCase().trim();
+      const estimate = await businesses.estimateWages(businessId, 3);
+      if (estimate.succeeded) {
+        res
+          .status(200)
+          .send(
+            "Based on the previous " +
+              estimate.count +
+              " calculations, total wages will be approx. $" +
+              estimate.amountString +
+              ", and $" +
+              estimate.lunchAmountString +
+              " with paid lunches. Based on " +
+              estimate.totalHoursString +
+              " estimated hours worked and " +
+              estimate.totalLunchHoursString +
+              " hours including lunches."
+          );
+      } else {
+        res.status(200).send("Estimate failed.");
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
 module.exports = router;
