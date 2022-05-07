@@ -139,7 +139,11 @@ let getPastPayPeriods = async (businessId) => {
   const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
   if (!business) throw "Couldn't find business";
 
-  return business.calculations;
+  if (business.calculations != undefined && business.calculations.length > 0) {
+    return business.calculations.reverse();
+  } else {
+    return business.calculations;
+  }
 };
 
 let toggleStoreStatus = async (businessId) => {

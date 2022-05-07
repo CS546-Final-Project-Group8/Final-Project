@@ -330,63 +330,66 @@
               {{/if}}
           </button>
       </form>
-</div>
+  </div>
 
-<div class="row">
-    <div class="col-md-4">
-        {{#if pastCalculations}}
-        <h3 style="margin-top:20px">Past Pay Periods</h3>
-        <table id="pastCalculationsTable" class="table table-striped">
-            <thead>
-                <tr>
-                    <th style="width:30px">#</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each pastCalculations}}
-                <tr>
-                    <td>{{@index}}</td>
-                    <td>
-                        <a title="Click to view calculation for {{dateFormat this.[0].date "MM/D/YYYY"}}" href="#" onclick="console.log('switch!');return false;">{{dateFormat this.[0].date "MM/D/YYYY"}}</a>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
-        {{/if}}
-    </div>
-    <div class="col-md-8">
-        {{#if payChecks}}
-        <h3 style="margin-top:20px">Paychecks for {{dateFormat payChecks.[0].date "MM/D/YYYY"}}</h3>
-        <table id="calculationTable" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Comments</th>
-                    <th>Work Hours</th>
-                    <th>Lunch Hours</th>
-                    <th>Pay</th>
-                    <th>Pay (with lunch)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each payChecks}}
-                <tr>
-                    <td>{{employeeName}}</td>
-                    <td>{{#each allComments}}{{this}}{{#unless @last}},&nbsp;{{/unless}}{{/each}}</td>
-                    <td>{{totalHoursString}}</td>
-                    <td>{{totalLunchHoursString}}</td>
-                    <td>{{totalPayString}}</td>
-                    <td>{{totalPayLunchString}}</td>
-                </tr>
-                {{/each}}
-                </tr>
-            </tbody>
-        </table>
-        {{/if}}
-    </div>
-</div>
+  <div class="row">
+      <div class="col-md-4">
+          {{#if pastCalculations}}
+          <h3 style="margin-top:20px">Past Pay Periods</h3>
+          <table id="pastCalculationsTable" class="table table-striped">
+              <thead>
+                  <tr>
+                      <th style="width:30px">#</th>
+                      <th>Date</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {{#each pastCalculations}}
+                  <tr>
+                      <td>{{@index}}</td>
+                      <td>
+                          <form action="/manager" method="POST" id="calculate{{@index}}">
+                              <input type="text" hidden name="calculationDate" value="{{{this.[0].date}}}" />
+                              <a style="color:#006af6" title="Click to view calculation for {{dateFormat this.[0].date "MM/D/YYYY"}}" href="#" onclick="document.getElementById('calculate{{@index}}').submit();return false;">Calculation on {{dateFormat this.[0].date "MM/D/YYYY"}}</a>
+                          </form>
+                      </td>
+                  </tr>
+                  {{/each}}
+              </tbody>
+          </table>
+          {{/if}}
+      </div>
+      <div class="col-md-8">
+          {{#if payChecks}}
+          <h3 style="margin-top:20px">Paychecks calculated on {{dateFormat payChecks.[0].date "MM/D/YYYY"}}</h3>
+          <table id="calculationTable" class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Comments</th>
+                      <th>Work Hours</th>
+                      <th>Lunch Hours</th>
+                      <th>Pay</th>
+                      <th>Pay (with lunch)</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {{#each payChecks}}
+                  <tr>
+                      <td>{{employeeName}}</td>
+                      <td>{{#each allComments}}{{this}}{{#unless @last}},&nbsp;{{/unless}}{{/each}}</td>
+                      <td>{{totalHoursString}}</td>
+                      <td>{{totalLunchHoursString}}</td>
+                      <td>{{totalPayString}}</td>
+                      <td>{{totalPayLunchString}}</td>
+                  </tr>
+                  {{/each}}
+                  </tr>
+              </tbody>
+          </table>
+          {{/if}}
+      </div>
+  </div>
 </div>
 
 
