@@ -11,6 +11,7 @@ router.get("/", async (req, res) => {
       let allEmployees = await users.getAllEmployees(req.session.businessId);
       let allTimeOffRequests = await users.getTimeOffEntries(req.session.businessId);
       let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
+      let activeEmployeesData = JSON.stringify(await businesses.getActiveEmployeesData(req.session.businessId));
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -25,6 +26,7 @@ router.get("/", async (req, res) => {
         employeeNames: employeeNames,
         timeOffRequests: allTimeOffRequests,
         pastCalculations: pastCalculations,
+        activeEmployeesData: activeEmployeesData,
       });
     } catch (e) {
       res.status(400).render("manager/manager", {
@@ -47,6 +49,7 @@ router.post("/", async (req, res) => {
       validate.checkID(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
       let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
+      let activeEmployeesData = JSON.stringify(await businesses.getActiveEmployeesData(req.session.businessId));
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -69,6 +72,7 @@ router.post("/", async (req, res) => {
         allEmployees: allEmployees,
         employeeNames: employeeNames,
         pastCalculations: pastCalculations,
+        activeEmployeesData: activeEmployeesData,
         payChecks: payChecks,
       });
     } catch (e) {
@@ -393,14 +397,10 @@ router.put("/declineTimeOffRequest", async (req, res) => {
 router.post("/calculate", async (req, res) => {
   if (req.session.isAdmin) {
     try {
-      let businessId = req.session.businessId;
-      await validate.checkID(businessId);
-
-      let payChecks = await businesses.calculatePay(businessId);
-
-      let pastCalculations = await businesses.getPastPayPeriods(businessId);
-
+      let payChecks = await businesses.calculatePay(req.session.businessId);
+      let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
+      let activeEmployeesData = JSON.stringify(await businesses.getActiveEmployeesData(req.session.businessId));
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -416,6 +416,7 @@ router.post("/calculate", async (req, res) => {
           employeeNames: employeeNames,
           payChecks: payChecks,
           pastCalculations: pastCalculations,
+          activeEmployeesData: activeEmployeesData,
         });
       } else {
         res.render("manager/manager", {
@@ -427,6 +428,7 @@ router.post("/calculate", async (req, res) => {
           employeeNames: employeeNames,
           payChecks: payChecks,
           pastCalculations: pastCalculations,
+          activeEmployeesData: activeEmployeesData,
           error: "No shifts worked since last calculation.",
         });
       }

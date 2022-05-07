@@ -211,8 +211,30 @@ let estimateWages = async (businessId, count) => {
     totalHours: totalHours,
     totalHoursString: totalHoursString,
     totalLunchHours: totalLunchHours,
-    totalLunchHoursString: totalHoursString,
+    totalLunchHoursString: totalLunchHoursString,
   };
+};
+
+let getActiveEmployeesData = async (businessId) => {
+  await validate.checkID(businessId);
+
+  const employeeCollection = await employees();
+  let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
+
+  totalActive = 0;
+  totalInactive = 0;
+  emps.forEach((employee) => {
+    if (employee.isActiveEmployee) {
+      totalActive += 1;
+    } else {
+      totalInactive += 1;
+    }
+  });
+  return [
+    ["Status", "Employees"],
+    ["Active", totalActive],
+    ["Inactive", totalInactive],
+  ];
 };
 
 module.exports = {
@@ -222,4 +244,5 @@ module.exports = {
   getPastPayPeriods,
   toggleStoreStatus,
   estimateWages,
+  getActiveEmployeesData,
 };
