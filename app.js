@@ -43,6 +43,15 @@ hbs.handlebars.registerHelper("json", function (context) {
   return JSON.stringify(context);
 });
 
+// middleware to check if user is admin for /manager route
+app.use("/manager", (req, res, next) => {
+  if (req.session.isAdmin) {
+    next();
+  } else {
+    res.redirect("/home");
+  }
+});
+
 configRoutes(app);
 
 app.listen(3000, () => {

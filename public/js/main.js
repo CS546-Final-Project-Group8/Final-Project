@@ -1,31 +1,3 @@
-// javascript code for main page
-$("#newEmployee").on("click", async () => {
-  // hide the button
-  $("#newEmployee").hide();
-  // hide the table
-  $("#employeesTable").hide();
-  // back to home button
-  $("#backToHome").hide();
-  // show the form
-  $("#newEmployeeForm").removeAttr("hidden");
-});
-
-$("#cancelEmployee").on("click", async () => {
-  // hide the form
-  $("#newEmployeeForm").attr("hidden", true);
-  // show the button
-  $("#newEmployee").show();
-  // show the table
-  $("#employeesTable").show();
-  // check is isbusiness is true
-  const isBusiness = $("#isBusiness").val();
-  if (!isBusiness) {
-    $("#backToHome").show();
-  } else {
-    $("#backToHome").hide();
-  }
-});
-
 $(document).on("click", ".deleteEmployee", async function (event) {
   event.preventDefault();
   $("#deleteEmployeeModal").attr("data-employee-id", $(this).attr("data-employee-id"));

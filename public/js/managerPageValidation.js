@@ -221,53 +221,51 @@ let matchPassword = async (password, confirmPassword) => {
   }
 };
 
-$(document).ready(function () {
-  const newEmployeeForm = $("#newEmployeeForm");
-  newEmployeeForm.submit(async (event) => {
-    $("#errormessage").attr("hidden", true);
-    try {
-      let email = $("#email").val();
-      let password = $("#password").val();
-      let confirmPassword = $("#confirmPassword").val();
-      let firstName = $("#firstName").val();
-      let lastName = $("#lastName").val();
-      let address = $("#address").val();
-      let city = $("#city").val();
-      let state = $("#state").val();
-      let zip = $("#zip").val();
-      let phone = $("#phoneNumber").val();
-      let employmentStatus = $("#employmentStatus").val();
-      let isActiveEmployee = $("#isActiveEmployee").val();
-      let hourlyPay = $("#hourlyPay").val();
-      let startDate = $("#startDate").val();
-      let isManager = $("#isManager").val();
-      let gender = $("#gender").val();
+const newEmployeeForm = $("#newEmployeeForm");
+newEmployeeForm.submit(async (event) => {
+  $("#errormessage").attr("hidden", true);
+  try {
+    let email = $("#email").val();
+    let password = $("#password").val();
+    let confirmPassword = $("#confirmPassword").val();
+    let firstName = $("#firstName").val();
+    let lastName = $("#lastName").val();
+    let address = $("#address").val();
+    let city = $("#city").val();
+    let state = $("#state").val();
+    let zip = $("#zip").val();
+    let phone = $("#phoneNumber").val();
+    let employmentStatus = $("#employmentStatus").val();
+    let isActiveEmployee = $("#isActiveEmployee").val();
+    let hourlyPay = $("#hourlyPay").val();
+    let startDate = $("#startDate").val();
+    let isManager = $("#isManager").val();
+    let gender = $("#gender").val();
 
-      await checkEmail(email);
-      await checkPassword(password);
-      password = password.trim();
-      await checkPassword(confirmPassword);
-      confirmPassword = confirmPassword.trim();
-      await matchPassword(password, confirmPassword);
-      await checkString(firstName);
-      await checkString(lastName);
-      await checkString(address);
-      await checkString(city);
-      await checkState(state);
-      await checkZip(zip);
-      await checkPhone(phone);
-      await checkEmploymentStatus(employmentStatus);
-      await checkBoolean(isActiveEmployee);
-      await checkNumber(hourlyPay);
-      await checkDate(startDate);
-      await checkBoolean(isManager);
-      await checkGender(gender);
-    } catch (e) {
-      event.preventDefault();
-      $("#errormessage").text(e);
-      $("#errormessage").attr("hidden", false);
-    }
-  });
+    await checkEmail(email);
+    await checkPassword(password);
+    password = password.trim();
+    await checkPassword(confirmPassword);
+    confirmPassword = confirmPassword.trim();
+    await matchPassword(password, confirmPassword);
+    await checkString(firstName);
+    await checkString(lastName);
+    await checkString(address);
+    await checkString(city);
+    await checkState(state);
+    await checkZip(zip);
+    await checkPhone(phone);
+    await checkEmploymentStatus(employmentStatus);
+    await checkBoolean(isActiveEmployee);
+    await checkNumber(hourlyPay);
+    await checkDate(startDate);
+    await checkBoolean(isManager);
+    await checkGender(gender);
+  } catch (e) {
+    event.preventDefault();
+    $("#errormessage").text(e);
+    $("#errormessage").attr("hidden", false);
+  }
 });
 
 $(document).on("click", ".editEmployee", async function (event) {

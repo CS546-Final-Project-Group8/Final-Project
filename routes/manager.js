@@ -370,7 +370,9 @@ router.put("/toggleStoreStatus", async (req, res) => {
         res.status(200).send("Store Opened");
       } else {
         req.session.storeOpen = false;
-        req.session.employee.currentStatus = "clockedOut";
+        if (req.session.employee) {
+          req.session.employee.currentStatus = "clockedOut";
+        }
         res.status(200).send("Store Closed");
       }
     } catch (e) {

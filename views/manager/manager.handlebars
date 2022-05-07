@@ -38,184 +38,6 @@
     </div>
 </div>
 
-{{!-- loop through allEmployees object --}}
-<table id="employeesTable" class="table table-striped table-hover">
-    <thead>
-        <tr id="employeesTableHeader">
-        <th>Name</th>
-        <th>Status</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Address</th>
-        <th>Gender Identity</th>
-        <th>Hourly Pay</th>
-        <th>Employment Status</th>
-        <th>Active</th>
-        <th>Started On</th>
-        <th>Role</th>
-        <th>Actions</th>
-        <th>Promote</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each allEmployees}}
-        <tr data-employee-id="{{_id}}">
-          <td class="employeeName">{{firstName}} {{lastName}}</td>
-          <td class="employeeStatus">{{currentStatus}}</td>
-          <td class="employeeEmail">{{email}}</td>
-          <td class="employeePhone">{{phone}}</td>
-          <td class="employeeAddress">{{address}}, {{city}} {{state}}, {{zip}}</td>
-          <td class="employeeGender">{{gender}}</td>
-          <td class="employeeHourlyPay">${{hourlyPay}}</td>
-          <td class="employeeEmployment">{{employmentStatus}}</td>
-          {{#if isActiveEmployee}}
-            <td class="employeeActive">Yes</td>
-          {{else}}
-            <td class="employeeActive">No</td>
-          {{/if}}
-          <td class="employeeStart">{{dateFormat startDate "MM/D/YYYY"}}</td>
-          {{#if isManager}}
-            <td class="employeeManager">Manager</td>
-          {{else}}
-            <td class="employeeManager">Employee</td>
-          {{/if}}
-          <td>
-            <i data-employee-id="{{_id}}" class="editEmployee bi bi-pencil-square" style="cursor:pointer"></i>
-            <i data-employee-id="{{_id}}" class="deleteEmployee bi bi-trash-fill" style="cursor:pointer"></i>
-          </td>
-          <td>
-            {{#if isManager}}
-              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Demote to Employee</button>
-            {{else}}
-              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote to Manager</button>
-            {{/if}}
-          </td>
-        </tr>
-        {{else}}
-        <tr>
-            <td colspan="12">There are no employees.</td>
-        </tr>
-      {{/each}}
-    </tbody>
-</table>
-<p hidden id="noEmployeeFound">No employees found</p>
-
-
-
-{{#if isBusiness}}
-  <input type="bool" hidden id="isBusiness" value="{{isBusiness}}" />
-  <button hidden class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
-{{else}}
-  <button class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
-{{/if}}
-
-<button class="btn btn-outline-primary" id="newEmployee">Create New Employee</button>
-
-{{! form to edit an employee }}
-<div id="editEmployeeModal" class="modal" >
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Edit Employee</h4>
-    </div>
-    <div class="modal-body">
-      <form id="editEmployeeForm">
-        <div class="row">
-          <div class="col-12 mb-3">
-            <label for="editEmail" class="form-label">Email</label>
-            <input required type="email" class="form-control" id="editEmail" name="email" placeholder="Email" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="editFirstName" class="form-label">First Name</label>
-            <input required type="text" class="form-control" id="editFirstName" name="firstName" placeholder="First Name" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="editLastName" class="form-label">Last Name</label>
-            <input required type="text" class="form-control" id="editLastName" name="lastName" placeholder="Last Name" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="editGender" class="form-label">Gender Identity</label>
-            <select class="form-select" aria-label="Default select example" name="gender" id="editGender">
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Transgender">Transgender</option>
-              <option value="Gender Neutral">Gender Neutral</option>
-              <option value="Non-Binary">Non-Binary</option>
-              <option value="Prefer Not to Say">Prefer Not to Say</option>
-            </select>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editAddress">Address</label>
-            <input required type="text" class="form-control" id="editAddress" name="address" placeholder="Address" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editCity">City</label>
-            <input required type="text" class="form-control" id="editCity" name="city" placeholder="City" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editState">State</label>
-            <input required type="text" class="form-control" id="editState" name="state" placeholder="State" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editZip">Zip</label>
-            <input required type="text" class="form-control" id="editZip" name="zip" placeholder="Zip" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editPhoneNumber">Phone Number</label>
-            <input required type="text" class="form-control" id="editPhoneNumber" name="phoneNumber" placeholder="Phone Number" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editEmploymentStatus">Employment Status</label>
-            <select class="form-select" aria-label="Default select example" name="employmentStatus" id="editEmploymentStatus">
-              <option value="Full-Time">Full-Time</option>
-              <option value="Part-Time">Part-Time</option>
-              <option value="Contract">Contract</option>
-              <option value="Intern">Intern</option>
-              <option value="Temporary">Temporary</option>
-              <option value="Volunteer">Volunteer</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editIsActiveEmployee">Is Active Employee</label>
-            <select class="form-select" aria-label="Default select example" name="isActiveEmployee" id="editIsActiveEmployee">
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </select>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editHourlyPay">Hourly Pay</label>
-            <input required type="number" class="form-control" id="editHourlyPay" name="hourlyPay" placeholder="Hourly Pay" />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label" for="editStartDate">Start Date</label>
-            <input required type="date" class="form-control" id="editStartDate" name="startDate" />
-          </div>
-          <p id="modalErrorMessage" class="error" hidden></p>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline-success" id="saveEditEmployee">Save</button>
-      <button class="btn btn-outline-danger" id="cancelEditEmployee">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<div id="deleteEmployeeModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h4 class="modal-title">Are you sure?</h4>
-    </div>
-    <div class="modal-body">
-      <p>Do you really want to delete this employee? This cannot be undone.</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-default" id="cancelDeleteEmployee">Cancel</button>
-      <button class="btn btn-danger" id="confirmDeleteEmployee">Delete</button>
-    </div>
-  </div>
-</div>
-
 {{! form to create new employee }}
 <form hidden id="newEmployeeForm" action="/manager/new" method="POST">
   <div class="row">
@@ -311,23 +133,203 @@
       <button class="btn btn-outline-danger" id="cancelEmployee">Cancel</button>
     </div>
   </div>
-</form>
+
 <p class="error" hidden id="errormessage"></p>
+</form>
 
-<hr />
-
-<h2 style="margin-top:15px">Payroll Calculation</h2>
-
-<div class="col-md-3 mb-3" style="margin-top: 1rem;">
-    <form action="/manager/calculate" method="POST" style="display:inline">
-        <button style="width: -webkit-fill-available;" class="btn btn-outline-success" type="submit" id="calculateButton">
-            {{#if pastCalculations}}
-            Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/D/YYYY"}}
+<div id="managerDashboarddiv">
+  {{!-- loop through allEmployees object --}}
+  <table id="employeesTable" class="table table-striped table-hover">
+      <thead>
+          <tr id="employeesTableHeader">
+          <th>Name</th>
+          <th>Status</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Gender Identity</th>
+          <th>Hourly Pay</th>
+          <th>Employment Status</th>
+          <th>Active</th>
+          <th>Started On</th>
+          <th>Role</th>
+          <th>Actions</th>
+          <th>Promote</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each allEmployees}}
+          <tr data-employee-id="{{_id}}">
+            <td class="employeeName">{{firstName}} {{lastName}}</td>
+            <td class="employeeStatus">{{currentStatus}}</td>
+            <td class="employeeEmail">{{email}}</td>
+            <td class="employeePhone">{{phone}}</td>
+            <td class="employeeAddress">{{address}}, {{city}} {{state}}, {{zip}}</td>
+            <td class="employeeGender">{{gender}}</td>
+            <td class="employeeHourlyPay">${{hourlyPay}}</td>
+            <td class="employeeEmployment">{{employmentStatus}}</td>
+            {{#if isActiveEmployee}}
+              <td class="employeeActive">Yes</td>
             {{else}}
-            Calculate Current Paychecks
+              <td class="employeeActive">No</td>
             {{/if}}
-        </button>
-    </form>
+            <td class="employeeStart">{{dateFormat startDate "MM/D/YYYY"}}</td>
+            {{#if isManager}}
+              <td class="employeeManager">Manager</td>
+            {{else}}
+              <td class="employeeManager">Employee</td>
+            {{/if}}
+            <td>
+              <i data-employee-id="{{_id}}" class="editEmployee bi bi-pencil-square" style="cursor:pointer"></i>
+              <i data-employee-id="{{_id}}" class="deleteEmployee bi bi-trash-fill" style="cursor:pointer"></i>
+            </td>
+            <td>
+              {{#if isManager}}
+                <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Demote to Employee</button>
+              {{else}}
+                <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote to Manager</button>
+              {{/if}}
+            </td>
+          </tr>
+          {{else}}
+          <tr>
+              <td colspan="12">There are no employees.</td>
+          </tr>
+        {{/each}}
+      </tbody>
+  </table>
+  <p hidden id="noEmployeeFound">No employees found</p>
+
+
+
+  {{#if isBusiness}}
+    <input type="bool" hidden id="isBusiness" value="{{isBusiness}}" />
+    <button hidden class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
+  {{else}}
+    <button class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
+  {{/if}}
+
+  <button class="btn btn-outline-primary" id="newEmployee">Create New Employee</button>
+
+  {{! form to edit an employee }}
+  <div id="editEmployeeModal" class="modal" >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Employee</h4>
+      </div>
+      <div class="modal-body">
+        <form id="editEmployeeForm">
+          <div class="row">
+            <div class="col-12 mb-3">
+              <label for="editEmail" class="form-label">Email</label>
+              <input required type="email" class="form-control" id="editEmail" name="email" placeholder="Email" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="editFirstName" class="form-label">First Name</label>
+              <input required type="text" class="form-control" id="editFirstName" name="firstName" placeholder="First Name" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="editLastName" class="form-label">Last Name</label>
+              <input required type="text" class="form-control" id="editLastName" name="lastName" placeholder="Last Name" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="editGender" class="form-label">Gender Identity</label>
+              <select class="form-select" aria-label="Default select example" name="gender" id="editGender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Transgender">Transgender</option>
+                <option value="Gender Neutral">Gender Neutral</option>
+                <option value="Non-Binary">Non-Binary</option>
+                <option value="Prefer Not to Say">Prefer Not to Say</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editAddress">Address</label>
+              <input required type="text" class="form-control" id="editAddress" name="address" placeholder="Address" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editCity">City</label>
+              <input required type="text" class="form-control" id="editCity" name="city" placeholder="City" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editState">State</label>
+              <input required type="text" class="form-control" id="editState" name="state" placeholder="State" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editZip">Zip</label>
+              <input required type="text" class="form-control" id="editZip" name="zip" placeholder="Zip" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editPhoneNumber">Phone Number</label>
+              <input required type="text" class="form-control" id="editPhoneNumber" name="phoneNumber" placeholder="Phone Number" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editEmploymentStatus">Employment Status</label>
+              <select class="form-select" aria-label="Default select example" name="employmentStatus" id="editEmploymentStatus">
+                <option value="Full-Time">Full-Time</option>
+                <option value="Part-Time">Part-Time</option>
+                <option value="Contract">Contract</option>
+                <option value="Intern">Intern</option>
+                <option value="Temporary">Temporary</option>
+                <option value="Volunteer">Volunteer</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editIsActiveEmployee">Is Active Employee</label>
+              <select class="form-select" aria-label="Default select example" name="isActiveEmployee" id="editIsActiveEmployee">
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editHourlyPay">Hourly Pay</label>
+              <input required type="number" class="form-control" id="editHourlyPay" name="hourlyPay" placeholder="Hourly Pay" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="editStartDate">Start Date</label>
+              <input required type="date" class="form-control" id="editStartDate" name="startDate" />
+            </div>
+            <p id="modalErrorMessage" class="error" hidden></p>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-success" id="saveEditEmployee">Save</button>
+        <button class="btn btn-outline-danger" id="cancelEditEmployee">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="deleteEmployeeModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Are you sure?</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you really want to delete this employee? This cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" id="cancelDeleteEmployee">Cancel</button>
+        <button class="btn btn-danger" id="confirmDeleteEmployee">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <h2 style="margin-top:15px">Payroll Calculation</h2>
+
+  <div class="col-md-3 mb-3" style="margin-top: 1rem;">
+      <form action="/manager/calculate" method="POST" style="display:inline">
+          <button style="width: -webkit-fill-available;" class="btn btn-outline-success" type="submit" id="calculateButton">
+              {{#if pastCalculations}}
+              Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/D/YYYY"}}
+              {{else}}
+              Calculate Current Paychecks
+              {{/if}}
+          </button>
+      </form>
 </div>
 
 <div class="row">
@@ -384,6 +386,7 @@
         </table>
         {{/if}}
     </div>
+</div>
 </div>
 
 
