@@ -1,3 +1,24 @@
+{{#section 'head'}}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {packages: ['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+        var data = google.visualization.arrayToDataTable({{{activeEmployeesData}}});
+
+        var options = {
+            title: 'Active Employees', width: 500, height: 300
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+        }
+    </script>
+{{/section}}
+
 <div class="alert alert-dismissible fade show" style="position: fixed;  margin-left: 35%;" id="alert" hidden role="alert">
     <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -316,6 +337,8 @@
     </div>
   </div>
 
+  <div id="piechart"></div>
+
   <h4>Time Off Requests</h4>
 <div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
   <p class="mb-0" id="timeOffAlertText"></p>
@@ -352,7 +375,7 @@
 
   <hr />
 
-  <h2 style="margin-top:15px">Payroll Calculation</h2>
+  <h2 style="margin-top:15px" id="calculation">Payroll Calculation</h2>
 
   
   <div class="col-md-12 mb-3" style="margin-top: 1rem;">
