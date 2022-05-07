@@ -40,6 +40,51 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  if (req.session.isAdmin && req.body.calculation !== null) {
+    try {
+      validate.checkID(req.session.businessId);
+      let allEmployees = await users.getAllEmployees(req.session.businessId);
+      let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
+
+      const employeeNames = allEmployees.map((employee) => {
+        return employee.firstName + " " + employee.lastName;
+      });
+
+      calculationDate = req.body.calculationDate;
+      let payChecks = [];
+      pastCalculations.forEach((calculation) => {
+        if (calculationDate === calculation[0].date) {
+          payChecks = calculation;
+        }
+      });
+
+      res.render("manager/manager", {
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        isBusiness: req.session.isBusiness,
+        storeOpen: req.session.storeOpen,
+        title: "Manager Dashboard",
+        allEmployees: allEmployees,
+        employeeNames: employeeNames,
+        pastCalculations: pastCalculations,
+        payChecks: payChecks,
+      });
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        isBusiness: req.session.isBusiness,
+        storeOpen: req.session.storeOpen,
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
 router.post("/new", async (req, res) => {
   if (req.session.isAdmin) {
     try {

@@ -129,6 +129,7 @@ router.post("/clockIn", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
+    let shifts = await users.getShifts(req.session.employeeId);
     res.status(400).render("home/home", {
       title: "Home",
       user: req.session.user,
@@ -136,6 +137,7 @@ router.post("/clockIn", async (req, res) => {
       businessId: req.session.businessId,
       employeeId: req.session.employeeId,
       employee: req.session.employee,
+      shifts: shifts,
       error: e,
     });
   }
@@ -169,6 +171,7 @@ router.post("/clockOut", async (req, res) => {
       res.redirect("/home");
     }
   } catch (e) {
+    let shifts = await users.getShifts(req.session.employeeId);
     res.status(400).render("home/home", {
       title: "Home",
       user: req.session.user,
@@ -176,6 +179,7 @@ router.post("/clockOut", async (req, res) => {
       businessId: req.session.businessId,
       employeeId: req.session.employeeId,
       employee: req.session.employee,
+      shifts: shifts,
       error: e,
     });
   }
