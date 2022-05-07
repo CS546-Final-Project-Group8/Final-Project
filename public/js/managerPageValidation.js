@@ -287,7 +287,7 @@ $(document).on("click", ".editEmployee", async function (event) {
     const gender = $("#editGender");
     gender.find("option").each(function () {
       if ($(this).val().toLowerCase() === employee.gender.toLowerCase()) {
-        $(this).attr("selected", true);
+        $("#editGender").val($(this).val());
       }
     });
     $("#editAddress").val(employee.address);
@@ -299,14 +299,14 @@ $(document).on("click", ".editEmployee", async function (event) {
     const employmentStatus = $("#editEmploymentStatus");
     employmentStatus.find("option").each(function () {
       if ($(this).val().toLowerCase() === employee.employmentStatus.toLowerCase()) {
-        $(this).attr("selected", true);
+        $("#editEmploymentStatus").val($(this).val());
       }
     });
     const isActiveEmployee = $("#editIsActiveEmployee");
     isActiveEmployee.find("option").each(function () {
       // stringify employee.isActiveEmployee from boolean to string
       if (JSON.stringify(employee.isActiveEmployee).toLowerCase() === $(this).val().toLowerCase()) {
-        $(this).attr("selected", true);
+        $("#editIsActiveEmployee").val($(this).val());
       }
     });
     $("#editHourlyPay").val(employee.hourlyPay);
@@ -370,6 +370,9 @@ $("#saveEditEmployee").on("click", async (event) => {
       .done((data) => {
         if (data.error) console.log("Error updating employee: ", data.error);
         else {
+          if (data.reload) {
+            window.location.replace("/home");
+          }
           let trQuery = `tr[data-employee-id=${employeeId}] `;
           $(trQuery + " .employeeName").text(data.firstName + " " + data.lastName);
           $(trQuery + " .employeeStatus").text(data.currentStatus);
@@ -384,7 +387,6 @@ $("#saveEditEmployee").on("click", async (event) => {
           $(trQuery + " .employeeStart").text(startDate.toLocaleDateString("en-US"));
           $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
           $("#editEmployeeModal").hide();
-          location.reload(); // this is done to avoid render error i got for select tag when editing employee
         }
       })
       .fail((req, status, error) => console.log(error));
@@ -401,13 +403,10 @@ $("#cancelEditEmployee").on("click", async (event) => {
   $("#modalErrorMessage").attr("hidden", true);
   // reset the contents of the modal
   resetModal();
-  location.reload(); // this is done to avoid render error i got for select tag when editing employee
 });
 
 let resetModal = () => {
   // reset modal back to original state
   $(".modal-body input").val("");
-  $(".modal-body select").val("");
-  $(".modal-body select option").removeAttr("selected");
   $("#modalErrorMessage").attr("hidden", true);
 };

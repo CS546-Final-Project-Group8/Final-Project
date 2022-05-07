@@ -43,7 +43,7 @@ let createBusiness = async (businessName, email, password, confirmPassword, addr
     zip: zip,
     phone: phone,
     about: about,
-    isOpen: true,
+    storeOpen: true,
     calculations: [],
   };
   //if email already exists in mongoDB database
@@ -69,7 +69,8 @@ let checkBusiness = async (email, password) => {
   if (!businessData) throw "Either the email or password is invalid";
   const passwordStatus = await bcrypt.compare(password, businessData.hashedPassword);
   if (!passwordStatus) throw "Either the email or password is invalid";
-  return { authenticated: true, businessID: businessData._id, isAdmin: true };
+
+  return { authenticated: true, businessID: businessData._id, storeStatus: businessData.storeOpen, isAdmin: true };
 };
 
 let calculatePay = async (businessId) => {
@@ -141,9 +142,33 @@ let getPastPayPeriods = async (businessId) => {
   return business.calculations;
 };
 
+let toggleStoreStatus = async (businessId) => {
+  await validate.checkID(businessId);
+  businessId = businessId.toLowerCase().trim();
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
+  if (!business) throw "Couldn't find business";
+
+  if (business.storeOpen) {
+    const employeeCollection = await employees();
+    // employees that are not "ClockedOut"
+    let clockedEmployees = await employeeCollection.find({ businessId: businessId, currentStatus: { $ne: "clockedOut" } }).toArray();
+    for (const employee of clockedEmployees) {
+      let employee_id = employee._id.toString();
+      await users.clockOut(employee_id, "Store closed");
+    }
+  }
+
+  const updateInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $set: { storeOpen: !business.storeOpen } }, { returnDocument: "after" });
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+
+  return { storeOpen: !business.storeOpen };
+};
+
 module.exports = {
   createBusiness,
   checkBusiness,
   calculatePay,
   getPastPayPeriods,
+  toggleStoreStatus,
 };

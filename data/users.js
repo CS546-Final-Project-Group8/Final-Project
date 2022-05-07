@@ -162,6 +162,10 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
     await demoteEmployee(employeeId);
   }
 
+  if (isActiveEmployee === false && employee.currentStatus !== "clockedOut") {
+    await clockOut(employeeId, "Employee was deactivated");
+  }
+
   const updatedEmployee = await employeesCollection.findOneAndUpdate(
     {
       businessId: businessId,
@@ -188,6 +192,7 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
   );
   if (!updatedEmployee) throw "Couldn't update employee";
   updatedEmployee.value.hashedPassword = null;
+  updatedEmployee.value._id = updatedEmployee.value._id.toString();
   return updatedEmployee.value;
 };
 
@@ -227,6 +232,7 @@ let checkEmployee = async (businessEmail, email, password) => {
     authenticated: true,
     employeeID: employee._id,
     businessId: employee.businessId,
+    storeOpen: business.storeOpen,
     isAdmin: employee.isManager,
     employee: employee,
   };
@@ -317,7 +323,7 @@ let clockOut = async (employeeId, comment) => {
   if (!employee) throw "Employee not found";
   if (employee.isActiveEmployee === false) throw "Employee is not active";
 
-  if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "lunch")) {
+  if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "meal")) {
     throw "Employee must be clocked in / on lunch break to clock out!";
   }
   const userCollection = await employees();

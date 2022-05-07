@@ -46,6 +46,7 @@ router.post("/login", async (req, res) => {
         req.session.user = email;
         req.session.isAdmin = result.isAdmin;
         req.session.businessId = result.businessId;
+        req.session.storeOpen = result.storeOpen;
         req.session.name = "AuthCookie";
         req.session.employeeId = result.employeeID;
         req.session.employee = result.employee;
@@ -90,7 +91,22 @@ router.post("/clockIn", async (req, res) => {
   try {
     if (!req.session.isBusiness && req.session.user) {
       await validate.checkString(req.body.comment);
-      const result = await users.clockIn(req.session.employeeId, req.body.comment);
+      let comment = req.body.comment.trim();
+      if (!req.session.storeOpen) {
+        let shifts = await users.getShifts(req.session.employeeId);
+        res.render("home/home", {
+          title: "Home",
+          user: req.session.user,
+          isAdmin: req.session.isAdmin,
+          businessId: req.session.businessId,
+          employeeId: req.session.employeeId,
+          employee: req.session.employee,
+          shifts: shifts,
+          error: "Store is closed",
+        });
+        return;
+      }
+      const result = await users.clockIn(req.session.employeeId, comment);
 
       if (result.succeeded) {
         req.session.employee.currentStatus = "clockedIn";
@@ -129,7 +145,8 @@ router.post("/clockOut", async (req, res) => {
   try {
     if (!req.session.isBusiness && req.session.user) {
       await validate.checkString(req.body.comment);
-      const result = await users.clockOut(req.session.employeeId, req.body.comment);
+      let comment = req.body.comment.trim();
+      const result = await users.clockOut(req.session.employeeId, comment);
 
       if (result.succeeded) {
         req.session.employee.currentStatus = "clockedOut";
@@ -168,7 +185,8 @@ router.post("/clockOutLunch", async (req, res) => {
   try {
     if (!req.session.isBusiness && req.session.user) {
       await validate.checkString(req.body.comment);
-      const result = await users.clockOutLunch(req.session.employeeId, req.body.comment);
+      let comment = req.body.comment.trim();
+      const result = await users.clockOutLunch(req.session.employeeId, comment);
 
       if (result.succeeded) {
         req.session.employee.currentStatus = "meal";
@@ -209,7 +227,23 @@ router.post("/clockInLunch", async (req, res) => {
   try {
     if (!req.session.isBusiness && req.session.user) {
       await validate.checkString(req.body.comment);
-      const result = await users.clockInLunch(req.session.employeeId, req.body.comment);
+      let comment = req.body.comment.trim();
+      if (!req.session.storeOpen) {
+        let shifts = await users.getShifts(req.session.employeeId);
+        res.render("home/home", {
+          title: "Home",
+          user: req.session.user,
+          isAdmin: req.session.isAdmin,
+          businessId: req.session.businessId,
+          employeeId: req.session.employeeId,
+          employee: req.session.employee,
+          shifts: shifts,
+          error: "Store is closed",
+        });
+        return;
+      }
+
+      const result = await users.clockInLunch(req.session.employeeId, comment);
 
       if (result.succeeded) {
         req.session.employee.currentStatus = "clockedIn";

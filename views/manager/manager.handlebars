@@ -1,9 +1,23 @@
-<div class="alert alert-success alert-dismissible fade show" id="alert" hidden role="alert">
+<div class="alert alert-dismissible fade show" style="position: fixed;  margin-left: 35%;" id="alert" hidden role="alert">
     <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-
-<h1>Manager Dashboard</h1>
+{{!-- if error --}}
+{{#if error}}
+    <div class="alert alert-dismissible alert-danger fade show" style="position: fixed;  margin-left: 35%;" role="alert">
+      <p class="mb-0">{{error}}</p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{{/if}}
+<div class="row">
+    <div class="col-8">
+      <h1 class="col-8">Manager Dashboard</h1>
+    </div>
+  <div class="col-4">
+    {{!-- button to make store open, close --}}
+    <button class="btn btn-primary" style="    margin-top: 10px; right: 42px; position: absolute;" id="storeStatus">{{#if storeOpen}} Close Store {{else}} Open Store {{/if}}</button>
+  </div>
+</div>
 
 {{!-- create a search box to filter employees --}}
 <div class="form-group row">
@@ -299,10 +313,6 @@
   </div>
 </form>
 <p class="error" hidden id="errormessage"></p>
-{{!-- if error --}}
-{{#if error}}
-    <p class="error">{{error}}</p>
-{{/if}}
 
 <hr />
 
