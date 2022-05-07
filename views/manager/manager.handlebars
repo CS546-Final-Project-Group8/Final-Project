@@ -1,24 +1,3 @@
-{{#section 'head'}}
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load('current', {packages: ['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-
-        var data = google.visualization.arrayToDataTable({{{activeEmployeesData}}});
-
-        var options = {
-            title: 'Active Employees', width: 500, height: 300
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-        chart.draw(data, options);
-        }
-    </script>
-{{/section}}
-
 <div class="alert alert-dismissible fade show" style="position: fixed;  margin-left: 35%;" id="alert" hidden role="alert">
     <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -337,9 +316,10 @@
     </div>
   </div>
 
-  {{#if activeEmployeesData}}
-  <div id="piechart"></div>
-  {{/if}}
+  <div style="display:flex;text-align: center;justify-content: center;">
+    <div id="piechart" style="flex: 1;"></div>
+    <div id="line_chart" style="flex: 1;"></div>
+  </div>
 
   <h4 style="margin-top:20px">Time Off Requests</h4>
 <div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
@@ -390,8 +370,8 @@
               {{/if}}
           </button>
       </form>
-        {{#if pastCalculations}}
-        <button class="btn btn-outline-primary" id="estimateButton" onclick="estimatePayChecks()">Estimate Total Hours and Pay</button>
+        {{#if pastCalculations.[2]}}
+        <button class="btn btn-outline-primary" id="estimateButton">Estimate Total Hours and Pay</button>
         <div class="alert alert-primary alert-dismissible fade show" id="estimate" hidden role="alert" style="margin-top:25px">
             <p class="mb-0" id="estimateText"></p>
             <button type="button" class="btn-close" aria-label="Close" id="estimateAlertClose"></button>

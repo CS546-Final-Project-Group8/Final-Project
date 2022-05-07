@@ -1,3 +1,48 @@
+google.charts.load("current", { packages: ["corechart"] });
+google.charts.setOnLoadCallback(drawCharts);
+
+function drawActiveEmployeesChart() {
+  var data = $.ajax({
+    url: "/manager/getActiveEmployeesData",
+    type: "PUT",
+    async: false,
+  }).responseText;
+
+  var options = {
+    title: "Active Employees",
+    width: 500,
+    height: 300,
+  };
+
+  var chart = new google.visualization.PieChart(document.getElementById("piechart"));
+
+  chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
+}
+
+function drawHistoricalDataChart() {
+  var data = $.ajax({
+    url: "/manager/getHistoricalData",
+    type: "PUT",
+    async: false,
+  }).responseText;
+
+  var options = {
+    title: "Previous Total Wages",
+    width: 500,
+    height: 300,
+    legend: { position: "bottom" },
+  };
+
+  var chart = new google.visualization.LineChart(document.getElementById("line_chart"));
+
+  if (data != "") chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
+}
+
+function drawCharts() {
+  drawActiveEmployeesChart();
+  drawHistoricalDataChart();
+}
+
 $(".updateEmployee").click(function () {
   // send ajax request to promote employee
   let employeeId = $(this).attr("value");
@@ -278,7 +323,11 @@ $("#estimateButton").on("click", function () {
     url: "/manager/estimateWages",
     type: "PUT",
     success: function (data) {
-      $("#estimateText").text(data);
+      if (data !== "") {
+        $("#estimateText").text(data);
+      } else {
+        $("#estimateText").text("Estimate failed.");
+      }
       $("#estimate").attr("hidden", false);
     },
     error: function (err) {
