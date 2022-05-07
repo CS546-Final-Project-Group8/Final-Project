@@ -477,6 +477,116 @@ let getShifts = async (employeeId) => {
   return shifts;
 };
 
+let addTimeOffEntry = async (businessId, employeeId, employeeName, startDate, endDate) => {
+  await validate.checkID(businessId);
+  await validate.checkID(employeeId);
+  await validate.checkTimeOffDates(startDate, endDate);
+  const businessCollection = await businesses();
+  let newTimeOffRequest = {
+    objId: ObjectId().toString(),
+    employeeId: employeeId,
+    employeeName: employeeName,
+    timeOffStartDate: startDate,
+    timeOffEndDate: endDate,
+    requestAcknowledged: false,
+    requestAccepted: false,
+  };
+  const updatedInfo = await businessCollection.updateOne(
+    { "_id": ObjectId(businessId) },
+    { "$push": { "timeOff": newTimeOffRequest } }
+  )
+  if (updatedInfo.modifiedCount === 0) {
+    return false;
+  }
+  return true;
+};
+
+let getTimeOffEntries = async (businessId) => {
+  await validate.checkID(businessId);
+  businessId = businessId.trim();
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({
+    _id: ObjectId(businessId),
+  });
+  let allTimeEntries = business.timeOff;
+  if (!allTimeEntries) throw new Error ("Could not get time off entries");
+  let activeRequests = [];
+  for(let i = 0; i < allTimeEntries.length; i++) {
+    if(allTimeEntries[i].requestAcknowledged == false){
+      activeRequests.push(allTimeEntries[i]);
+    }
+  }
+  return activeRequests;
+}
+
+// Accepts a time off request manager portal
+let acceptTimeOffRequest = async (objId, businessId) => {
+  await validate.checkID(objId);
+  objId = objId.trim();
+  await validate.checkID(businessId);
+  businessId = businessId.trim();
+  const businessCollection = await businesses();
+
+  const updateInfo2 = await businessCollection.updateOne(
+    { _id: ObjectId(businessId), "timeOff.objId": objId}, 
+    { $set: {"timeOff.$.requestAcknowledged": true, "timeOff.$.requestAccepted": true } });
+  if (!updateInfo2.matchedCount && !updateInfo2.modifiedCount) throw "Update failed";
+
+  return { requestStatus: true };
+};
+
+// Decline a time off request manager portal
+let declineTimeOffRequest = async (objId, businessId) => {
+  await validate.checkID(objId);
+  objId = objId.trim();
+  await validate.checkID(businessId);
+  businessId = businessId.trim();
+  const businessCollection = await businesses();
+
+  const updateInfo2 = await businessCollection.updateOne(
+    { _id: ObjectId(businessId), "timeOff.objId": objId}, 
+    { $set: {"timeOff.$.requestAcknowledged": true, "timeOff.$.requestAccepted": false } });
+  if (!updateInfo2.matchedCount && !updateInfo2.modifiedCount) throw "Update failed";
+
+  return { requestStatus: true };
+};
+
+//Get user-specific time off requests
+let getUserTimeOffEntries = async (businessId, employeeId) => {
+  await validate.checkID(businessId);
+  businessId = businessId.trim();
+  await validate.checkID(employeeId);
+  employeeId = employeeId.trim();
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({
+    _id: ObjectId(businessId),
+  });
+  let allTimeEntries = business.timeOff;
+  if (!allTimeEntries) throw new Error ("Could not get time off entries");
+  let activeRequests = [];
+  for(let i = 0; i < allTimeEntries.length; i++) {
+    if(allTimeEntries[i].employeeId == employeeId){
+      activeRequests.push(allTimeEntries[i]);
+    }
+  }
+  return activeRequests;
+}
+
+// Delete a time off request
+let deleteTimeOffRequest = async (objId, businessId) => {
+  await validate.checkID(objId);
+  objId = objId.trim();
+  await validate.checkID(businessId);
+  businessId = businessId.trim();
+  const businessCollection = await businesses();
+
+  const deleteInfo = await businessCollection.updateOne(
+    { _id: ObjectId(businessId), "timeOff.objId": objId}, 
+    { $pull: { timeOff: {objId: objId} } });
+
+  return { requestStatus: true };
+};
+
 module.exports = {
   createEmployee,
   updateEmployee,
@@ -491,4 +601,10 @@ module.exports = {
   promoteEmployee,
   demoteEmployee,
   getShifts,
+  addTimeOffEntry,
+  getTimeOffEntries,
+  acceptTimeOffRequest,
+  declineTimeOffRequest,
+  getUserTimeOffEntries,
+  deleteTimeOffRequest,
 };

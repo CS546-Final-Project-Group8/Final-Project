@@ -42,6 +42,7 @@ let createBusiness = async (businessName, email, password, confirmPassword, addr
     phone: phone,
     about: about,
     isOpen: true,
+    timeOff: [],
   };
   //if email already exists in mongoDB database
   const businessData = await businessCollection.findOne({ email: email });

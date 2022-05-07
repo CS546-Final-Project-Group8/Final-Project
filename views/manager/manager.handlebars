@@ -1,88 +1,120 @@
 <div class="alert alert-success alert-dismissible fade show" id="alert" hidden role="alert">
-    <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
+  <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
 <h1>Manager Dashboard</h1>
 
-{{!-- create a search box to filter employees --}}
+{{! create a search box to filter employees }}
 <div class="form-group row">
   <div class="col-6">
-         <h2>Employee Management</h2>
-     </div>
-    <div class="col-6">
-        <input type="text" class="form-control" id="searchEmployee" placeholder="Search for an employee">
-        {{!-- show the matching results --}}
-        <div id="searchResults">
-          
-        </div>
+    <h2>Employee Management</h2>
+  </div>
+  <div class="col-6">
+    <input type="text" class="form-control" id="searchEmployee" placeholder="Search for an employee" />
+    {{! show the matching results }}
+    <div id="searchResults">
 
     </div>
+
+  </div>
 </div>
 
-{{!-- loop through allEmployees object --}}
+{{! loop through allEmployees object }}
 <table id="employeesTable" class="table table-striped table-hover">
-    <thead>
-        <tr id="employeesTableHeader">
-        <th>Name</th>
-        <th>Status</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Address</th>
-        <th>Gender Identity</th>
-        <th>Hourly Pay</th>
-        <th>Employment Status</th>
-        <th>Active</th>
-        <th>Started On</th>
-        <th>Role</th>
-        <th>Actions</th>
-        <th>Promote</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each allEmployees}}
-        <tr employee-id="{{_id}}">
-          <td class="employeeName">{{firstName}} {{lastName}}</td>
-          <td class="employeeStatus">{{currentStatus}}</td>
-          <td class="employeeEmail">{{email}}</td>
-          <td class="employeePhone">{{phone}}</td>
-          <td class="employeeAddress">{{address}}, {{city}} {{state}}, {{zip}}</td>
-          <td class="employeeGender">{{gender}}</td>
-          <td class="employeeHourlyPay">${{hourlyPay}}</td>
-          <td class="employeeEmployment">{{employmentStatus}}</td>
-          {{#if isActiveEmployee}}
-            <td class="employeeActive">Yes</td>
-          {{else}}
-            <td class="employeeActive">No</td>
-          {{/if}}
-          <td class="employeeStart">{{dateFormat startDate "M/D/YYYY"}}</td>
-          {{#if isManager}}
-            <td class="employeeManager">Manager</td>
-          {{else}}
-            <td class="employeeManager">Employee</td>
-          {{/if}}
-          <td>
-            <a href="#" class="editEmployee" employee-id="{{_id}}"><i style="margin-bottom: 10px;" class="fa-solid fa-pen"></i></a>
-            <a href="#" class="deleteEmployee" employee-id="{{_id}}"><i class="fa-solid fa-trash"></i></a>
-          </td>
-          <td>
-            {{#if isManager}}
-              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Demote as Employee</button>
-            {{else}}
-              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote as Manager</button>
-            {{/if}}
-          </td>
-        </tr>
+  <thead>
+    <tr id="employeesTableHeader">
+      <th>Name</th>
+      <th>Status</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th>Gender Identity</th>
+      <th>Hourly Pay</th>
+      <th>Employment Status</th>
+      <th>Active</th>
+      <th>Started On</th>
+      <th>Role</th>
+      <th>Actions</th>
+      <th>Promote</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each allEmployees}}
+      <tr employee-id="{{_id}}">
+        <td class="employeeName">{{firstName}} {{lastName}}</td>
+        <td class="employeeStatus">{{currentStatus}}</td>
+        <td class="employeeEmail">{{email}}</td>
+        <td class="employeePhone">{{phone}}</td>
+        <td class="employeeAddress">{{address}}, {{city}} {{state}}, {{zip}}</td>
+        <td class="employeeGender">{{gender}}</td>
+        <td class="employeeHourlyPay">${{hourlyPay}}</td>
+        <td class="employeeEmployment">{{employmentStatus}}</td>
+        {{#if isActiveEmployee}}
+          <td class="employeeActive">Yes</td>
         {{else}}
-        <tr>
-            <td colspan="100%">There are no employees.</td>
-        </tr>
-      {{/each}}
-    </tbody>
+          <td class="employeeActive">No</td>
+        {{/if}}
+        <td class="employeeStart">{{dateFormat startDate "M/D/YYYY"}}</td>
+        {{#if isManager}}
+          <td class="employeeManager">Manager</td>
+        {{else}}
+          <td class="employeeManager">Employee</td>
+        {{/if}}
+        <td>
+          <a href="#" class="editEmployee" employee-id="{{_id}}"><i style="margin-bottom: 10px;" class="fa-solid fa-pen"></i></a>
+          <a href="#" class="deleteEmployee" employee-id="{{_id}}"><i class="fa-solid fa-trash"></i></a>
+        </td>
+        <td>
+          {{#if isManager}}
+            <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;">Demote as Employee</button>
+          {{else}}
+            <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;">Promote as Manager</button>
+          {{/if}}
+        </td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="100%">There are no employees.</td>
+      </tr>
+    {{/each}}
+  </tbody>
 </table>
 <p hidden id="noEmployeeFound">No employees found</p>
 
-
+<h4>Time Off Requests</h4>
+<div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
+  <p class="mb-0" id="timeOffAlertText"></p>
+  <button type="button" class="btn-close" aria-label="Close" id="timeOffAlertClose"></button>
+</div>
+<table class="table table-striped table-hover" id="timeOffRequestTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each timeOffRequests}}
+      <tr>
+        <td>{{employeeName}}</td>
+        <td>{{dateFormat timeOffStartDate "M/D/YYYY"}}</td>
+        <td>{{dateFormat timeOffEndDate "M/D/YYYY"}}</td>
+        <td>
+          <button class="updateRequest btn btn-primary" id="timeOffReqAccept" value={{objId}} style="line-height: inherit; padding: revert;">Accept</button>
+          <button class="updateRequest btn btn-primary" id="timeOffReqDecline" value={{objId}} style="line-height: inherit; padding: revert;">Decline</button>
+        </td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="100%">There are no pending time off requests.</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<br />
 
 {{#if isBusiness}}
   <input type="bool" hidden id="isBusiness" value="{{isBusiness}}" />
@@ -295,11 +327,10 @@
   </div>
 </form>
 <p class="error" hidden id="errormessage"></p>
-{{!-- if error --}}
+{{! if error }}
 {{#if error}}
-    <p class="error">{{error}}</p>
+  <p class="error">{{error}}</p>
 {{/if}}
 
-
-<script src="../../public/js/managerPageValidation.js" ></script>
+<script src="../../public/js/managerPageValidation.js"></script>
 <script src="../../public/js/manager.js"></script>

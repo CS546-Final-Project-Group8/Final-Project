@@ -78,3 +78,71 @@ td {
 .modal-title {
   font-weight: bold;
 }
+
+#timeOffModal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.2); 
+  text-align: center;
+}
+
+#timeOffModalContent {
+  position: relative;
+  background-color: white;
+  color: black;
+  margin: 12% auto;
+  padding: 0px 50px 0px 50px;
+  border: 1px solid black;
+  border-radius: 10px;
+  width: 35%;
+}
+
+#timeOffModalContent input {
+  margin: auto;
+  text-align: center;
+  width: 150px;
+}
+
+#closeTimeOffModal {
+  color: black;
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#closeTimeOffModal:hover,
+#closeTimeOffModal:focus {
+  color: grey;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#userTimeOffReqTable {
+  width: 400px;
+}
+
+#timeOffUserEntries {
+  width: 400px;
+  margin-top: 20px;
+}
+
+#reqTimeOffBttn {
+  float: right;
+  display: inline;
+  width: 49%;
+  margin-bottom: 10px;
+}
+
+.floatLeftTimeOff {
+  float: left;
+  display: inline;
+  width: 49%
+}
