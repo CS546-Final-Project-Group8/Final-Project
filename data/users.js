@@ -91,6 +91,7 @@ let createEmployee = async (
     isManager: isManager,
     currentStatus: "clockedOut",
     timeEntries: [],
+    timeEntiresOld: [],
   };
 
   //if businessId and email are unique, create employee
@@ -156,6 +157,15 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
     _id: ObjectId(employeeId),
   });
   if (!employee) throw "Couldn't update an employee that does not exist";
+
+  if (isActiveEmployee === false && employee.isManager === true) {
+    await demoteEmployee(employeeId);
+  }
+
+  if (isActiveEmployee === false && employee.currentStatus !== "clockedOut") {
+    await clockOut(employeeId, "Employee was deactivated");
+  }
+
   const updatedEmployee = await employeesCollection.findOneAndUpdate(
     {
       businessId: businessId,
@@ -181,7 +191,8 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
     { returnDocument: "after" }
   );
   if (!updatedEmployee) throw "Couldn't update employee";
-  console.log(updatedEmployee.value);
+  updatedEmployee.value.hashedPassword = null;
+  updatedEmployee.value._id = updatedEmployee.value._id.toString();
   return updatedEmployee.value;
 };
 
@@ -221,6 +232,7 @@ let checkEmployee = async (businessEmail, email, password) => {
     authenticated: true,
     employeeID: employee._id,
     businessId: employee.businessId,
+    storeOpen: business.storeOpen,
     isAdmin: employee.isManager,
     employee: employee,
   };
@@ -311,7 +323,7 @@ let clockOut = async (employeeId, comment) => {
   if (!employee) throw "Employee not found";
   if (employee.isActiveEmployee === false) throw "Employee is not active";
 
-  if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "lunch")) {
+  if (!(employee.currentStatus === "clockedIn" || employee.currentStatus === "meal")) {
     throw "Employee must be clocked in / on lunch break to clock out!";
   }
   const userCollection = await employees();
@@ -368,8 +380,16 @@ let clockOutLunch = async (employeeId, comment) => {
   if (!employee) throw "Employee not found";
   if (employee.isActiveEmployee === false) throw "Employee is not active";
 
+  let timeEntries = employee.timeEntries;
+
+  timeEntries.sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1));
+
+  if (timeEntries[0].status == "lunchIn") {
+    throw "You have already clocked lunch for this shift.";
+  }
+
   if (employee.currentStatus !== "clockedIn") {
-    throw "Employee must be clocked in to clock out for lunch!";
+    throw "Critical error: You must be clocked in to clock out for lunch!";
   }
   const userCollection = await employees();
   let userUpdateInfo = {
@@ -396,6 +416,7 @@ let promoteEmployee = async (employeeId) => {
   if (!employee) throw "Employee not found";
 
   if (employee.isManager) throw "Employee is already a manager";
+  if (employee.isActiveEmployee === false) throw "Employee is not active";
 
   const businessCollection = await businesses();
   const business = await businessCollection.findOne({ _id: ObjectId(employee.businessId) });
@@ -449,32 +470,52 @@ let getShifts = async (employeeId) => {
   lastClockIn = null;
   lastLunch = null;
   let lunchhours = 0;
+  shiftComments = [];
   timeEntries.forEach((entry) => {
     if (lastClockIn == null) lastClockIn = entry.dateTime;
     if (entry.status == "clockIn") {
       lastClockIn = entry.dateTime;
       lunchhours = 0;
+      if (entry.comment.trim() === "") {
+        shiftComments = [];
+      } else {
+        shiftComments = [entry.comment.trim()];
+      }
     } else if (entry.status == "clockOut") {
       let current = new Date(entry.dateTime);
       let prev = new Date(lastClockIn);
       let shift = {};
+      if (entry.comment.trim() !== "") {
+        shiftComments.push(entry.comment.trim());
+      }
+      if (shiftComments !== null || shiftComments !== "" || shiftComments.length !== 0) shift["comments"] = shiftComments;
       shift["date"] = current.toLocaleString().split(",")[0];
       shift["hours"] = (current - prev) / 1000 / 60 / 60 - lunchhours;
       shift["lunchHours"] = lunchhours;
-      shift["hoursString"] = Math.round(shift["hours"] * 1000) / 1000 + " hours";
-      shift["lunchHoursString"] = Math.round(shift["lunchHours"] * 1000) / 1000 + " hours";
+
+      shiftMinutes = Math.floor(((shift["hours"] * 60) % 60) * 100) / 100;
+      shiftHours = Math.floor(shift["hours"]);
+
+      shift["hoursString"] = String(shiftHours).padStart(2, "0") + "h " + String(shiftMinutes.toFixed(2)).padStart(2, "0") + "m";
+      shift["lunchHoursString"] = String(Math.floor(lunchhours)).padStart(2, "0") + "h " + String((lunchhours * 60).toFixed(2)).padStart(2, "0") + "m";
       shifts.push(shift);
     } else if (entry.status == "lunchIn") {
       let current = new Date(entry.dateTime);
       let prev = new Date(lastLunch.dateTime);
       lunchhours = (current - prev) / 1000 / 60 / 60;
       lastLunch = null;
+      if (entry.comment.trim() !== "") {
+        shiftComments.push(entry.comment.trim());
+      }
     } else if (entry.status == "lunchOut") {
       lastLunch = entry;
+      if (entry.comment.trim() !== "") {
+        shiftComments.push(entry.comment.trim());
+      }
     }
   });
 
-  return shifts;
+  return shifts.reverse();
 };
 
 let addTimeOffEntry = async (businessId, employeeId, employeeName, startDate, endDate) => {

@@ -9,6 +9,7 @@ router.get("/", async (req, res) => {
       let shifts = await users.getShifts(req.session.employeeId);
       let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId)
       res.render("home/home", {
+        title: "Home",
         user: req.session.user,
         isAdmin: req.session.isAdmin,
         businessId: req.session.businessId,

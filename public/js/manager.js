@@ -3,7 +3,7 @@ $(".updateEmployee").click(function () {
   let employeeId = $(this).attr("value");
   let element = $("[value=" + employeeId + "]");
 
-  if (element.text() === "Promote as Manager") {
+  if (element.text() === "Promote to Manager") {
     $.ajax({
       url: "/manager/promoteEmployee",
       type: "PUT",
@@ -14,25 +14,33 @@ $(".updateEmployee").click(function () {
         if (data === "Employee promoted") {
           // get element with value of employeeId
           element = $("[value=" + employeeId + "]");
-          element.text("Demote as Employee");
-          let trQuery = `tr[employee-id=${employeeId}] `;
+          element.text("Demote to Employee");
+          let trQuery = `tr[data-employee-id=${employeeId}] `;
           $(trQuery + " .employeeManager").text("Manager");
           // show alert that employee has been promoted for 3 seconds
+          $("#alert").removeClass("alert-danger");
+          $("#alert").addClass("alert-success");
           $("#alertText").text("Successfully promoted employee to manager.");
           $("#alert").attr("hidden", false);
           setTimeout(function () {
             $("#alert").attr("hidden", true);
-          }, 2000);
+          }, 3000);
         } else {
+          $("#alert").removeClass("alert-success");
+          $("#alert").addClass("alert-danger");
           $("#alertText").text("Internal Server Error");
           $("#alert").attr("hidden", false);
           setTimeout(function () {
             $("#alert").attr("hidden", true);
-          }, 2000);
+          }, 3000);
         }
       },
+      error: function (err) {
+        let data = JSON.parse(err.responseText);
+        alert(data.error);
+      },
     });
-  } else if (element.text() === "Demote as Employee") {
+  } else if (element.text() === "Demote to Employee") {
     $.ajax({
       url: "/manager/demoteEmployee",
       type: "PUT",
@@ -42,23 +50,31 @@ $(".updateEmployee").click(function () {
       success: function (data) {
         if (data === "Employee demoted") {
           element = $("[value=" + employeeId + "]");
-          element.text("Promote as Manager");
-          let trQuery = `tr[employee-id=${employeeId}] `;
+          element.text("Promote to Manager");
+          let trQuery = `tr[data-employee-id=${employeeId}] `;
           $(trQuery + " .employeeManager").text("Employee");
+          $("#alert").removeClass("alert-danger");
+          $("#alert").addClass("alert-success");
           $("#alertText").text("Successfully demoted manager to employee.");
           $("#alert").attr("hidden", false);
           setTimeout(function () {
             $("#alert").attr("hidden", true);
-          }, 2000);
+          }, 3000);
         } else if (data === "redirect to home") {
           window.location.href = "/home";
         } else {
+          $("#alert").removeClass("alert-success");
+          $("#alert").addClass("alert-danger");
           $("#alertText").text("Internal Server Error, please try again.");
           $("#alert").attr("hidden", false);
           setTimeout(function () {
             $("#alert").attr("hidden", true);
-          }, 2000);
+          }, 3000);
         }
+      },
+      error: function (err) {
+        let data = JSON.parse(err.responseText);
+        alert(data.error);
       },
     });
   }
@@ -73,6 +89,7 @@ $("#newEmployee").on("click", async () => {
   $("#backToHome").attr("hidden", true);
   // hide search bar
   $("#searchEmployee").attr("hidden", true);
+  $("#searchEmployeeLabel").attr("hidden", true);
   // show the form
   $("#newEmployeeForm").removeAttr("hidden");
 });
@@ -93,6 +110,7 @@ $("#cancelEmployee").on("click", async () => {
   }
   // show search bar
   $("#searchEmployee").removeAttr("hidden");
+  $("#searchEmployeeLabel").removeAttr("hidden");
 });
 
 $("#backToHome").on("click", async () => {
@@ -130,6 +148,51 @@ $("#searchEmployee").on("keyup", function (event) {
       $("#noEmployeeFound").attr("hidden", true);
     }
   }
+});
+
+// onclick of id storeStatus, do ajax request to toggle store status
+$("#storeStatus").on("click", function () {
+  // send ajax request to toggle store status
+  $.ajax({
+    url: "/manager/toggleStoreStatus",
+    type: "PUT",
+    success: function (data) {
+      if (data === "Store Opened") {
+        // change the text of the button
+        $("#storeStatus").text("Close Store");
+        // show alert that store has been opened
+        $("#alert").removeClass("alert-danger");
+        $("#alert").addClass("alert-success");
+        $("#alertText").text("Successfully opened store.");
+        $("#alert").attr("hidden", false);
+        setTimeout(function () {
+          $("#alert").attr("hidden", true);
+        }, 3000);
+      } else if (data === "Store Closed") {
+        $("#employeesTable tr .employeeStatus").text("clockedOut");
+        $("#storeStatus").text("Open Store");
+        $("#alert").removeClass("alert-danger");
+        $("#alert").addClass("alert-success");
+        $("#alertText").text("Successfully closed store and clocked out all employees.");
+        $("#alert").attr("hidden", false);
+        setTimeout(function () {
+          $("#alert").attr("hidden", true);
+        }, 3000);
+      } else {
+        $("#alert").removeClass("alert-success");
+        $("#alert").addClass("alert-danger");
+        $("#alertText").text("Internal Server Error");
+        $("#alert").attr("hidden", false);
+        setTimeout(function () {
+          $("#alert").attr("hidden", true);
+        }, 3000);
+      }
+    },
+    error: function (err) {
+      let data = JSON.parse(err.responseText);
+      alert(data.error);
+    },
+  });
 });
 
 // // on keyup of search bar, give recommendation to the user

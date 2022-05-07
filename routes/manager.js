@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const validate = require("../validate/index.js");
 const users = require("../data/users.js");
+const businesses = require("../data/businesses.js");
 
 router.get("/", async (req, res) => {
   if (req.session.isAdmin) {
@@ -9,6 +10,8 @@ router.get("/", async (req, res) => {
       validate.checkID(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
       let allTimeOffRequests = await users.getTimeOffEntries(req.session.businessId);
+      let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
+
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
       });
@@ -16,16 +19,64 @@ router.get("/", async (req, res) => {
         user: req.session.user,
         isAdmin: req.session.isAdmin,
         isBusiness: req.session.isBusiness,
+        storeOpen: req.session.storeOpen,
         title: "Manager Dashboard",
         allEmployees: allEmployees,
         employeeNames: employeeNames,
         timeOffRequests: allTimeOffRequests,
+        pastCalculations: pastCalculations,
       });
     } catch (e) {
       res.status(400).render("manager/manager", {
         user: req.session.user,
         isAdmin: req.session.isAdmin,
         isBusiness: req.session.isBusiness,
+        storeOpen: req.session.storeOpen,
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
+router.post("/", async (req, res) => {
+  if (req.session.isAdmin && req.body.calculation !== null) {
+    try {
+      validate.checkID(req.session.businessId);
+      let allEmployees = await users.getAllEmployees(req.session.businessId);
+      let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
+
+      const employeeNames = allEmployees.map((employee) => {
+        return employee.firstName + " " + employee.lastName;
+      });
+
+      calculationDate = req.body.calculationDate;
+      let payChecks = [];
+      pastCalculations.forEach((calculation) => {
+        if (calculationDate === calculation[0].date) {
+          payChecks = calculation;
+        }
+      });
+
+      res.render("manager/manager", {
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        isBusiness: req.session.isBusiness,
+        storeOpen: req.session.storeOpen,
+        title: "Manager Dashboard",
+        allEmployees: allEmployees,
+        employeeNames: employeeNames,
+        pastCalculations: pastCalculations,
+        payChecks: payChecks,
+      });
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        isBusiness: req.session.isBusiness,
+        storeOpen: req.session.storeOpen,
         title: "Manager Dashboard",
         error: e,
       });
@@ -155,8 +206,7 @@ router.put("/promoteEmployee", async (req, res) => {
         res.status(500).send("Internal Server Error");
       }
     } catch (e) {
-      console.log(e);
-      res.status(400).send(e);
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
@@ -181,8 +231,7 @@ router.put("/demoteEmployee", async (req, res) => {
         res.redirect("/home");
       }
     } catch (e) {
-      console.log(e);
-      res.status(400).send(e);
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
@@ -255,6 +304,15 @@ router.patch("/employee/:employee_id", async (req, res) => {
         hourlyPay,
         startDate
       );
+
+      if (updateResult.isActiveEmployee === false && updateResult.currentStatus === "clockedOut") {
+        req.session.employee.currentStatus = "clockedOut";
+      }
+      if (updateResult.isActiveEmployee === false && req.session.employeeId === req.params.employee_id) {
+        req.session.isAdmin = false;
+        req.session.isEmployee = true;
+        updateResult.reload = true;
+      }
       if (updateResult) res.status(200).json(updateResult);
       else res.status(500).json({ error: "Internal Server Error" });
     } catch (e) {
@@ -329,6 +387,82 @@ router.put("/declineTimeOffRequest", async (req, res) => {
   } catch (e) {
     console.log(e);
     res.status(400).send(e);
+  }
+});
+
+router.post("/calculate", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      let businessId = req.session.businessId;
+      await validate.checkID(businessId);
+
+      let payChecks = await businesses.calculatePay(businessId);
+
+      let pastCalculations = await businesses.getPastPayPeriods(businessId);
+
+      let allEmployees = await users.getAllEmployees(req.session.businessId);
+
+      const employeeNames = allEmployees.map((employee) => {
+        return employee.firstName + " " + employee.lastName;
+      });
+
+      if (payChecks.length > 0) {
+        res.render("manager/manager", {
+          user: req.session.user,
+          isAdmin: req.session.isAdmin,
+          isBusiness: req.session.isBusiness,
+          title: "Manager Dashboard",
+          allEmployees: allEmployees,
+          employeeNames: employeeNames,
+          payChecks: payChecks,
+          pastCalculations: pastCalculations,
+        });
+      } else {
+        res.render("manager/manager", {
+          user: req.session.user,
+          isAdmin: req.session.isAdmin,
+          isBusiness: req.session.isBusiness,
+          title: "Manager Dashboard",
+          allEmployees: allEmployees,
+          employeeNames: employeeNames,
+          payChecks: payChecks,
+          pastCalculations: pastCalculations,
+          error: "No shifts worked since last calculation.",
+        });
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
+router.put("/toggleStoreStatus", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      await validate.checkID(req.session.businessId);
+      let businessId = req.session.businessId.toLowerCase().trim();
+      const toggleResult = await businesses.toggleStoreStatus(businessId);
+      if (toggleResult.storeOpen) {
+        req.session.storeOpen = true;
+        res.status(200).send("Store Opened");
+      } else {
+        req.session.storeOpen = false;
+        req.session.employee.currentStatus = "clockedOut";
+        res.status(200).send("Store Closed");
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
   }
 });
 

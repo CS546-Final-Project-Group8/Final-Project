@@ -1,25 +1,27 @@
-<h1>Employee Dashboard</h1>
+<div class="row">
+    <div class="col-md-4">
+        <h1>Employee Dashboard</h1>
 
-<p>Hello, {{employee.firstName}} {{employee.lastName}}!</p>
+        <p style="font-size:20px">Hello, {{employee.firstName}} {{employee.lastName}}!</p>
 
-<button class="btn btn-outline-primary" id="showEmployeeInfo">Show Account Information</button>
+        <button class="btn btn-outline-primary" id="showEmployeeInfo">Show Account Information</button>
 
-<div hidden id="employeeInfo">
-    <button class="btn btn-outline-primary" id="hideEmployeeInfo">Hide Account Information</button>
-    <ul>
-        <li>Name: {{employee.firstName}} {{employee.lastName}}</li>
-        <li>Gender: {{employee.gender}}</li>
-        <li>Address: {{employee.address}}, {{employee.city}}, {{employee.state}}</li>
-        <li>Phone: {{employee.phone}}</li>
-    </ul>
-</div>
+        <div hidden id="employeeInfo">
+            <button class="btn btn-outline-primary" id="hideEmployeeInfo">Hide Account Information</button>
+            <ul>
+                <li>Name: {{employee.firstName}} {{employee.lastName}}</li>
+                <li>Gender: {{employee.gender}}</li>
+                <li>Address: {{employee.address}}, {{employee.city}}, {{employee.state}}</li>
+                <li>Phone: {{employee.phone}}</li>
+            </ul>
+        </div>
 
-{{#if isAdmin}}
-<p class="mt-5">You are an administrator:</p>
-<form action="/manager" method="GET">
-    <button type="submit" class="btn btn-outline-primary" id="ManagerDashboard">Go to Manager Dashboard</button>
-</form>
-{{/if}}
+        {{#if isAdmin}}
+        <p class="mt-5">You are an administrator:</p>
+        <form action="/manager" method="GET">
+            <button type="submit" class="btn btn-outline-primary" id="ManagerDashboard">Go to Manager Dashboard</button>
+        </form>
+        {{/if}}
 
 {{#unless isAdmin}}
 <div id="timeOffModal">
@@ -86,81 +88,86 @@
 </div>
 {{/unless}}
 
-<div id="timeClock">
-    <p id="time"></p>
-    {{#if_eq employee.currentStatus "clockedOut"}}
-    <p>Current status: <span style="font-weight: bold;">Clocked out</span></p>
-    <form action="/clockIn" style="margin: 30px;" method="POST">
-        <div class="row">
-            <div>
-                <label class="form-label" for="comment">Comment</label>
-                <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
-            </div>
-            <span id="buttons">
-                <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" type="submit">Clock in</button>
-            </span>
-        </div>
-    </form>
-    {{/if_eq}}
-    {{#if_eq employee.currentStatus "clockedIn"}}
-    <p>Current status: <span style="font-weight: bold;">Clocked in</span></p>
-    <form style="margin: 30px;" method="POST">
-        <div class="row">
-            <div>
-                <label class="form-label" for="comment">Comment</label>
-                <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
-            </div>
-            <span id="buttons">
-                <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockOut" type="submit">Clock out</button>
-                <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockOutLunch" type="submit">Lunch out</button>
-            </span>
-        </div>
-    </form>
-    {{/if_eq}}
-    {{#if_eq employee.currentStatus "meal"}}
-    <p>Current status: <span style="font-weight: bold;">Meal Break</span></p>
-    <form style="margin: 30px;" method="POST">
-        <div class="row">
-            <div>
-                <label class="form-label" for="comment">Comment</label>
-                <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
-            </div>
-            <span id="buttons">
-                <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockInLunch" type="submit">Lunch in</button>
-            </span>
-        </div>
-    </form>
-    {{/if_eq}}
+        <div class="mt-4" id="timeClock">
+            <p id="time"></p>
+            {{#if_eq employee.currentStatus "clockedOut"}}
+            <p>Current status: <span style="font-weight: bold;">Clocked out</span></p>
+            <form action="/clockIn" style="margin: 30px;" method="POST">
+                <div class="row">
+                    <div>
+                        <label class="form-label" for="comment">Comment</label>
+                        <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
+                    </div>
+                    <span id="buttons">
+                        <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" type="submit">Clock in</button>
+                    </span>
+                </div>
+            </form>
+            {{/if_eq}}
+            {{#if_eq employee.currentStatus "clockedIn"}}
+            <p>Current status: <span style="font-weight: bold;">Clocked in</span></p>
+            <form style="margin: 30px;" method="POST">
+                <div class="row">
+                    <div>
+                        <label class="form-label" for="comment">Comment</label>
+                        <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
+                    </div>
+                    <span id="buttons">
+                        <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockOut" type="submit">Clock out</button>
+                        <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockOutLunch" type="submit">Lunch out</button>
+                    </span>
+                </div>
+            </form>
+            {{/if_eq}}
+            {{#if_eq employee.currentStatus "meal"}}
+            <p>Current status: <span style="font-weight: bold;">Meal Break</span></p>
+            <form style="margin: 30px;" method="POST">
+                <div class="row">
+                    <div>
+                        <label class="form-label" for="comment">Comment</label>
+                        <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
+                    </div>
+                    <span id="buttons">
+                        <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockInLunch" type="submit">Lunch in</button>
+                    </span>
+                </div>
+            </form>
+            {{/if_eq}}
 
-    {{#if error}}
-        <p class="error">{{error}}</p>
-    {{/if}}
+            {{#if error}}
+                <p class="error">{{error}}</p>
+            {{/if}}
+        </div>
+    </div>
+    <div class="col-md-8" style="margin-top:50px">
+        <h2>Previous Shifts</h2>
+
+        <table id="shiftsTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Hours Worked</th>
+                    <th>Lunch Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each shifts}}
+                <tr>
+                    <td>{{@index}}</td>
+                    <td>{{date}}</td>
+                    <td>{{hoursString}}</td>
+                    <td>{{lunchHoursString}}</td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="4">There are no shifts since last payroll calculation.</td>
+                </tr>
+                {{/each}}
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<h2>Previous Shifts</h2>
-
-<table id="shiftsTable" class="table table-striped">
-    <thead>
-        <tr>
-        <th>Date</th>
-        <th>Hours Worked</th>
-        <th>Lunch Hours</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each shifts}}
-        <tr>
-            <td>{{date}}</td>
-            <td>{{hoursString}}</td>
-            <td>{{lunchHoursString}}</td>
-        </tr>
-        {{else}}
-        <tr>
-            <td colspan="100%">There are no shifts since last payroll calculation.</td>
-        </tr>
-        {{/each}}
-        </tr>
-    </tbody>
-</table>
 
 <script src="../../public/js/home.js" ></script>

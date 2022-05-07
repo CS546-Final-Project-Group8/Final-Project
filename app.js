@@ -8,7 +8,7 @@ app.use(
     secret: "4kAQJRzpPSJ27pttoqejyh8RsjfMFEJXeGqBCL5p4ow4HkszhbXjux8kWWr9BYpC",
     saveUninitialized: true,
     resave: false,
-    cookie: { maxAge: 600000 },
+    cookie: { maxAge: 6000000 },
   })
 );
 
@@ -37,6 +37,10 @@ hbs.handlebars.registerHelper("if_eq", function (a, b, opts) {
   } else {
     return opts.inverse(this);
   }
+});
+
+hbs.handlebars.registerHelper("json", function (context) {
+  return JSON.stringify(context);
 });
 
 configRoutes(app);

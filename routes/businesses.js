@@ -44,18 +44,7 @@ router.post("/signup", async (req, res) => {
       let phoneNumber = req.body.phoneNumber.trim();
       await validate.checkString(req.body.about);
       let about = req.body.about.trim();
-      const result = await businesses.createBusiness(
-        businessName,
-        email,
-        password,
-        confirmPassword,
-        address,
-        city,
-        state,
-        zip,
-        phoneNumber,
-        about
-      );
+      const result = await businesses.createBusiness(businessName, email, password, confirmPassword, address, city, state, zip, phoneNumber, about);
       if (result.businessInserted) {
         req.session.user = email;
         req.session.businessId = result.businessID;
@@ -130,6 +119,7 @@ router.post("/login", async (req, res) => {
         req.session.isAdmin = true;
         req.session.isBusiness = true;
         req.session.businessId = result.businessID;
+        req.session.storeOpen = result.storeStatus;
         req.session.name = "AuthCookie";
         res.redirect("/home");
       } else {

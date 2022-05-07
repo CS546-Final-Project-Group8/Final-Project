@@ -1,84 +1,102 @@
-<div class="alert alert-success alert-dismissible fade show" id="alert" hidden role="alert">
-  <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
+<div class="alert alert-dismissible fade show" style="position: fixed;  margin-left: 35%;" id="alert" hidden role="alert">
+    <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-
-<h1>Manager Dashboard</h1>
+{{!-- if error --}}
+{{#if error}}
+    <div class="alert alert-dismissible alert-danger fade show" style="position: fixed;  margin-left: 35%;" role="alert">
+      <p class="mb-0">{{error}}</p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{{/if}}
+<div class="row">
+    <div class="col-8">
+      <h1 class="col-8">Manager Dashboard</h1>
+    </div>
+  <div class="col-4">
+    {{!-- button to make store open, close --}}
+    <button class="btn btn-primary" style="    margin-top: 10px; right: 42px; position: absolute;" id="storeStatus">{{#if storeOpen}} Close Store {{else}} Open Store {{/if}}</button>
+  </div>
+</div>
 
 {{! create a search box to filter employees }}
 <div class="form-group row">
   <div class="col-6">
-    <h2>Employee Management</h2>
-  </div>
-  <div class="col-6">
-    <input type="text" class="form-control" id="searchEmployee" placeholder="Search for an employee" />
-    {{! show the matching results }}
-    <div id="searchResults">
+         <h2 style="margin-top:20px">Employee Management</h2>
+     </div>
+    <div class="col-6">
+      <div style="display: flex;margin-top:20px">
+        <label for="searchEmployee" id="searchEmployeeLabel" class="col-form-label" style="margin-right: 5px;">Search</label>
+        <input type="text" class="form-control" id="searchEmployee" placeholder="Search for an employee">
+        {{!-- show the matching results --}}
+        <div id="searchResults">
+          
+        </div>
+      </div>
+        
 
     </div>
-
-  </div>
 </div>
 
 {{! loop through allEmployees object }}
 <table id="employeesTable" class="table table-striped table-hover">
-  <thead>
-    <tr id="employeesTableHeader">
-      <th>Name</th>
-      <th>Status</th>
-      <th>Email</th>
-      <th>Phone</th>
-      <th>Address</th>
-      <th>Gender Identity</th>
-      <th>Hourly Pay</th>
-      <th>Employment Status</th>
-      <th>Active</th>
-      <th>Started On</th>
-      <th>Role</th>
-      <th>Actions</th>
-      <th>Promote</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each allEmployees}}
-      <tr employee-id="{{_id}}">
-        <td class="employeeName">{{firstName}} {{lastName}}</td>
-        <td class="employeeStatus">{{currentStatus}}</td>
-        <td class="employeeEmail">{{email}}</td>
-        <td class="employeePhone">{{phone}}</td>
-        <td class="employeeAddress">{{address}}, {{city}} {{state}}, {{zip}}</td>
-        <td class="employeeGender">{{gender}}</td>
-        <td class="employeeHourlyPay">${{hourlyPay}}</td>
-        <td class="employeeEmployment">{{employmentStatus}}</td>
-        {{#if isActiveEmployee}}
-          <td class="employeeActive">Yes</td>
-        {{else}}
-          <td class="employeeActive">No</td>
-        {{/if}}
-        <td class="employeeStart">{{dateFormat startDate "M/D/YYYY"}}</td>
-        {{#if isManager}}
-          <td class="employeeManager">Manager</td>
-        {{else}}
-          <td class="employeeManager">Employee</td>
-        {{/if}}
-        <td>
-          <a href="#" class="editEmployee" employee-id="{{_id}}"><i style="margin-bottom: 10px;" class="fa-solid fa-pen"></i></a>
-          <a href="#" class="deleteEmployee" employee-id="{{_id}}"><i class="fa-solid fa-trash"></i></a>
-        </td>
-        <td>
-          {{#if isManager}}
-            <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;">Demote as Employee</button>
+    <thead>
+        <tr id="employeesTableHeader">
+        <th>Name</th>
+        <th>Status</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Gender Identity</th>
+        <th>Hourly Pay</th>
+        <th>Employment Status</th>
+        <th>Active</th>
+        <th>Started On</th>
+        <th>Role</th>
+        <th>Actions</th>
+        <th>Promote</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each allEmployees}}
+        <tr data-employee-id="{{_id}}">
+          <td class="employeeName">{{firstName}} {{lastName}}</td>
+          <td class="employeeStatus">{{currentStatus}}</td>
+          <td class="employeeEmail">{{email}}</td>
+          <td class="employeePhone">{{phone}}</td>
+          <td class="employeeAddress">{{address}}, {{city}} {{state}}, {{zip}}</td>
+          <td class="employeeGender">{{gender}}</td>
+          <td class="employeeHourlyPay">${{hourlyPay}}</td>
+          <td class="employeeEmployment">{{employmentStatus}}</td>
+          {{#if isActiveEmployee}}
+            <td class="employeeActive">Yes</td>
           {{else}}
-            <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;">Promote as Manager</button>
+            <td class="employeeActive">No</td>
           {{/if}}
-        </td>
-      </tr>
-    {{else}}
-      <tr>
-        <td colspan="100%">There are no employees.</td>
-      </tr>
-    {{/each}}
-  </tbody>
+          <td class="employeeStart">{{dateFormat startDate "MM/D/YYYY"}}</td>
+          {{#if isManager}}
+            <td class="employeeManager">Manager</td>
+          {{else}}
+            <td class="employeeManager">Employee</td>
+          {{/if}}
+          <td>
+            <i data-employee-id="{{_id}}" class="editEmployee bi bi-pencil-square" style="cursor:pointer"></i>
+            <i data-employee-id="{{_id}}" class="deleteEmployee bi bi-trash-fill" style="cursor:pointer"></i>
+          </td>
+          <td>
+            {{#if isManager}}
+              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Demote to Employee</button>
+            {{else}}
+              <button class="updateEmployee btn btn-primary" value={{_id}} style="line-height: inherit; padding: revert;" >Promote to Manager</button>
+            {{/if}}
+          </td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="13">There are no employees.</td>
+        </tr>
+      {{/each}}
+    </tbody>
 </table>
 <p hidden id="noEmployeeFound">No employees found</p>
 
@@ -126,29 +144,29 @@
 <button class="btn btn-outline-primary" id="newEmployee">Create New Employee</button>
 
 {{! form to edit an employee }}
-<div id="editEmployeeModal" class="modal" display="none">
+<div id="editEmployeeModal" class="modal" >
   <div class="modal-content">
     <div class="modal-header">
-      <h4 class="modal-title">Edit Employee</h4>
+      <h3 class="modal-title">Edit Employee</h4>
     </div>
     <div class="modal-body">
       <form id="editEmployeeForm">
         <div class="row">
           <div class="col-12 mb-3">
-            <label for="email" class="form-label">Email</label>
+            <label for="editEmail" class="form-label">Email</label>
             <input required type="email" class="form-control" id="editEmail" name="email" placeholder="Email" />
           </div>
           <div class="col-md-6 mb-3">
-            <label for="firstName" class="form-label">First Name</label>
+            <label for="editFirstName" class="form-label">First Name</label>
             <input required type="text" class="form-control" id="editFirstName" name="firstName" placeholder="First Name" />
           </div>
           <div class="col-md-6 mb-3">
-            <label for="lastName" class="form-label">Last Name</label>
+            <label for="editLastName" class="form-label">Last Name</label>
             <input required type="text" class="form-control" id="editLastName" name="lastName" placeholder="Last Name" />
           </div>
           <div class="col-md-6 mb-3">
-            <label for="gender" class="form-label">Gender Identity</label>
-            <select required class="form-select" aria-label="Default select example" name="gender" id="editGender">
+            <label for="editGender" class="form-label">Gender Identity</label>
+            <select class="form-select" aria-label="Default select example" name="gender" id="editGender">
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Transgender">Transgender</option>
@@ -158,28 +176,28 @@
             </select>
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="address">Address</label>
+            <label class="form-label" for="editAddress">Address</label>
             <input required type="text" class="form-control" id="editAddress" name="address" placeholder="Address" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="city">City</label>
+            <label class="form-label" for="editCity">City</label>
             <input required type="text" class="form-control" id="editCity" name="city" placeholder="City" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="state">State</label>
+            <label class="form-label" for="editState">State</label>
             <input required type="text" class="form-control" id="editState" name="state" placeholder="State" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="zip">Zip</label>
+            <label class="form-label" for="editZip">Zip</label>
             <input required type="text" class="form-control" id="editZip" name="zip" placeholder="Zip" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="phoneNumber">Phone Number</label>
+            <label class="form-label" for="editPhoneNumber">Phone Number</label>
             <input required type="text" class="form-control" id="editPhoneNumber" name="phoneNumber" placeholder="Phone Number" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="employmentStatus">Employment Status</label>
-            <select required class="form-select" aria-label="Default select example" name="employmentStatus" id="editEmploymentStatus">
+            <label class="form-label" for="editEmploymentStatus">Employment Status</label>
+            <select class="form-select" aria-label="Default select example" name="employmentStatus" id="editEmploymentStatus">
               <option value="Full-Time">Full-Time</option>
               <option value="Part-Time">Part-Time</option>
               <option value="Contract">Contract</option>
@@ -190,19 +208,19 @@
             </select>
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="isActiveEmployee">Is Active Employee</label>
-            <select required class="form-select" aria-label="Default select example" name="isActiveEmployee" id="editIsActiveEmployee">
+            <label class="form-label" for="editIsActiveEmployee">Is Active Employee</label>
+            <select class="form-select" aria-label="Default select example" name="isActiveEmployee" id="editIsActiveEmployee">
               <option value="true">True</option>
               <option value="false">False</option>
             </select>
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="hourlyPay">Hourly Pay</label>
+            <label class="form-label" for="editHourlyPay">Hourly Pay</label>
             <input required type="number" class="form-control" id="editHourlyPay" name="hourlyPay" placeholder="Hourly Pay" />
           </div>
           <div class="col-md-6 mb-3">
-            <label class="form-label" for="startDate">Start Date</label>
-            <input required type="date" class="form-control" id="editStartDate" name="startDate" placeholder="Start Date" />
+            <label class="form-label" for="editStartDate">Start Date</label>
+            <input required type="date" class="form-control" id="editStartDate" name="startDate" />
           </div>
           <p id="modalErrorMessage" class="error" hidden></p>
         </div>
@@ -215,7 +233,7 @@
   </div>
 </div>
 
-<div id="deleteEmployeeModal" class="modal" display="none">
+<div id="deleteEmployeeModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
       <h4 class="modal-title">Are you sure?</h4>
@@ -309,7 +327,7 @@
     </div>
     <div class="col-md-6 mb-3">
       <label class="form-label" for="startDate">Start Date</label>
-      <input required type="date" class="form-control" id="startDate" name="startDate" value="{{startDate}}" placeholder="Start Date" />
+      <input required type="date" class="form-control" id="startDate" name="startDate" value="{{startDate}}" />
     </div>
     <div class="col-md-6 mb-3">
       <label class="form-label" for="isManager">Is Manager</label>
@@ -327,10 +345,81 @@
   </div>
 </form>
 <p class="error" hidden id="errormessage"></p>
-{{! if error }}
-{{#if error}}
-  <p class="error">{{error}}</p>
-{{/if}}
+
+<hr />
+
+<h2 style="margin-top:15px">Payroll Calculation</h2>
+
+<div class="col-md-3 mb-3" style="margin-top: 1rem;">
+    <form action="/manager/calculate" method="POST" style="display:inline">
+        <button style="width: -webkit-fill-available;" class="btn btn-outline-success" type="submit" id="calculateButton">
+            {{#if pastCalculations}}
+            Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/D/YYYY"}}
+            {{else}}
+            Calculate Current Paychecks
+            {{/if}}
+        </button>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        {{#if pastCalculations}}
+        <h3 style="margin-top:20px">Past Pay Periods</h3>
+        <table id="pastCalculationsTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">#</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each pastCalculations}}
+                <tr>
+                    <td>{{@index}}</td>
+                    <td>
+                        <form action="/manager" method="POST" id="calculate{{@index}}">
+                            <input type="text" hidden name="calculationDate" value="{{{this.[0].date}}}" />
+                            <a style="color:#006af6" title="Click to view calculation for {{dateFormat this.[0].date "MM/D/YYYY"}}" href="#" onclick="document.getElementById('calculate{{@index}}').submit();return false;">Calculation on {{dateFormat this.[0].date "MM/D/YYYY"}}</a>
+                        </form>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
+    </div>
+    <div class="col-md-8">
+        {{#if payChecks}}
+        <h3 style="margin-top:20px">Paychecks calculated on {{dateFormat payChecks.[0].date "MM/D/YYYY"}}</h3>
+        <table id="calculationTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Comments</th>
+                    <th>Work Hours</th>
+                    <th>Lunch Hours</th>
+                    <th>Pay</th>
+                    <th>Pay (with lunch)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each payChecks}}
+                <tr>
+                    <td>{{employeeName}}</td>
+                    <td>{{#each allComments}}{{this}}{{#unless @last}},&nbsp;{{/unless}}{{/each}}</td>
+                    <td>{{totalHoursString}}</td>
+                    <td>{{totalLunchHoursString}}</td>
+                    <td>{{totalPayString}}</td>
+                    <td>{{totalPayLunchString}}</td>
+                </tr>
+                {{/each}}
+                </tr>
+            </tbody>
+        </table>
+        {{/if}}
+    </div>
+</div>
 
 <script src="../../public/js/managerPageValidation.js"></script>
 <script src="../../public/js/manager.js"></script>

@@ -1,9 +1,11 @@
 const mongoCollections = require("../config/mongoCollections");
+const employees = mongoCollections.employees;
 const businesses = mongoCollections.businesses;
 const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const validate = require("../validate/index.js");
+const users = require("../data/users.js");
 
 // function createBusiness(businessName, email, password, confirmPassword address, city, state, zip, phone, about) this function creates a business in monogoDB database
 let createBusiness = async (businessName, email, password, confirmPassword, address, city, state, zip, phone, about) => {
@@ -41,8 +43,9 @@ let createBusiness = async (businessName, email, password, confirmPassword, addr
     zip: zip,
     phone: phone,
     about: about,
-    isOpen: true,
     timeOff: [],
+    storeOpen: true,
+    calculations: [],
   };
   //if email already exists in mongoDB database
   const businessData = await businessCollection.findOne({ email: email });
@@ -67,10 +70,110 @@ let checkBusiness = async (email, password) => {
   if (!businessData) throw "Either the email or password is invalid";
   const passwordStatus = await bcrypt.compare(password, businessData.hashedPassword);
   if (!passwordStatus) throw "Either the email or password is invalid";
-  return { authenticated: true, businessID: businessData._id, isAdmin: true };
+
+  return { authenticated: true, businessID: businessData._id, storeStatus: businessData.storeOpen, isAdmin: true };
+};
+
+let calculatePay = async (businessId) => {
+  await validate.checkID(businessId);
+
+  const employeeCollection = await employees();
+  let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
+
+  payChecks = [];
+  for (const e of emps) {
+    let shifts = await users.getShifts(e._id.toString());
+    if (shifts.length === 0) continue;
+
+    let totalHours = 0;
+    let totalLunchHours = 0;
+    let allComments = [];
+
+    shifts.forEach((shift) => {
+      totalHours += shift.hours;
+      totalLunchHours += shift.lunchHours;
+      if (shift.comments.length !== 0) {
+        allComments.push(shift.comments.flat());
+      }
+    });
+
+    let payCheck = {};
+    payCheck["employeeName"] = e.firstName + " " + e.lastName;
+    payCheck["allComments"] = allComments;
+    payCheck["totalHours"] = totalHours;
+
+    totalMinutes = Math.floor(((payCheck["totalHours"] * 60) % 60) * 100) / 100;
+    totalHours = Math.floor(payCheck["totalHours"]);
+
+    payCheck["totalHoursString"] = String(totalHours).padStart(2, "0") + "h " + String(totalMinutes.toFixed(2)).padStart(2, "0") + "m";
+    payCheck["totalLunchHours"] = totalLunchHours;
+    payCheck["totalLunchHoursString"] = String(Math.floor(totalLunchHours)).padStart(2, "0") + "h " + String((totalLunchHours * 60).toFixed(2)).padStart(2, "0") + "m";
+
+    payCheck["totalPay"] = payCheck["totalHours"] * e.hourlyPay;
+    payCheck["totalPayString"] = "$" + payCheck["totalPay"].toFixed(2);
+    payCheck["totalPayLunch"] = (payCheck["totalHours"] + payCheck["totalLunchHours"]) * e.hourlyPay;
+    payCheck["totalPayLunchString"] = "$" + payCheck["totalPayLunch"].toFixed(2);
+    payCheck["date"] = new Date(new Date().setHours(new Date().getHours() - new Date().getTimezoneOffset() / 60)).toISOString();
+
+    payChecks.push(payCheck);
+
+    const userCollection = await employees();
+    let userUpdateInfo = {
+      timeEntries: [],
+    };
+    const updateInfo = await userCollection.updateOne({ _id: e._id }, { $addToSet: { timeEntriesOld: e.timeEntries }, $set: userUpdateInfo });
+    if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+  }
+
+  if (payChecks.length !== 0) {
+    const businessCollection = await businesses();
+    const updateInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $addToSet: { calculations: payChecks } });
+    if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+  }
+
+  return payChecks;
+};
+
+let getPastPayPeriods = async (businessId) => {
+  await validate.checkID(businessId);
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
+  if (!business) throw "Couldn't find business";
+
+  if (business.calculations != undefined && business.calculations.length > 0) {
+    return business.calculations.reverse();
+  } else {
+    return business.calculations;
+  }
+};
+
+let toggleStoreStatus = async (businessId) => {
+  await validate.checkID(businessId);
+  businessId = businessId.toLowerCase().trim();
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
+  if (!business) throw "Couldn't find business";
+
+  if (business.storeOpen) {
+    const employeeCollection = await employees();
+    // employees that are not "ClockedOut"
+    let clockedEmployees = await employeeCollection.find({ businessId: businessId, currentStatus: { $ne: "clockedOut" } }).toArray();
+    for (const employee of clockedEmployees) {
+      let employee_id = employee._id.toString();
+      await users.clockOut(employee_id, "Store closed");
+    }
+  }
+
+  const updateInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $set: { storeOpen: !business.storeOpen } }, { returnDocument: "after" });
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
+
+  return { storeOpen: !business.storeOpen };
 };
 
 module.exports = {
   createBusiness,
   checkBusiness,
+  calculatePay,
+  getPastPayPeriods,
+  toggleStoreStatus,
 };

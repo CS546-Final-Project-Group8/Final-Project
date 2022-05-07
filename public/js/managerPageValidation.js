@@ -158,7 +158,6 @@ let checkNumber = async (num) => {
 };
 
 let checkDate = async (date) => {
-  console.log(date);
   await checkString(date);
   date = date.trim();
   // validate Date in YYYY-MM-DD format
@@ -273,7 +272,7 @@ $(document).ready(function () {
 
 $(document).on("click", ".editEmployee", async function (event) {
   event.preventDefault();
-  let employeeId = $(this).attr("employee-id");
+  let employeeId = $(this).attr("data-employee-id");
   $.ajax({
     url: `manager/employee/${employeeId}`,
     type: "GET",
@@ -281,16 +280,14 @@ $(document).on("click", ".editEmployee", async function (event) {
     if (data.error) console.log("Error getting employee while editing: ", data.error);
     const employee = data;
     console.log("employee: ", employee);
-    $("#editEmployeeModal").attr("employee-id", employeeId);
+    $("#editEmployeeModal").attr("data-employee-id", employeeId);
     $("#editEmail").val(employee.email);
     $("#editFirstName").val(employee.firstName);
     $("#editLastName").val(employee.lastName);
     const gender = $("#editGender");
     gender.find("option").each(function () {
       if ($(this).val().toLowerCase() === employee.gender.toLowerCase()) {
-        $(this).attr("selected", true);
-      } else {
-        $(this).attr("selected", false);
+        $("#editGender").val($(this).val());
       }
     });
     $("#editAddress").val(employee.address);
@@ -302,18 +299,14 @@ $(document).on("click", ".editEmployee", async function (event) {
     const employmentStatus = $("#editEmploymentStatus");
     employmentStatus.find("option").each(function () {
       if ($(this).val().toLowerCase() === employee.employmentStatus.toLowerCase()) {
-        $(this).attr("selected", true);
-      } else {
-        $(this).attr("selected", false);
+        $("#editEmploymentStatus").val($(this).val());
       }
     });
     const isActiveEmployee = $("#editIsActiveEmployee");
     isActiveEmployee.find("option").each(function () {
       // stringify employee.isActiveEmployee from boolean to string
       if (JSON.stringify(employee.isActiveEmployee).toLowerCase() === $(this).val().toLowerCase()) {
-        $(this).attr("selected", true);
-      } else {
-        $(this).attr("selected", false);
+        $("#editIsActiveEmployee").val($(this).val());
       }
     });
     $("#editHourlyPay").val(employee.hourlyPay);
@@ -324,7 +317,7 @@ $(document).on("click", ".editEmployee", async function (event) {
 
 $("#saveEditEmployee").on("click", async (event) => {
   event.preventDefault();
-  let employeeId = $("#editEmployeeModal").attr("employee-id");
+  let employeeId = $("#editEmployeeModal").attr("data-employee-id");
   // TODO client side validation goes here BEFORE patching
   $("#modalErrorMessage").attr("hidden", true);
   try {
@@ -377,7 +370,10 @@ $("#saveEditEmployee").on("click", async (event) => {
       .done((data) => {
         if (data.error) console.log("Error updating employee: ", data.error);
         else {
-          let trQuery = `tr[employee-id=${employeeId}] `;
+          if (data.reload) {
+            window.location.replace("/home");
+          }
+          let trQuery = `tr[data-employee-id=${employeeId}] `;
           $(trQuery + " .employeeName").text(data.firstName + " " + data.lastName);
           $(trQuery + " .employeeStatus").text(data.currentStatus);
           $(trQuery + " .employeeEmail").text(data.email);
@@ -391,7 +387,6 @@ $("#saveEditEmployee").on("click", async (event) => {
           $(trQuery + " .employeeStart").text(startDate.toLocaleDateString("en-US"));
           $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
           $("#editEmployeeModal").hide();
-          resetModal();
         }
       })
       .fail((req, status, error) => console.log(error));
@@ -413,7 +408,5 @@ $("#cancelEditEmployee").on("click", async (event) => {
 let resetModal = () => {
   // reset modal back to original state
   $(".modal-body input").val("");
-  $(".modal-body select").val("");
-  $(".modal-body select option").removeAttr("selected");
   $("#modalErrorMessage").attr("hidden", true);
 };
