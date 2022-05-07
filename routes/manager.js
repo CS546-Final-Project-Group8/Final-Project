@@ -11,7 +11,6 @@ router.get("/", async (req, res) => {
       let allEmployees = await users.getAllEmployees(req.session.businessId);
       let allTimeOffRequests = await users.getTimeOffEntries(req.session.businessId);
       let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
-      let activeEmployeesData = JSON.stringify(await businesses.getActiveEmployeesData(req.session.businessId));
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -26,7 +25,6 @@ router.get("/", async (req, res) => {
         employeeNames: employeeNames,
         timeOffRequests: allTimeOffRequests,
         pastCalculations: pastCalculations,
-        activeEmployeesData: activeEmployeesData,
       });
     } catch (e) {
       res.status(400).render("manager/manager", {
@@ -49,7 +47,6 @@ router.post("/", async (req, res) => {
       validate.checkID(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
       let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
-      let activeEmployeesData = JSON.stringify(await businesses.getActiveEmployeesData(req.session.businessId));
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -72,7 +69,6 @@ router.post("/", async (req, res) => {
         allEmployees: allEmployees,
         employeeNames: employeeNames,
         pastCalculations: pastCalculations,
-        activeEmployeesData: activeEmployeesData,
         payChecks: payChecks,
       });
     } catch (e) {
@@ -400,7 +396,6 @@ router.post("/calculate", async (req, res) => {
       let payChecks = await businesses.calculatePay(req.session.businessId);
       let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
-      let activeEmployeesData = JSON.stringify(await businesses.getActiveEmployeesData(req.session.businessId));
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -416,7 +411,6 @@ router.post("/calculate", async (req, res) => {
           employeeNames: employeeNames,
           payChecks: payChecks,
           pastCalculations: pastCalculations,
-          activeEmployeesData: activeEmployeesData,
         });
       } else {
         res.render("manager/manager", {
@@ -493,7 +487,7 @@ router.put("/estimateWages", async (req, res) => {
               " hours including lunches."
           );
       } else {
-        res.status(200).send("Estimate failed.");
+        res.status(400).send("Estimate failed.");
       }
     } catch (e) {
       res.status(400).render("manager/manager", {
@@ -506,4 +500,24 @@ router.put("/estimateWages", async (req, res) => {
   }
 });
 
+router.put("/getActiveEmployeesData", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      validate.checkID(req.session.businessId);
+      let activeEmployeesData = await businesses.getActiveEmployeesData(req.session.businessId);
+      if (activeEmployeesData == null) {
+        res.status(200).send("");
+      } else {
+        res.status(200).send(JSON.stringify(activeEmployeesData));
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
 module.exports = router;

@@ -2,11 +2,16 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {packages: ['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawActiveEmployeesChart);
 
-        function drawChart() {
+        function drawActiveEmployeesChart() {
 
-        var data = google.visualization.arrayToDataTable({{{activeEmployeesData}}});
+        var data = $.ajax({
+          url: "/manager/getActiveEmployeesData",
+          type: "PUT",
+          async: false
+          }).responseText;
+
 
         var options = {
             title: 'Active Employees', width: 500, height: 300
@@ -14,7 +19,7 @@
 
         var chart = new google.visualization.PieChart(document.getElementById('piechart'));
 
-        chart.draw(data, options);
+        chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
         }
     </script>
 {{/section}}
