@@ -305,7 +305,7 @@ router.patch("/employee/:employee_id", async (req, res) => {
         startDate
       );
 
-      if (updateResult.isActiveEmployee === false && updateResult.currentStatus === "clockedOut") {
+      if (updateResult.isActiveEmployee === false && updateResult.currentStatus === "clockedOut" && !req.session.isBusiness) {
         req.session.employee.currentStatus = "clockedOut";
       }
       if (updateResult.isActiveEmployee === false && req.session.employeeId === req.params.employee_id) {

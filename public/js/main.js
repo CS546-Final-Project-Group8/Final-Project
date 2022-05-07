@@ -2,7 +2,6 @@ $(document).on("click", ".deleteEmployee", async function (event) {
   event.preventDefault();
   $("#deleteEmployeeModal").attr("data-employee-id", $(this).attr("data-employee-id"));
   $("#deleteEmployeeModal").show();
-  drawActiveEmployeesChart();
 });
 
 $("#cancelDeleteEmployee").on("click", async function (event) {
@@ -35,6 +34,7 @@ $("#confirmDeleteEmployee").on("click", async function (event) {
           $("#noEmployeeFound").attr("hidden", false);
         }
       }
+      drawActiveEmployeesChart();
     })
     .fail((req, status, error) => {
       console.log(error);
