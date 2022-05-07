@@ -84,7 +84,7 @@ $("#newEmployee").on("click", async () => {
   // hide the button
   $("#newEmployee").attr("hidden", true);
   // hide the table
-  $("#employeesTable").attr("hidden", true);
+  $("#managerDashboarddiv").attr("hidden", true);
   // back to home button
   $("#backToHome").attr("hidden", true);
   // hide search bar
@@ -100,7 +100,7 @@ $("#cancelEmployee").on("click", async () => {
   // show the button
   $("#newEmployee").removeAttr("hidden");
   // show the table
-  $("#employeesTable").removeAttr("hidden");
+  $("#managerDashboarddiv").removeAttr("hidden");
   // check is isbusiness is true
   const isBusiness = $("#isBusiness").val();
   if (!isBusiness) {
@@ -125,7 +125,8 @@ $("#searchEmployee").on("keyup", function (event) {
     // show all employees
     $("#employeesTable tr").attr("hidden", false);
   }
-  if (event.keyCode === 13) {
+  if (event) {
+    // event.keyCode === 13 for enter key
     var value = $(this).val().toLowerCase();
     var table = $("#employeesTable");
     var rows = table.find("tr");
