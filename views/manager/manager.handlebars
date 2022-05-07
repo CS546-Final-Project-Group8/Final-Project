@@ -316,13 +316,48 @@
     </div>
   </div>
 
+  <h4>Time Off Requests</h4>
+<div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
+  <p class="mb-0" id="timeOffAlertText"></p>
+  <button type="button" class="btn-close" aria-label="Close" id="timeOffAlertClose"></button>
+</div>
+<table class="table table-striped table-hover" id="timeOffRequestTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each timeOffRequests}}
+      <tr>
+        <td>{{employeeName}}</td>
+        <td>{{dateFormat timeOffStartDate "M/D/YYYY"}}</td>
+        <td>{{dateFormat timeOffEndDate "M/D/YYYY"}}</td>
+        <td>
+          <button class="updateRequest btn btn-primary" id="timeOffReqAccept" value={{objId}} style="line-height: inherit; padding: revert;">Accept</button>
+          <button class="updateRequest btn btn-primary" id="timeOffReqDecline" value={{objId}} style="line-height: inherit; padding: revert;">Decline</button>
+        </td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="100%">There are no pending time off requests.</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<br />
+
   <hr />
 
   <h2 style="margin-top:15px">Payroll Calculation</h2>
 
-  <div class="col-md-3 mb-3" style="margin-top: 1rem;">
+  
+  <div class="col-md-12 mb-3" style="margin-top: 1rem;">
       <form action="/manager/calculate" method="POST" style="display:inline">
-          <button style="width: -webkit-fill-available;" class="btn btn-outline-success" type="submit" id="calculateButton">
+          <button class="btn btn-outline-success" type="submit" id="calculateButton">
               {{#if pastCalculations}}
               Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/D/YYYY"}}
               {{else}}
@@ -330,6 +365,10 @@
               {{/if}}
           </button>
       </form>
+        {{#if pastCalculations}}
+        <button class="btn btn-outline-primary" id="estimateButton" onclick="estimatePayChecks()">Estimate Total Hours and Pay</button>
+        <div style="margin-left:20px;margin-top:25px;display: inline-block;vertical-align: middle; overflow-wrap: normal;"><p id="estimate"></p></div>
+        {{/if}}
   </div>
 
   <div class="row">
