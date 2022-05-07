@@ -3,7 +3,7 @@ google.charts.setOnLoadCallback(drawCharts);
 
 function drawActiveEmployeesChart() {
   var data = $.ajax({
-    url: "/manager/getActiveEmployeesData",
+    url: "/businesses/getActiveEmployeesData",
     type: "PUT",
     async: false,
   }).responseText;
@@ -21,7 +21,7 @@ function drawActiveEmployeesChart() {
 
 function drawHistoricalDataChart() {
   var data = $.ajax({
-    url: "/manager/getHistoricalData",
+    url: "/businesses/getHistoricalData",
     type: "PUT",
     async: false,
   }).responseText;
