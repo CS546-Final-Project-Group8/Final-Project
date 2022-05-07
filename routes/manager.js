@@ -422,7 +422,6 @@ router.post("/calculate", async (req, res) => {
           employeeNames: employeeNames,
           payChecks: payChecks,
           pastCalculations: pastCalculations,
-          activeEmployeesData: activeEmployeesData,
           error: "No shifts worked since last calculation.",
         });
       }
@@ -487,7 +486,7 @@ router.put("/estimateWages", async (req, res) => {
               " hours including lunches."
           );
       } else {
-        res.status(400).send("Estimate failed.");
+        res.status(200).send("Could not calculate estimate.");
       }
     } catch (e) {
       res.status(400).render("manager/manager", {
@@ -509,6 +508,39 @@ router.put("/getActiveEmployeesData", async (req, res) => {
         res.status(200).send("");
       } else {
         res.status(200).send(JSON.stringify(activeEmployeesData));
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
+router.put("/getHistoricalData", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      validate.checkID(req.session.businessId);
+      let historicalData = await businesses.getPastPayPeriods(req.session.businessId);
+      historicalData = historicalData.reverse();
+      numPeriods = historicalData.length;
+      if (numPeriods < 2) {
+        res.status(200).send("");
+      } else {
+        let ans = [["Period", "Total Wages", "Total Wages with Lunch"]];
+        for (let i = 0; i < numPeriods; i++) {
+          let sum = 0;
+          let lunchsum = 0;
+          historicalData[i].forEach((payCheck) => {
+            sum += payCheck.totalPay;
+            lunchsum += payCheck.totalPayLunch;
+          });
+          ans.push([(numPeriods - i - 1).toString(), sum, lunchsum]);
+        }
+        res.status(200).send(JSON.stringify(ans));
       }
     } catch (e) {
       res.status(400).render("manager/manager", {
