@@ -143,4 +143,58 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.put("/getActiveEmployeesData", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      validate.checkID(req.session.businessId);
+      let activeEmployeesData = await businesses.getActiveEmployeesData(req.session.businessId);
+      if (activeEmployeesData == null) {
+        res.status(200).send("");
+      } else {
+        res.status(200).send(JSON.stringify(activeEmployeesData));
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
+router.put("/getHistoricalData", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      validate.checkID(req.session.businessId);
+      let historicalData = await businesses.getPastPayPeriods(req.session.businessId);
+      historicalData = historicalData.reverse();
+      numPeriods = historicalData.length;
+      if (numPeriods < 2) {
+        res.status(200).send("");
+      } else {
+        let ans = [["Period", "Total Wages", "Total Wages with Lunch"]];
+        for (let i = 0; i < numPeriods; i++) {
+          let sum = 0;
+          let lunchsum = 0;
+          historicalData[i].forEach((payCheck) => {
+            sum += payCheck.totalPay;
+            lunchsum += payCheck.totalPayLunch;
+          });
+          ans.push([(numPeriods - i - 1).toString(), sum, lunchsum]);
+        }
+        res.status(200).send(JSON.stringify(ans));
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
 module.exports = router;

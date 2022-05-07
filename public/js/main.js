@@ -2,6 +2,7 @@ $(document).on("click", ".deleteEmployee", async function (event) {
   event.preventDefault();
   $("#deleteEmployeeModal").attr("data-employee-id", $(this).attr("data-employee-id"));
   $("#deleteEmployeeModal").show();
+  drawActiveEmployeesChart();
 });
 
 $("#cancelDeleteEmployee").on("click", async function (event) {
