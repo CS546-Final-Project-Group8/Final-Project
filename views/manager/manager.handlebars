@@ -93,7 +93,7 @@
         </tr>
         {{else}}
         <tr>
-            <td colspan="12">There are no employees.</td>
+            <td colspan="13">There are no employees.</td>
         </tr>
       {{/each}}
     </tbody>
@@ -346,7 +346,10 @@
                 <tr>
                     <td>{{@index}}</td>
                     <td>
-                        <a title="Click to view calculation for {{dateFormat this.[0].date "MM/D/YYYY"}}" href="#" onclick="console.log('switch!');return false;">{{dateFormat this.[0].date "MM/D/YYYY"}}</a>
+                        <form action="/manager" method="POST" id="calculate{{@index}}">
+                            <input type="text" hidden name="calculationDate" value="{{{this.[0].date}}}" />
+                            <a style="color:#006af6" title="Click to view calculation for {{dateFormat this.[0].date "MM/D/YYYY"}}" href="#" onclick="document.getElementById('calculate{{@index}}').submit();return false;">Calculation on {{dateFormat this.[0].date "MM/D/YYYY"}}</a>
+                        </form>
                     </td>
                 </tr>
                 {{/each}}
@@ -356,7 +359,7 @@
     </div>
     <div class="col-md-8">
         {{#if payChecks}}
-        <h3 style="margin-top:20px">Paychecks for {{dateFormat payChecks.[0].date "MM/D/YYYY"}}</h3>
+        <h3 style="margin-top:20px">Paychecks calculated on {{dateFormat payChecks.[0].date "MM/D/YYYY"}}</h3>
         <table id="calculationTable" class="table table-striped">
             <thead>
                 <tr>
