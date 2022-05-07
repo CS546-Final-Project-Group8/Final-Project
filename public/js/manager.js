@@ -227,7 +227,6 @@ $("#timeOffRequestTable").on('click','.updateRequest', function () {
       },
       success: function (data) {
         if (data == "Request accepted") {
-          // show alert that request had been accepted for 3 seconds
           $("#timeOffRequestTable").load(" #timeOffRequestTable > *");
           $("#timeOffAlertText").text("Successfully accepted request.");
           $("#alertTimeOff").attr("hidden", false);
