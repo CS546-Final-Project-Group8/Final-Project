@@ -238,6 +238,24 @@ let getActiveEmployeesData = async (businessId) => {
   ];
 };
 
+let getEmployeeStatusData = async (businessId) => {
+  await validate.checkID(businessId);
+
+  const employeeCollection = await employees();
+  let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
+
+  totalClockedIn = emps.filter((obj) => obj.currentStatus === "clockedIn").length;
+  totalClockedOut = emps.filter((obj) => obj.currentStatus === "clockedOut").length;
+  totalMeal = emps.filter((obj) => obj.currentStatus === "meal").length;
+  //if (totalClockedIn + totalClockedOut + totalMeal == 0) return null;
+  return [
+    ["Status", "Employees"],
+    ["Clocked Out", totalClockedOut],
+    ["Clocked In", totalClockedIn],
+    ["Meal", totalMeal],
+  ];
+};
+
 module.exports = {
   createBusiness,
   checkBusiness,
@@ -246,4 +264,5 @@ module.exports = {
   toggleStoreStatus,
   estimateWages,
   getActiveEmployeesData,
+  getEmployeeStatusData,
 };

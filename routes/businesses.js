@@ -164,6 +164,27 @@ router.put("/getActiveEmployeesData", async (req, res) => {
   }
 });
 
+router.put("/getEmployeeStatusData", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      validate.checkID(req.session.businessId);
+      let activeEmployeesData = await businesses.getEmployeeStatusData(req.session.businessId);
+      if (activeEmployeesData == null) {
+        res.status(200).send("");
+      } else {
+        res.status(200).send(JSON.stringify(activeEmployeesData));
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
 router.put("/getHistoricalData", async (req, res) => {
   if (req.session.isAdmin) {
     try {
