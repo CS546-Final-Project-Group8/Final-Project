@@ -19,7 +19,7 @@ app.use(function (req, res, next) {
 
 const configRoutes = require("./routes");
 const static = express.static(__dirname + "/public");
-exphbs = require("express-handlebars");
+const exphbs = require("express-handlebars");
 
 app.use("/public", static);
 app.use(express.json());

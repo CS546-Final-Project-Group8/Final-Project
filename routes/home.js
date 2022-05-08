@@ -53,7 +53,7 @@ router.post("/", async (req, res) => {
       const newTimeEntry = await users.addTimeOffEntry(businessId, employeeId, employeeName, startDate, endDate);
       if (newTimeEntry) {
         res.redirect("/home");
-      } else throw "Time off request unsuccessful";
+      }
     } catch (err) {
       res.status(400).render("home/home", {
         title: "Home",
