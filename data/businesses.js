@@ -117,11 +117,17 @@ let calculatePay = async (businessId) => {
 
     payChecks.push(payCheck);
 
+    let timeEntries = e.timeEntries.sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1));
+    let i;
+    for (i = 0; i < timeEntries.length; i++) if (timeEntries[i].status === "clockOut") break;
+    timeEntries = timeEntries.slice(0, i);
+    timeEntriesOld = timeEntries.slice(i, timeEntries.length);
+
     const userCollection = await employees();
     let userUpdateInfo = {
-      timeEntries: [],
+      timeEntries: timeEntries,
     };
-    const updateInfo = await userCollection.updateOne({ _id: e._id }, { $addToSet: { timeEntriesOld: e.timeEntries }, $set: userUpdateInfo });
+    const updateInfo = await userCollection.updateOne({ _id: e._id }, { $addToSet: { timeEntriesOld: timeEntriesOld }, $set: userUpdateInfo });
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Update failed";
   }
 
@@ -197,13 +203,11 @@ let updateBusinessInfo = async (businessId, businessName, email, address, city, 
     state: state,
     zip: zip,
     phone: phone,
-    about: about
-  }
-  const businessData = await businessCollection.updateOne(
-    { _id: ObjectId(businessId)}, 
-    { $set: updateInfo });
-  if(!businessData) throw "Business could not be found in location";
-  return true
+    about: about,
+  };
+  const businessData = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $set: updateInfo });
+  if (!businessData) throw "Business could not be found in location";
+  return true;
 };
 
 let estimateWages = async (businessId) => {

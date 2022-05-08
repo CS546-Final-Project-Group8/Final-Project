@@ -297,7 +297,7 @@ $(document).on("click", ".editEmployee", async function (event) {
   event.preventDefault();
   let employeeId = $(this).attr("data-employee-id");
   $.ajax({
-    url: `manager/employee/${employeeId}`,
+    url: `/manager/employee/${employeeId}`,
     type: "GET",
   }).done((data) => {
     if (data.error) console.log("Error getting employee while editing: ", data.error);
@@ -372,7 +372,7 @@ $("#saveEditEmployee").on("click", async (event) => {
     await checkNumber(hourlyPay);
     await checkDate(startDate);
     $.ajax({
-      url: `manager/employee/${employeeId}`,
+      url: `/manager/employee/${employeeId}`,
       type: "PATCH",
       data: {
         email: email,
@@ -445,7 +445,7 @@ let resetModal = () => {
 $(document).on("click", "#updateBusinessInfo", async function (event) {
   event.preventDefault();
   $.ajax({
-    url: `manager/businessInfo`,
+    url: `/manager/businessInfo`,
     type: "GET",
   }).done((data) => {
     if (data.error) console.log("Error getting business: ", data.error);
@@ -485,7 +485,7 @@ $("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) =
     await checkString(about);
     await checkUpdateBusinessInfo(businessName, address, city, about);
     $.ajax({
-      url: "manager/updateInfo",
+      url: "/manager/updateInfo",
       type: "PATCH",
       data: {
         businessName: businessName,
