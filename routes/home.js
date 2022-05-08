@@ -5,8 +5,8 @@ const users = require("../data/users.js");
 const xss = require("xss");
 
 router.get("/", async (req, res) => {
-  try {
-    if (req.session.user && !req.session.isBusiness) {
+  if (req.session.user && !req.session.isBusiness) {
+    try {
       let shifts = await users.getShifts(req.session.employeeId);
       let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
       res.render("home/home", {
@@ -19,19 +19,27 @@ router.get("/", async (req, res) => {
         shifts: shifts,
         timeOffUserEntries: timeOffUserEntries,
       });
-    } else if (req.session.user && req.session.isBusiness) {
-      res.redirect("/manager");
-    } else {
-      res.redirect("/login");
+    } catch (err) {
+      res.status(400).render("home/home", {
+        title: "Home",
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        businessId: req.session.businessId,
+        employeeId: req.session.employeeId,
+        employee: req.session.employee,
+        error: err,
+      });
     }
-  } catch (err) {
+  } else if (req.session.user && req.session.isBusiness) {
+    res.redirect("/manager");
+  } else {
     res.redirect("/login");
   }
 });
 
 router.post("/", async (req, res) => {
-  try {
-    if (req.session.user && !req.session.isBusiness) {
+  if (req.session.user && !req.session.isBusiness) {
+    try {
       req.body.timeOffStartDate = xss(req.body.timeOffStartDate);
       await validate.checkTimeOffDateFormat(req.body.timeOffStartDate);
       let startDate = req.body.timeOffStartDate;
@@ -46,19 +54,27 @@ router.post("/", async (req, res) => {
       if (newTimeEntry) {
         res.redirect("/home");
       } else throw "Time off request unsuccessful";
-    } else if (req.session.user && req.session.isBusiness) {
-      res.redirect("/manager");
-    } else {
-      res.redirect("/login");
+    } catch (err) {
+      res.status(400).render("home/home", {
+        title: "Home",
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        businessId: req.session.businessId,
+        employeeId: req.session.employeeId,
+        employee: req.session.employee,
+        error: err,
+      });
     }
-  } catch (e) {
+  } else if (req.session.user && req.session.isBusiness) {
+    res.redirect("/manager");
+  } else {
     res.redirect("/login");
   }
 });
 
 router.put("/userTimeOffDelete", async (req, res) => {
-  try {
-    if (req.session.user && !req.session.isBusiness) {
+  if (req.session.user && !req.session.isBusiness) {
+    try {
       req.body.objId = xss(req.body.objId);
       await validate.checkID(req.body.objId);
       let objId = req.body.objId.toLowerCase().trim();
@@ -70,14 +86,13 @@ router.put("/userTimeOffDelete", async (req, res) => {
       } else {
         res.status(500).send("Internal Server Error");
       }
-    } else if (req.session.user && req.session.isBusiness) {
-      res.redirect("/manager");
-    } else {
-      res.redirect("/login");
+    } catch (err) {
+      res.status(400).json({ error: err });
     }
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e);
+  } else if (req.session.user && req.session.isBusiness) {
+    res.redirect("/manager");
+  } else {
+    res.redirect("/login");
   }
 });
 

@@ -158,6 +158,14 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
   });
   if (!employee) throw "Couldn't update an employee that does not exist";
 
+  const employeeDataCheck = await employeesCollection.findOne({
+    businessId: businessId,
+    email: email,
+  });
+  if (employeeDataCheck && employeeDataCheck._id.toString() !== employeeId) {
+    throw "Email already exists";
+  }
+
   if (isActiveEmployee === false && employee.isManager === true) {
     await demoteEmployee(employeeId);
   }

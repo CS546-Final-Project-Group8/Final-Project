@@ -195,6 +195,11 @@ let updateBusinessInfo = async (businessId, businessName, email, address, city, 
   await validate.checkID(businessId);
   businessId = businessId.trim();
   const businessCollection = await businesses();
+
+  // make sure that the email is unique
+  const businessDataCheck = await businessCollection.findOne({ email: email });
+  if (businessDataCheck && businessDataCheck._id.toString() !== businessId) throw "Email already exists";
+
   let updateInfo = {
     businessName: businessName,
     email: email,

@@ -49,17 +49,14 @@ router.get("/businessInfo", async (req, res) => {
       let businessInfo = await businesses.getBusiness(req.session.businessId);
       res.json(businessInfo);
     } catch (e) {
-      res.status(400).render("manager/manager", {
-        title: "Business",
-        error: e,
-      });
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
   }
 });
 
-router.patch("/updateInfo", async (req, res) => {
+router.patch("/updateBusinessInfo", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       await validate.checkID(req.session.businessId);
@@ -329,10 +326,7 @@ router.get("/employee/:employee_id", async (req, res) => {
       let employee = await users.getEmployee(req.session.businessId, employeeId);
       res.json(employee);
     } catch (e) {
-      res.status(400).render("manager/manager", {
-        title: "Employee",
-        error: e,
-      });
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
@@ -414,10 +408,7 @@ router.patch("/employee/:employee_id", async (req, res) => {
       if (updateResult) res.status(200).json(updateResult);
       else res.status(500).json({ error: "Internal Server Error" });
     } catch (e) {
-      res.status(400).render("manager/manager", {
-        title: "Employee",
-        error: e,
-      });
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
@@ -443,10 +434,7 @@ router.delete("/employee/:employee_id", async (req, res) => {
         res.status(500).send("Internal Server Error");
       }
     } catch (e) {
-      res.status(400).render("manager/manager", {
-        title: "Employee",
-        error: e,
-      });
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
@@ -454,40 +442,46 @@ router.delete("/employee/:employee_id", async (req, res) => {
 });
 
 router.put("/acceptTimeOffRequest", async (req, res) => {
-  try {
-    req.body.objId = xss(req.body.objId);
-    await validate.checkID(req.body.objId);
-    let objId = req.body.objId.toLowerCase().trim();
-    await validate.checkID(req.session.businessId);
-    let businessId = req.session.businessId.toLowerCase().trim();
-    const result = await users.acceptTimeOffRequest(objId, businessId);
-    if (result.requestStatus) {
-      res.status(200).send("Request accepted");
-    } else {
-      res.status(500).send("Internal Server Error");
+  if (req.session.isAdmin) {
+    try {
+      req.body.objId = xss(req.body.objId);
+      await validate.checkID(req.body.objId);
+      let objId = req.body.objId.toLowerCase().trim();
+      await validate.checkID(req.session.businessId);
+      let businessId = req.session.businessId.toLowerCase().trim();
+      const result = await users.acceptTimeOffRequest(objId, businessId);
+      if (result.requestStatus) {
+        res.status(200).send("Request accepted");
+      } else {
+        res.status(500).send("Internal Server Error");
+      }
+    } catch (e) {
+      res.status(400).json({ error: e });
     }
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e);
+  } else {
+    res.redirect("/home");
   }
 });
 
 router.put("/declineTimeOffRequest", async (req, res) => {
-  try {
-    req.body.objId = xss(req.body.objId);
-    await validate.checkID(req.body.objId);
-    let objId = req.body.objId.toLowerCase().trim();
-    await validate.checkID(req.session.businessId);
-    let businessId = req.session.businessId.toLowerCase().trim();
-    const result = await users.declineTimeOffRequest(objId, businessId);
-    if (result.requestStatus) {
-      res.status(200).send("Request declined");
-    } else {
-      res.status(500).send("Internal Server Error");
+  if (req.session.isAdmin) {
+    try {
+      req.body.objId = xss(req.body.objId);
+      await validate.checkID(req.body.objId);
+      let objId = req.body.objId.toLowerCase().trim();
+      await validate.checkID(req.session.businessId);
+      let businessId = req.session.businessId.toLowerCase().trim();
+      const result = await users.declineTimeOffRequest(objId, businessId);
+      if (result.requestStatus) {
+        res.status(200).send("Request declined");
+      } else {
+        res.status(500).send("Internal Server Error");
+      }
+    } catch (e) {
+      res.status(400).json({ error: e });
     }
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e);
+  } else {
+    res.redirect("/home");
   }
 });
 
@@ -558,10 +552,7 @@ router.put("/toggleStoreStatus", async (req, res) => {
         res.status(200).send("Store Closed");
       }
     } catch (e) {
-      res.status(400).render("manager/manager", {
-        title: "Manager Dashboard",
-        error: e,
-      });
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");
@@ -592,10 +583,7 @@ router.put("/estimateWages", async (req, res) => {
         res.status(200).send("Could not calculate estimate.");
       }
     } catch (e) {
-      res.status(400).render("manager/manager", {
-        title: "Manager Dashboard",
-        error: e,
-      });
+      res.status(400).json({ error: e });
     }
   } else {
     res.redirect("/home");

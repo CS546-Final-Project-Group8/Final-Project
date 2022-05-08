@@ -176,7 +176,7 @@
             {{else}}
               <td class="employeeActive">No</td>
             {{/if}}
-            <td class="employeeStart">{{dateFormat startDate "MM/D/YYYY"}}</td>
+            <td class="employeeStart">{{dateFormat startDate "MM/DD/YYYY"}}</td>
             {{#if isManager}}
               <td class="employeeManager">Manager</td>
             {{else}}
@@ -259,12 +259,13 @@
             </div>
             <p id="modalErrorMessage" class="error" hidden></p>
           </div>
+          <div style="text-align: end;>
+            <button class="btn btn-outline-success" id="saveUpdateBusiness">Save</button>
+            <button class="btn btn-outline-danger" id="cancelUpdateBusiness">Cancel</button>
+          </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline-success" id="saveUpdateBusiness">Save</button>
-        <button class="btn btn-outline-danger" id="cancelUpdateBusiness">Cancel</button>
-      </div>
+      
     </div>
   </div>
   {{/if}}
@@ -350,11 +351,11 @@
             </div>
             <p id="modalErrorMessage" class="error" hidden></p>
           </div>
+          <div style="text-align: end;">
+            <button class="btn btn-outline-success" type="submit" id="saveEditEmployee">Save</button>
+            <button class="btn btn-outline-danger" id="cancelEditEmployee">Cancel</button>
+        </div>
         </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline-success" id="saveEditEmployee">Save</button>
-        <button class="btn btn-outline-danger" id="cancelEditEmployee">Cancel</button>
       </div>
     </div>
   </div>
@@ -423,7 +424,7 @@
       <form action="/manager/calculate" method="POST" style="display:inline">
           <button class="btn btn-outline-success" type="submit" id="calculateButton">
               {{#if pastCalculations}}
-              Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/D/YYYY"}}
+              Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/DD/YYYY"}}
               {{else}}
               Calculate Current Paychecks
               {{/if}}
