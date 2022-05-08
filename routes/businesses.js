@@ -3,6 +3,7 @@ const router = express.Router();
 const validate = require("../validate/index.js");
 const businesses = require("../data/businesses.js");
 const { append } = require("express/lib/response");
+const xss = require("xss");
 
 router.get("/signup", async (req, res) => {
   if (!req.session.user) {
@@ -24,24 +25,34 @@ router.get("/signup", async (req, res) => {
 router.post("/signup", async (req, res) => {
   if (!req.session.user) {
     try {
+      req.body.businessName = xss(req.body.businessName);
       await validate.checkString(req.body.businessName);
       let businessName = req.body.businessName.toLowerCase().trim();
+      req.body.email = xss(req.body.email);
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();
+      req.body.password = xss(req.body.password);
       await validate.checkPassword(req.body.password);
       let password = req.body.password.trim();
+      req.body.passwordConfirm = xss(req.body.passwordConfirm);
       await validate.checkPassword(req.body.confirmPassword);
       let confirmPassword = req.body.confirmPassword.trim();
+      req.body.address = xss(req.body.address);
       await validate.checkString(req.body.address);
       let address = req.body.address.trim();
+      req.body.city = xss(req.body.city);
       await validate.checkString(req.body.city);
       let city = req.body.city.trim();
+      req.body.state = xss(req.body.state);
       await validate.checkState(req.body.state);
       let state = req.body.state.trim();
+      req.body.zip = xss(req.body.zip);
       await validate.checkZip(req.body.zip);
       let zip = req.body.zip.trim();
+      req.body.phoneNumber = xss(req.body.phoneNumber);
       await validate.checkPhone(req.body.phoneNumber);
       let phoneNumber = req.body.phoneNumber.trim();
+      req.body.about = xss(req.body.about);
       await validate.checkString(req.body.about);
       let about = req.body.about.trim();
       const result = await businesses.createBusiness(businessName, email, password, confirmPassword, address, city, state, zip, phoneNumber, about);
@@ -109,8 +120,10 @@ router.get("/login", async (req, res) => {
 router.post("/login", async (req, res) => {
   if (!req.session.user) {
     try {
+      req.body.email = xss(req.body.email);
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();
+      req.body.password = xss(req.body.password);
       await validate.checkPassword(req.body.password);
       let password = req.body.password.trim();
       const result = await businesses.checkBusiness(email, password);

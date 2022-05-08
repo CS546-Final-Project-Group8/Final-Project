@@ -240,7 +240,17 @@ let checkTimeOffDates = async (startDate, endDate) => {
   if (!date1 || !date2) throw "Please complete all fields";
   if (date1 > date2) throw "Start date must be before end date";
   return true;
-}
+};
+
+// check timeoff dates in YYYY-MM-DD format
+let checkTimeOffDateFormat = async (date) => {
+  if (!date) throw "Please complete all fields";
+  let re = /^\d{4}-\d{2}-\d{2}$/;
+  if (!re.test(date)) {
+    throw "Please enter date in YYYY-MM-DD format";
+  }
+  return true;
+};
 
 module.exports = {
   checkString,
@@ -256,4 +266,5 @@ module.exports = {
   checkGender,
   checkEmploymentStatus,
   checkTimeOffDates,
+  checkTimeOffDateFormat,
 };

@@ -3,6 +3,7 @@ const router = express.Router();
 const validate = require("../validate/index.js");
 const users = require("../data/users.js");
 const businesses = require("../data/businesses.js");
+const xss = require("xss");
 
 router.get("/", async (req, res) => {
   if (req.session.isAdmin) {
@@ -63,20 +64,28 @@ router.patch("/updateInfo", async (req, res) => {
     try {
       await validate.checkID(req.session.businessId);
       let businessId = req.session.businessId.toLowerCase().trim();
+      req.body.businessName = xss(req.body.businessName);
       await validate.checkString(req.body.businessName);
       let businessName = req.body.businessName.trim();
+      req.body.email = xss(req.body.email);
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();
+      req.body.address = xss(req.body.address);
       await validate.checkString(req.body.address);
       let address = req.body.address.trim();
+      req.body.city = xss(req.body.city);
       await validate.checkString(req.body.city);
       let city = req.body.city.trim();
+      req.body.state = xss(req.body.state);
       await validate.checkState(req.body.state);
       let state = req.body.state.trim();
+      req.body.zip = xss(req.body.zip);
       await validate.checkZip(req.body.zip);
       let zip = req.body.zip.trim();
+      req.body.phoneNumber = xss(req.body.phoneNumber);
       await validate.checkPhone(req.body.phoneNumber);
       let phone = req.body.phoneNumber.trim();
+      req.body.about = xss(req.body.about);
       await validate.checkString(req.body.about);
       let about = req.body.about.trim();
       const result = await businesses.updateBusinessInfo(businessId, businessName, email, address, city, state, zip, phone, about);
@@ -95,6 +104,7 @@ router.patch("/updateInfo", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  req.body.calculation = xss(req.body.calculation);
   if (req.session.isAdmin && req.body.calculation !== null) {
     try {
       validate.checkID(req.session.businessId);
@@ -105,7 +115,7 @@ router.post("/", async (req, res) => {
         return employee.firstName + " " + employee.lastName;
       });
 
-      calculationDate = req.body.calculationDate;
+      let calculationDate = req.body.calculationDate;
       let payChecks = [];
       pastCalculations.forEach((calculation) => {
         if (calculationDate === calculation[0].date) {
@@ -144,36 +154,52 @@ router.post("/new", async (req, res) => {
     try {
       await validate.checkID(req.session.businessId);
       let businessId = req.session.businessId.toLowerCase().trim();
+      req.body.email = xss(req.body.email);
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();
+      req.body.password = xss(req.body.password);
       await validate.checkPassword(req.body.password);
       let password = req.body.password.trim();
+      req.body.confirmPassword = xss(req.body.confirmPassword);
       await validate.checkPassword(req.body.confirmPassword);
       let confirmPassword = req.body.confirmPassword.trim();
+      req.body.firstName = xss(req.body.firstName);
       await validate.checkString(req.body.firstName);
       let firstName = req.body.firstName.trim();
+      req.body.lastName = xss(req.body.lastName);
       await validate.checkString(req.body.lastName);
       let lastName = req.body.lastName.trim();
+      req.body.gender = xss(req.body.gender);
       await validate.checkGender(req.body.gender);
       let gender = req.body.gender.trim();
+      req.body.address = xss(req.body.address);
       await validate.checkString(req.body.address);
       let address = req.body.address.trim();
+      req.body.city = xss(req.body.city);
       await validate.checkString(req.body.city);
       let city = req.body.city.trim();
+      req.body.state = xss(req.body.state);
       await validate.checkState(req.body.state);
       let state = req.body.state.trim();
+      req.body.zip = xss(req.body.zip);
       await validate.checkZip(req.body.zip);
       let zip = req.body.zip.trim();
+      req.body.phoneNumber = xss(req.body.phoneNumber);
       await validate.checkPhone(req.body.phoneNumber);
       let phone = req.body.phoneNumber.trim();
+      req.body.hourlyPay = xss(req.body.hourlyPay);
       await validate.checkNumber(req.body.hourlyPay);
       let hourlyPay = parseInt(req.body.hourlyPay);
+      req.body.startDate = xss(req.body.startDate);
       await validate.checkDate(req.body.startDate);
       let startDate = req.body.startDate.trim();
+      req.body.employmentStatus = xss(req.body.employmentStatus);
       await validate.checkEmploymentStatus(req.body.employmentStatus);
       let employmentStatus = req.body.employmentStatus.trim();
+      req.body.isActiveEmployee = xss(req.body.isActiveEmployee);
       await validate.checkBoolean(req.body.isActiveEmployee);
       let isActiveEmployee = req.body.isActiveEmployee.trim();
+      req.body.isManager = xss(req.body.isManager);
       await validate.checkBoolean(req.body.isManager);
       let isManager = req.body.isManager.trim();
       const result = await users.createEmployee(
@@ -249,6 +275,7 @@ router.post("/new", async (req, res) => {
 router.put("/promoteEmployee", async (req, res) => {
   if (req.session.isAdmin) {
     try {
+      req.body.employeeId = xss(req.body.employeeId);
       await validate.checkID(req.body.employeeId);
       let employeeId = req.body.employeeId.toLowerCase().trim();
 
@@ -269,6 +296,7 @@ router.put("/promoteEmployee", async (req, res) => {
 router.put("/demoteEmployee", async (req, res) => {
   if (req.session.isAdmin) {
     try {
+      req.body.employeeId = xss(req.body.employeeId);
       await validate.checkID(req.body.employeeId);
       let employeeId = req.body.employeeId.toLowerCase().trim();
 
@@ -294,9 +322,11 @@ router.put("/demoteEmployee", async (req, res) => {
 router.get("/employee/:employee_id", async (req, res) => {
   if (req.session.isAdmin) {
     try {
+      req.params.employee_id = xss(req.params.employee_id);
       await validate.checkID(req.params.employee_id);
+      let employeeId = req.params.employee_id.toLowerCase().trim();
       await validate.checkID(req.session.businessId);
-      let employee = await users.getEmployee(req.session.businessId, req.params.employee_id);
+      let employee = await users.getEmployee(req.session.businessId, employeeId);
       res.json(employee);
     } catch (e) {
       res.status(400).render("manager/manager", {
@@ -312,36 +342,51 @@ router.get("/employee/:employee_id", async (req, res) => {
 router.patch("/employee/:employee_id", async (req, res) => {
   if (req.session.isAdmin) {
     try {
+      req.body.email = xss(req.body.email);
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();
+      req.body.firstName = xss(req.body.firstName);
       await validate.checkString(req.body.firstName);
       let firstName = req.body.firstName.trim();
+      req.body.lastName = xss(req.body.lastName);
       await validate.checkString(req.body.lastName);
       let lastName = req.body.lastName.trim();
+      req.body.gender = xss(req.body.gender);
       await validate.checkGender(req.body.gender);
       let gender = req.body.gender.trim();
+      req.body.address = xss(req.body.address);
       await validate.checkString(req.body.address);
       let address = req.body.address.trim();
+      req.body.city = xss(req.body.city);
       await validate.checkString(req.body.city);
       let city = req.body.city.trim();
+      req.body.state = xss(req.body.state);
       await validate.checkState(req.body.state);
       let state = req.body.state.trim();
+      req.body.zip = xss(req.body.zip);
       await validate.checkZip(req.body.zip);
       let zip = req.body.zip.trim();
+      req.body.phoneNumber = xss(req.body.phoneNumber);
       await validate.checkPhone(req.body.phoneNumber);
       let phone = req.body.phoneNumber.trim();
+      req.body.hourlyPay = xss(req.body.hourlyPay);
       await validate.checkNumber(req.body.hourlyPay);
       let hourlyPay = parseInt(req.body.hourlyPay);
+      req.body.startDate = xss(req.body.startDate);
       await validate.checkDate(req.body.startDate);
       let startDate = req.body.startDate.trim();
+      req.body.employmentStatus = xss(req.body.employmentStatus);
       await validate.checkEmploymentStatus(req.body.employmentStatus);
       let employmentStatus = req.body.employmentStatus.trim();
+      req.body.isActiveEmployee = xss(req.body.isActiveEmployee);
       await validate.checkBoolean(req.body.isActiveEmployee);
       let isActiveEmployee = req.body.isActiveEmployee.trim();
+      req.params.employee_id = xss(req.params.employee_id);
       validate.checkID(req.params.employee_id);
+      let employeeId = req.params.employee_id.toLowerCase().trim();
       validate.checkID(req.session.businessId);
       let updateResult = await users.updateEmployee(
-        req.params.employee_id,
+        employeeId,
         req.session.businessId,
         email,
         firstName,
@@ -382,6 +427,7 @@ router.patch("/employee/:employee_id", async (req, res) => {
 router.delete("/employee/:employee_id", async (req, res) => {
   if (req.session.isAdmin) {
     try {
+      req.params.employee_id = xss(req.params.employee_id);
       await validate.checkID(req.params.employee_id);
       let employee_id = req.params.employee_id.toLowerCase().trim();
       if (employee_id === req.session.employeeId) {
@@ -409,6 +455,7 @@ router.delete("/employee/:employee_id", async (req, res) => {
 
 router.put("/acceptTimeOffRequest", async (req, res) => {
   try {
+    req.body.objId = xss(req.body.objId);
     await validate.checkID(req.body.objId);
     let objId = req.body.objId.toLowerCase().trim();
     await validate.checkID(req.session.businessId);
@@ -427,6 +474,7 @@ router.put("/acceptTimeOffRequest", async (req, res) => {
 
 router.put("/declineTimeOffRequest", async (req, res) => {
   try {
+    req.body.objId = xss(req.body.objId);
     await validate.checkID(req.body.objId);
     let objId = req.body.objId.toLowerCase().trim();
     await validate.checkID(req.session.businessId);
@@ -446,8 +494,8 @@ router.put("/declineTimeOffRequest", async (req, res) => {
 router.post("/calculate", async (req, res) => {
   if (req.session.isAdmin) {
     try {
-      let payChecks = await businesses.calculatePay(req.session.businessId);
       validate.checkID(req.session.businessId);
+      let payChecks = await businesses.calculatePay(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
       let allTimeOffRequests = await users.getTimeOffEntries(req.session.businessId);
       let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
@@ -525,7 +573,7 @@ router.put("/estimateWages", async (req, res) => {
     try {
       await validate.checkID(req.session.businessId);
       let businessId = req.session.businessId.toLowerCase().trim();
-      const estimate = await businesses.estimateWages(req.session.businessId);
+      const estimate = await businesses.estimateWages(businessId);
       if (estimate.succeeded) {
         res
           .status(200)

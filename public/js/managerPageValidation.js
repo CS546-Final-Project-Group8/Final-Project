@@ -221,10 +221,9 @@ let matchPassword = async (password, confirmPassword) => {
   }
 };
 
-let checkUpdateBusinessInfo = async(businessName, address, city, about) => {
-  if(!businessName || businessName.trim() == "" || !address || address.trim() == "" || 
-      !city || city.trim() == "" || !about || about.trim() == "") throw "Error: Cannot have an empty field";
-}
+let checkUpdateBusinessInfo = async (businessName, address, city, about) => {
+  if (!businessName || businessName.trim() == "" || !address || address.trim() == "" || !city || city.trim() == "" || !about || about.trim() == "") throw "Error: Cannot have an empty field";
+};
 
 const newEmployeeForm = $("#newEmployeeForm");
 newEmployeeForm.submit(async (event) => {
@@ -389,6 +388,12 @@ $("#saveEditEmployee").on("click", async (event) => {
           startDate = new Date(data.startDate);
           $(trQuery + " .employeeStart").text(startDate.toLocaleDateString("en-US"));
           $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
+          let element = $("[value=" + employeeId + "]");
+          if (data.isManager) {
+            element.text("Demote to Employee");
+          } else {
+            element.text("Promote to Manager");
+          }
           $("#editEmployeeModal").hide();
         }
         drawActiveEmployeesChart();
@@ -457,9 +462,9 @@ $("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) =
     await checkZip(zip);
     await checkPhone(phone);
     await checkString(about);
-    await checkUpdateBusinessInfo(businessName, address, city, about)
+    await checkUpdateBusinessInfo(businessName, address, city, about);
     $.ajax({
-      url: 'manager/updateInfo',
+      url: "manager/updateInfo",
       type: "PATCH",
       data: {
         businessName: businessName,
@@ -477,19 +482,18 @@ $("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) =
           console.log("Error updating business: ", data.error);
           $("#updateBusinessInfoModal").hide();
           resetModal();
-          if($("#updateBusinessAlert").hasClass("alert-success")) $("#updateBusinessAlert").removeClass("alert-success");
-          if(!($("#updateBusinessAlert").hasClass("alert-danger"))) $("#updateBusinessAlert").addClass("alert-danger");
+          if ($("#updateBusinessAlert").hasClass("alert-success")) $("#updateBusinessAlert").removeClass("alert-success");
+          if (!$("#updateBusinessAlert").hasClass("alert-danger")) $("#updateBusinessAlert").addClass("alert-danger");
           $("#updateAlertText").text("Error: unsuccessful update attempt");
           $("#updateBusinessAlert").attr("hidden", false);
           setTimeout(function () {
             $("#updateBusinessAlert").attr("hidden", true);
           }, 2000);
-        } 
-        else {
+        } else {
           $("#updateBusinessInfoModal").hide();
           resetModal();
-          if($("#updateBusinessAlert").hasClass("alert-danger")) $("#updateBusinessAlert").removeClass("alert-danger");
-          if(!($("#updateBusinessAlert").hasClass("alert-success"))) $("#updateBusinessAlert").addClass("alert-success");
+          if ($("#updateBusinessAlert").hasClass("alert-danger")) $("#updateBusinessAlert").removeClass("alert-danger");
+          if (!$("#updateBusinessAlert").hasClass("alert-success")) $("#updateBusinessAlert").addClass("alert-success");
           $("#updateAlertText").text("Successfully updated business info");
           $("#updateBusinessAlert").attr("hidden", false);
           setTimeout(function () {
@@ -500,7 +504,7 @@ $("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) =
       .fail((req, status, error) => console.log(error));
   } catch (e) {
     event.preventDefault();
-    $("#modalErrorMessage").text(e.slice(7));
+    $("#modalErrorMessage").text(e);
     $("#modalErrorMessage").attr("hidden", false);
   }
 });
