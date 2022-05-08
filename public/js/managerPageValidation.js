@@ -391,6 +391,7 @@ $("#saveEditEmployee").on("click", async (event) => {
           $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
           $("#editEmployeeModal").hide();
         }
+        drawActiveEmployeesChart();
       })
       .fail((req, status, error) => console.log(error));
   } catch (e) {

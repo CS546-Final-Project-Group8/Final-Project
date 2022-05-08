@@ -196,7 +196,7 @@
           </tr>
           {{else}}
           <tr>
-              <td colspan="12">There are no employees.</td>
+              <td colspan="13">There are no employees.</td>
           </tr>
         {{/each}}
       </tbody>
@@ -206,7 +206,7 @@
 
 
   {{#if isBusiness}}
-    <input type="bool" hidden id="isBusiness" value="{{isBusiness}}" />
+    <input hidden id="isBusiness" value="{{isBusiness}}" />
     <button hidden class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
   {{else}}
     <button class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
@@ -374,7 +374,13 @@
     </div>
   </div>
 
-<h4>Time Off Requests</h4>
+  <div style="display:flex;text-align: center;justify-content: center;">
+    <div id="piechart" style="flex: 1;"></div>
+    <div id="piechart2" style="flex: 1;"></div>
+    <div id="line_chart" style="flex: 1;"></div>
+  </div>
+
+  <h4 style="margin-top:20px">Time Off Requests</h4>
 <div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
   <p class="mb-0" id="timeOffAlertText"></p>
   <button type="button" class="btn-close" aria-label="Close" id="timeOffAlertClose"></button>
@@ -401,7 +407,7 @@
       </tr>
     {{else}}
       <tr>
-        <td colspan="100%">There are no pending time off requests.</td>
+        <td colspan="4">There are no pending time off requests.</td>
       </tr>
     {{/each}}
   </tbody>
@@ -410,11 +416,12 @@
 
   <hr />
 
-  <h2 style="margin-top:15px">Payroll Calculation</h2>
+  <h2 style="margin-top:15px" id="calculation">Payroll Calculation</h2>
 
-  <div class="col-md-3 mb-3" style="margin-top: 1rem;">
+  
+  <div class="col-md-12 mb-3" style="margin-top: 1rem;">
       <form action="/manager/calculate" method="POST" style="display:inline">
-          <button style="width: -webkit-fill-available;" class="btn btn-outline-success" type="submit" id="calculateButton">
+          <button class="btn btn-outline-success" type="submit" id="calculateButton">
               {{#if pastCalculations}}
               Calculate Paychecks since {{dateFormat pastCalculations.[0].[0].date "MM/D/YYYY"}}
               {{else}}
@@ -422,6 +429,11 @@
               {{/if}}
           </button>
       </form>
+        <button class="btn btn-outline-primary" id="estimateButton">Estimate Total Hours and Pay</button>
+        <div class="alert alert-primary alert-dismissible fade show" id="estimate" hidden role="alert" style="margin-top:25px">
+            <p class="mb-0" id="estimateText"></p>
+            <button type="button" class="btn-close" aria-label="Close" id="estimateAlertClose"></button>
+        </div>
   </div>
 
   <div class="row">

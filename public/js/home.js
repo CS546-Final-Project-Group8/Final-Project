@@ -14,30 +14,34 @@ let timeOffErrorMsg = document.getElementById("timeOffErrorMsg");
 let startDate = document.getElementById("timeOffStartDate");
 let endDate = document.getElementById("timeOffEndDate");
 
-reqTimeOffBttn.onclick = function(){
-  timeOffModal.style.display = "block";
+if (reqTimeOffBttn !== null) {
+  reqTimeOffBttn.onclick = function () {
+    timeOffModal.style.display = "block";
+  };
 }
 
-closeTimeOffModal.onclick = function() {
-  timeOffModal.style.display = "none";
-  startDate.value = "";
-  endDate.value = "";
-  timeOffErrorMsg.hidden = true;
+if (closeTimeOffModal !== null) {
+  closeTimeOffModal.onclick = function () {
+    timeOffModal.style.display = "none";
+    startDate.value = "";
+    endDate.value = "";
+    timeOffErrorMsg.hidden = true;
+  };
 }
 
-window.onclick = function(event) {
+window.onclick = function (event) {
   if (event.target == timeOffModal) {
     timeOffModal.style.display = "none";
     startDate.value = "";
     endDate.value = "";
     timeOffErrorMsg.hidden = true;
   }
-}
+};
 
 //Ajax for deleting time off requests
-$("#userTimeOffReqTable").on('click','.deleteTimeOffRequest', function () {
+$("#userTimeOffReqTable").on("click", ".deleteTimeOffRequest", function () {
   let objId = $(this).attr("value");
-  let element = $(this).attr('id');
+  let element = $(this).attr("id");
   let table = $("#userTimeOffReqTable");
 
   if (element == "timeOffReqDelete") {

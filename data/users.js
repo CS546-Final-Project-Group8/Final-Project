@@ -532,10 +532,7 @@ let addTimeOffEntry = async (businessId, employeeId, employeeName, startDate, en
     requestAcknowledged: false,
     requestAccepted: false,
   };
-  const updatedInfo = await businessCollection.updateOne(
-    { "_id": ObjectId(businessId) },
-    { "$push": { "timeOff": newTimeOffRequest } }
-  )
+  const updatedInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $push: { timeOff: newTimeOffRequest } });
   if (updatedInfo.modifiedCount === 0) {
     return false;
   }
@@ -550,15 +547,15 @@ let getTimeOffEntries = async (businessId) => {
     _id: ObjectId(businessId),
   });
   let allTimeEntries = business.timeOff;
-  if (!allTimeEntries) throw new Error ("Could not get time off entries");
+  if (!allTimeEntries) throw new Error("Could not get time off entries");
   let activeRequests = [];
-  for(let i = 0; i < allTimeEntries.length; i++) {
-    if(allTimeEntries[i].requestAcknowledged == false){
+  for (let i = 0; i < allTimeEntries.length; i++) {
+    if (allTimeEntries[i].requestAcknowledged == false) {
       activeRequests.push(allTimeEntries[i]);
     }
   }
   return activeRequests;
-}
+};
 
 // Accepts a time off request manager portal
 let acceptTimeOffRequest = async (objId, businessId) => {
@@ -568,9 +565,7 @@ let acceptTimeOffRequest = async (objId, businessId) => {
   businessId = businessId.trim();
   const businessCollection = await businesses();
 
-  const updateInfo2 = await businessCollection.updateOne(
-    { _id: ObjectId(businessId), "timeOff.objId": objId}, 
-    { $set: {"timeOff.$.requestAcknowledged": true, "timeOff.$.requestAccepted": true } });
+  const updateInfo2 = await businessCollection.updateOne({ _id: ObjectId(businessId), "timeOff.objId": objId }, { $set: { "timeOff.$.requestAcknowledged": true, "timeOff.$.requestAccepted": true } });
   if (!updateInfo2.matchedCount && !updateInfo2.modifiedCount) throw "Update failed";
 
   return { requestStatus: true };
@@ -585,8 +580,9 @@ let declineTimeOffRequest = async (objId, businessId) => {
   const businessCollection = await businesses();
 
   const updateInfo2 = await businessCollection.updateOne(
-    { _id: ObjectId(businessId), "timeOff.objId": objId}, 
-    { $set: {"timeOff.$.requestAcknowledged": true, "timeOff.$.requestAccepted": false } });
+    { _id: ObjectId(businessId), "timeOff.objId": objId },
+    { $set: { "timeOff.$.requestAcknowledged": true, "timeOff.$.requestAccepted": false } }
+  );
   if (!updateInfo2.matchedCount && !updateInfo2.modifiedCount) throw "Update failed";
 
   return { requestStatus: true };
@@ -603,15 +599,15 @@ let getUserTimeOffEntries = async (businessId, employeeId) => {
     _id: ObjectId(businessId),
   });
   let allTimeEntries = business.timeOff;
-  if (!allTimeEntries) throw new Error ("Could not get time off entries");
+  if (!allTimeEntries) throw new Error("Could not get time off entries");
   let activeRequests = [];
-  for(let i = 0; i < allTimeEntries.length; i++) {
-    if(allTimeEntries[i].employeeId == employeeId){
+  for (let i = 0; i < allTimeEntries.length; i++) {
+    if (allTimeEntries[i].employeeId == employeeId) {
       activeRequests.push(allTimeEntries[i]);
     }
   }
   return activeRequests;
-}
+};
 
 // Delete a time off request
 let deleteTimeOffRequest = async (objId, businessId) => {
@@ -621,11 +617,21 @@ let deleteTimeOffRequest = async (objId, businessId) => {
   businessId = businessId.trim();
   const businessCollection = await businesses();
 
-  const deleteInfo = await businessCollection.updateOne(
-    { _id: ObjectId(businessId), "timeOff.objId": objId}, 
-    { $pull: { timeOff: {objId: objId} } });
+  const deleteInfo = await businessCollection.updateOne({ _id: ObjectId(businessId), "timeOff.objId": objId }, { $pull: { timeOff: { objId: objId } } });
 
   return { requestStatus: true };
+};
+
+let getCurrentStatus = async (employeeId) => {
+  await validate.checkID(employeeId);
+  employeeId = employeeId.trim();
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({
+    _id: ObjectId(employeeId),
+  });
+
+  if (!employee) throw new Error("Could not get employee");
+  return employee.currentStatus;
 };
 
 module.exports = {
@@ -648,4 +654,5 @@ module.exports = {
   declineTimeOffRequest,
   getUserTimeOffEntries,
   deleteTimeOffRequest,
+  getCurrentStatus,
 };

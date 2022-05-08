@@ -1,3 +1,67 @@
+google.charts.load("current", { packages: ["corechart"] });
+google.charts.setOnLoadCallback(drawCharts);
+
+function drawActiveEmployeesChart() {
+  var data = $.ajax({
+    url: "/businesses/getActiveEmployeesData",
+    type: "PUT",
+    async: false,
+  }).responseText;
+
+  var options = {
+    title: "Active Employees",
+    width: 450,
+    height: 300,
+  };
+
+  var chart = new google.visualization.PieChart(document.getElementById("piechart"));
+
+  chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
+}
+
+function drawEmployeeStatusChart() {
+  var data = $.ajax({
+    url: "/businesses/getEmployeeStatusData",
+    type: "PUT",
+    async: false,
+  }).responseText;
+
+  var options = {
+    title: "Employees Statuses",
+    width: 450,
+    height: 300,
+  };
+
+  var chart = new google.visualization.PieChart(document.getElementById("piechart2"));
+
+  chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
+}
+
+function drawHistoricalDataChart() {
+  var data = $.ajax({
+    url: "/businesses/getHistoricalData",
+    type: "PUT",
+    async: false,
+  }).responseText;
+
+  var options = {
+    title: "Previous Total Wages",
+    width: 500,
+    height: 300,
+    legend: { position: "bottom" },
+  };
+
+  var chart = new google.visualization.LineChart(document.getElementById("line_chart"));
+
+  if (data != "") chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
+}
+
+function drawCharts() {
+  drawActiveEmployeesChart();
+  drawEmployeeStatusChart();
+  drawHistoricalDataChart();
+}
+
 $(".updateEmployee").click(function () {
   // send ajax request to promote employee
   let employeeId = $(this).attr("value");
@@ -103,7 +167,7 @@ $("#cancelEmployee").on("click", async () => {
   $("#managerDashboarddiv").removeAttr("hidden");
   // check is isbusiness is true
   const isBusiness = $("#isBusiness").val();
-  if (!isBusiness) {
+  if (isBusiness === "false") {
     $("#backToHome").attr("hidden", false);
   } else {
     $("#backToHome").attr("hidden", true);
@@ -171,6 +235,7 @@ $("#storeStatus").on("click", function () {
         }, 3000);
       } else if (data === "Store Closed") {
         $("#employeesTable tr .employeeStatus").text("clockedOut");
+        drawEmployeeStatusChart();
         $("#storeStatus").text("Open Store");
         $("#alert").removeClass("alert-danger");
         $("#alert").addClass("alert-success");
@@ -214,9 +279,9 @@ $(document).ready(function () {
 });
 
 //Ajax for accepting/declining time off requests
-$("#timeOffRequestTable").on('click','.updateRequest', function () {
+$("#timeOffRequestTable").on("click", ".updateRequest", function () {
   let objId = $(this).attr("value");
-  let element = $(this).attr('id');
+  let element = $(this).attr("id");
 
   if (element == "timeOffReqAccept") {
     $.ajax({
@@ -265,4 +330,29 @@ $("#timeOffRequestTable").on('click','.updateRequest', function () {
 
 $("#timeOffAlertClose").on("click", async () => {
   $("#alertTimeOff").attr("hidden", true);
+});
+
+$("#estimateAlertClose").on("click", async () => {
+  $("#estimate").attr("hidden", true);
+});
+
+// onclick of estimate button, do ajax request to get estimated total paycheck amounts
+$("#estimateButton").on("click", function () {
+  // send ajax request to get estimate
+  $.ajax({
+    url: "/manager/estimateWages",
+    type: "PUT",
+    success: function (data) {
+      if (data !== "") {
+        $("#estimateText").text(data);
+      } else {
+        $("#estimateText").text("Estimate failed.");
+      }
+      $("#estimate").attr("hidden", false);
+    },
+    error: function (err) {
+      let data = JSON.parse(err.responseText);
+      alert(data.error);
+    },
+  });
 });

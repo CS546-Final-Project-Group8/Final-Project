@@ -204,7 +204,95 @@ let updateBusinessInfo = async (businessId, businessName, email, address, city, 
     { $set: updateInfo });
   if(!businessData) throw "Business could not be found in location";
   return true
-}
+};
+
+let estimateWages = async (businessId) => {
+  await validate.checkID(businessId);
+  businessId = businessId.toLowerCase().trim();
+  const employeeCollection = await employees();
+  let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
+
+  let totalHours = 0;
+  let totalLunchHours = 0;
+  let totalPay = 0;
+  let totalPayLunch = 0;
+  for (let i = 0; i < emps.length; i++) {
+    employee = emps[i];
+    shifts = await users.getShifts(employee._id.toString());
+    for (let j = 0; j < shifts.length; j++) {
+      totalHours += shifts[j].hours;
+      totalLunchHours += shifts[j].lunchHours;
+      totalPay += shifts[j].hours * employee.hourlyPay;
+      totalPayLunch += (shifts[j].hours + shifts[j].lunchHours) * employee.hourlyPay;
+    }
+  }
+
+  let totalMinutes = Math.floor(((totalHours * 60) % 60) * 100) / 100;
+  let totalHoursString = totalHours.toFixed(0).padStart(2, "0") + "h " + String(totalMinutes.toFixed(2)).padStart(2, "0") + "m";
+  let totalLunchHoursString = String(Math.floor(totalLunchHours)).padStart(2, "0") + "h " + String((totalLunchHours * 60).toFixed(2)).padStart(2, "0") + "m";
+
+  return {
+    succeeded: true,
+    totalHours: totalHours,
+    totalHoursString: totalHoursString,
+    totalLunchHours: totalLunchHours,
+    totalLunchHoursString: totalLunchHoursString,
+    totalPay: totalPay,
+    totalPayLunch: totalPayLunch,
+  };
+};
+
+let getActiveEmployeesData = async (businessId) => {
+  await validate.checkID(businessId);
+
+  const employeeCollection = await employees();
+  let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
+
+  totalActive = 0;
+  totalInactive = 0;
+  emps.forEach((employee) => {
+    if (employee.isActiveEmployee) {
+      totalActive += 1;
+    } else {
+      totalInactive += 1;
+    }
+  });
+  if (totalActive + totalInactive == 0) return null;
+  return [
+    ["Status", "Employees"],
+    ["Active", totalActive],
+    ["Inactive", totalInactive],
+  ];
+};
+
+let getEmployeeStatusData = async (businessId) => {
+  await validate.checkID(businessId);
+
+  const employeeCollection = await employees();
+  let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
+
+  totalClockedIn = emps.filter((obj) => obj.currentStatus === "clockedIn").length;
+  totalClockedOut = emps.filter((obj) => obj.currentStatus === "clockedOut").length;
+  totalMeal = emps.filter((obj) => obj.currentStatus === "meal").length;
+  //if (totalClockedIn + totalClockedOut + totalMeal == 0) return null;
+  return [
+    ["Status", "Employees"],
+    ["Clocked Out", totalClockedOut],
+    ["Clocked In", totalClockedIn],
+    ["Meal", totalMeal],
+  ];
+};
+
+// get store status for a business
+let getStoreStatus = async (businessId) => {
+  await validate.checkID(businessId);
+  businessId = businessId.toLowerCase().trim();
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
+  if (!business) throw "Couldn't find business";
+
+  return business.storeOpen;
+};
 
 module.exports = {
   createBusiness,
@@ -214,4 +302,8 @@ module.exports = {
   toggleStoreStatus,
   getBusiness,
   updateBusinessInfo,
+  estimateWages,
+  getActiveEmployeesData,
+  getEmployeeStatusData,
+  getStoreStatus,
 };

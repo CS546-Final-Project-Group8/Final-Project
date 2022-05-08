@@ -19,12 +19,13 @@
     <link rel="stylesheet" href="../../public/css/main.css" />
   </head>
   <body>
-      <header style="text-align: end;">
-        {{!-- if express session is active --}}
-        {{#if session.name}}
-          <a class="logoutbtn" href="/logout">Logout</a>
-        {{/if}}
-      </header>
+    <header style="text-align: end;">
+      {{!-- if express session is active --}}
+      {{#if session.name}}
+        <a class="logoutbtn" href="/logout">Logout</a>
+      {{/if}}
+    </header>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     {{{body}}}
     <script

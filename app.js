@@ -25,7 +25,12 @@ app.use("/public", static);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
+app.engine(
+  "handlebars",
+  exphbs.engine({
+    defaultLayout: "main",
+  })
+);
 app.set("view engine", "handlebars");
 
 var hbs = exphbs.create({});

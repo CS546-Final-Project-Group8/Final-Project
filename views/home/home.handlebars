@@ -27,7 +27,7 @@
 <div id="timeOffModal">
   <div id="timeOffModalContent">
     <span id="closeTimeOffModal">&times;</span>
-    <h4 style="margin-top: 10px;">Request Time Off</h4>
+    <label style="margin-top: 10px;font-size: 23px; font-weight: bold; margin-bottom: 10px;">Request Time Off</label>
     <br />
     <form action="/home" method="POST" id="timeOffForm">
       <div class="row align-items-center">
@@ -41,7 +41,7 @@
         </div>
         <div class="col-md-6">
           <button class="btn btn-outline-success" type="submit" id="addTimeOffReq">Submit Request</button>
-          <p id="timeOffErrorMsg" class="small pt-3" hidden></p>
+          <p id="timeOffErrorMsg" class="small error pt-3" hidden></p>
         </div>
       </div>
     </form>
@@ -49,7 +49,7 @@
 </div>
 
 <div id="timeOffUserEntries">
-    <h4 class="floatLeftTimeOff">Time Off Requests</h4>
+    <label class="floatLeftTimeOff" style="font-size: 21px; font-weight: bold;">Time Off Requests</label>
     <button class="btn btn-outline-primary" id="reqTimeOffBttn">Request Time Off</button>
     <table class="table table-striped table-hover" id="userTimeOffReqTable">
         <thead>

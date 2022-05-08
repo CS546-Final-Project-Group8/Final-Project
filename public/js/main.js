@@ -34,6 +34,7 @@ $("#confirmDeleteEmployee").on("click", async function (event) {
           $("#noEmployeeFound").attr("hidden", false);
         }
       }
+      drawActiveEmployeesChart();
     })
     .fail((req, status, error) => {
       console.log(error);

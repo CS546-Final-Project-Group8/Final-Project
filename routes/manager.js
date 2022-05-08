@@ -358,7 +358,7 @@ router.patch("/employee/:employee_id", async (req, res) => {
         startDate
       );
 
-      if (updateResult.isActiveEmployee === false && updateResult.currentStatus === "clockedOut") {
+      if (updateResult.isActiveEmployee === false && updateResult.currentStatus === "clockedOut" && !req.session.isBusiness) {
         req.session.employee.currentStatus = "clockedOut";
       }
       if (updateResult.isActiveEmployee === false && req.session.employeeId === req.params.employee_id) {
@@ -446,14 +446,11 @@ router.put("/declineTimeOffRequest", async (req, res) => {
 router.post("/calculate", async (req, res) => {
   if (req.session.isAdmin) {
     try {
-      let businessId = req.session.businessId;
-      await validate.checkID(businessId);
-
-      let payChecks = await businesses.calculatePay(businessId);
-
-      let pastCalculations = await businesses.getPastPayPeriods(businessId);
-
+      let payChecks = await businesses.calculatePay(req.session.businessId);
+      validate.checkID(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
+      let allTimeOffRequests = await users.getTimeOffEntries(req.session.businessId);
+      let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -468,6 +465,7 @@ router.post("/calculate", async (req, res) => {
           allEmployees: allEmployees,
           employeeNames: employeeNames,
           payChecks: payChecks,
+          timeOffRequests: allTimeOffRequests,
           pastCalculations: pastCalculations,
         });
       } else {
@@ -479,6 +477,7 @@ router.post("/calculate", async (req, res) => {
           allEmployees: allEmployees,
           employeeNames: employeeNames,
           payChecks: payChecks,
+          timeOffRequests: allTimeOffRequests,
           pastCalculations: pastCalculations,
           error: "No shifts worked since last calculation.",
         });
@@ -509,6 +508,40 @@ router.put("/toggleStoreStatus", async (req, res) => {
           req.session.employee.currentStatus = "clockedOut";
         }
         res.status(200).send("Store Closed");
+      }
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Manager Dashboard",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
+router.put("/estimateWages", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      await validate.checkID(req.session.businessId);
+      let businessId = req.session.businessId.toLowerCase().trim();
+      const estimate = await businesses.estimateWages(req.session.businessId);
+      if (estimate.succeeded) {
+        res
+          .status(200)
+          .send(
+            "Shift hours since last calculation: " +
+              estimate.totalHoursString +
+              " and " +
+              estimate.totalLunchHoursString +
+              " hours with lunch. Estimated total pay: $" +
+              estimate.totalPay.toFixed(2) +
+              " or $" +
+              estimate.totalPayLunch.toFixed(2) +
+              " including lunch."
+          );
+      } else {
+        res.status(200).send("Could not calculate estimate.");
       }
     } catch (e) {
       res.status(400).render("manager/manager", {
