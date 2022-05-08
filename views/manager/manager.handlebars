@@ -203,7 +203,7 @@
 
 
   {{#if isBusiness}}
-    <input type="bool" hidden id="isBusiness" value="{{isBusiness}}" />
+    <input hidden id="isBusiness" value="{{isBusiness}}" />
     <button hidden class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
   {{else}}
     <button class="btn btn-outline-secondary" id="backToHome">Back to Home</button>
@@ -349,7 +349,7 @@
       </tr>
     {{else}}
       <tr>
-        <td colspan="100%">There are no pending time off requests.</td>
+        <td colspan="4">There are no pending time off requests.</td>
       </tr>
     {{/each}}
   </tbody>

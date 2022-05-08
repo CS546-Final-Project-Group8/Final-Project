@@ -247,6 +247,17 @@ let getEmployeeStatusData = async (businessId) => {
   ];
 };
 
+// get store status for a business
+let getStoreStatus = async (businessId) => {
+  await validate.checkID(businessId);
+  businessId = businessId.toLowerCase().trim();
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
+  if (!business) throw "Couldn't find business";
+
+  return business.storeOpen;
+};
+
 module.exports = {
   createBusiness,
   checkBusiness,
@@ -256,4 +267,5 @@ module.exports = {
   estimateWages,
   getActiveEmployeesData,
   getEmployeeStatusData,
+  getStoreStatus,
 };
