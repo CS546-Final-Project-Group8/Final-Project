@@ -261,23 +261,6 @@ $("#storeStatus").on("click", function () {
   });
 });
 
-// // on keyup of search bar, give recommendation to the user
-// $("#searchEmployee").on("keyup", function () {
-//   var value = $(this).val().toLowerCase();
-//   var currentFocus;
-// });
-
-// on load of page, get all employees
-let employeeNames = [];
-$(document).ready(function () {
-  // traverse the first column of the table and store the employee names
-  $("#employeesTable")
-    .find("td:first-child")
-    .each(function () {
-      employeeNames.push($(this).text());
-    });
-});
-
 //Ajax for accepting/declining time off requests
 $("#timeOffRequestTable").on("click", ".updateRequest", function () {
   let objId = $(this).attr("value");

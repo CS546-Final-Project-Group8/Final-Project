@@ -90,15 +90,15 @@ let checkDate = async (date) => {
 
   let currentYear = new Date().getFullYear();
   if (year < 1900 || year > currentYear) {
-    throw "Error: Value for year should be between 1900 and " + currentYear;
+    throw "Error: Value for year should be between 1900 and current year";
   } else if (year === currentYear) {
     let currentMonth = new Date().getMonth() + 1;
     if (month > currentMonth) {
-      throw "Error: Value for month should be less than or equal to " + currentMonth;
+      throw "Error: Value for month should be less than or equal to current month";
     } else if (month === currentMonth) {
       let currentDay = new Date().getDate();
       if (day > currentDay) {
-        throw "Error: Value for day should be less than or equal to " + currentDay;
+        throw "Error: Value for day should be less than or equal to current day";
       }
     }
   }
@@ -240,7 +240,17 @@ let checkTimeOffDates = async (startDate, endDate) => {
   if (!date1 || !date2) throw "Please complete all fields";
   if (date1 > date2) throw "Start date must be before end date";
   return true;
-}
+};
+
+// check timeoff dates in YYYY-MM-DD format
+let checkTimeOffDateFormat = async (date) => {
+  if (!date) throw "Please complete all fields";
+  let re = /^\d{4}-\d{2}-\d{2}$/;
+  if (!re.test(date)) {
+    throw "Please enter date in YYYY-MM-DD format";
+  }
+  return true;
+};
 
 module.exports = {
   checkString,
@@ -256,4 +266,5 @@ module.exports = {
   checkGender,
   checkEmploymentStatus,
   checkTimeOffDates,
+  checkTimeOffDateFormat,
 };

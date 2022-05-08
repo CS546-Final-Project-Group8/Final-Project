@@ -200,15 +200,15 @@ let checkDate = async (date) => {
 
   let currentYear = new Date().getFullYear();
   if (year < 1900 || year > currentYear) {
-    throw "Error: Value for year should be between 1900 and " + currentYear;
+    throw "Error: Value for year should be between 1900 and current year";
   } else if (year === currentYear) {
     let currentMonth = new Date().getMonth() + 1;
     if (month > currentMonth) {
-      throw "Error: Value for month should be less than or equal to " + currentMonth;
+      throw "Error: Value for month should be less than or equal to current month";
     } else if (month === currentMonth) {
       let currentDay = new Date().getDate();
       if (day > currentDay) {
-        throw "Error: Value for day should be less than or equal to " + currentDay;
+        throw "Error: Value for day should be less than or equal to current day";
       }
     }
   }
@@ -221,58 +221,83 @@ let matchPassword = async (password, confirmPassword) => {
   }
 };
 
-const newEmployeeForm = $("#newEmployeeForm");
-newEmployeeForm.submit(async (event) => {
-  $("#errormessage").attr("hidden", true);
-  try {
-    let email = $("#email").val();
-    let password = $("#password").val();
-    let confirmPassword = $("#confirmPassword").val();
-    let firstName = $("#firstName").val();
-    let lastName = $("#lastName").val();
-    let address = $("#address").val();
-    let city = $("#city").val();
-    let state = $("#state").val();
-    let zip = $("#zip").val();
-    let phone = $("#phoneNumber").val();
-    let employmentStatus = $("#employmentStatus").val();
-    let isActiveEmployee = $("#isActiveEmployee").val();
-    let hourlyPay = $("#hourlyPay").val();
-    let startDate = $("#startDate").val();
-    let isManager = $("#isManager").val();
-    let gender = $("#gender").val();
+let checkUpdateBusinessInfo = async (businessName, address, city, about) => {
+  if (!businessName || businessName.trim() == "" || !address || address.trim() == "" || !city || city.trim() == "" || !about || about.trim() == "") throw "Error: Cannot have an empty field";
+};
 
-    await checkEmail(email);
-    await checkPassword(password);
-    password = password.trim();
-    await checkPassword(confirmPassword);
-    confirmPassword = confirmPassword.trim();
-    await matchPassword(password, confirmPassword);
-    await checkString(firstName);
-    await checkString(lastName);
-    await checkString(address);
-    await checkString(city);
-    await checkState(state);
-    await checkZip(zip);
-    await checkPhone(phone);
-    await checkEmploymentStatus(employmentStatus);
-    await checkBoolean(isActiveEmployee);
-    await checkNumber(hourlyPay);
-    await checkDate(startDate);
-    await checkBoolean(isManager);
-    await checkGender(gender);
-  } catch (e) {
-    event.preventDefault();
-    $("#errormessage").text(e);
-    $("#errormessage").attr("hidden", false);
+let emails = [];
+let checkExistingEmails = async (email) => {
+  console.log(emails);
+  if (emails.includes(email)) {
+    throw "Error: Email already exists";
   }
-});
+};
+
+const newEmployeeFormElement = document.getElementById("newEmployeeForm");
+if (newEmployeeFormElement) {
+  newEmployeeFormElement.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    $("#errormessage").attr("hidden", true);
+    try {
+      emails = [];
+      let table = $("#employeesTable").find("tbody");
+      table.find("tr").each(function () {
+        let existingEmail = $(this).find("td:nth-child(3)").text();
+        emails.push(existingEmail);
+      });
+      let email = $("#email").val();
+      let password = $("#password").val();
+      let confirmPassword = $("#confirmPassword").val();
+      let firstName = $("#firstName").val();
+      let lastName = $("#lastName").val();
+      let gender = $("#gender").val();
+      let address = $("#address").val();
+      let city = $("#city").val();
+      let state = $("#state").val();
+      let zip = $("#zip").val();
+      let phone = $("#phoneNumber").val();
+      let employmentStatus = $("#employmentStatus").val();
+      let isActiveEmployee = $("#isActiveEmployee").val();
+      let hourlyPay = $("#hourlyPay").val();
+      let startDate = $("#startDate").val();
+      let isManager = $("#isManager").val();
+
+      await checkEmail(email);
+      await checkExistingEmails(email);
+      await checkPassword(password);
+      password = password.trim();
+      await checkPassword(confirmPassword);
+      confirmPassword = confirmPassword.trim();
+      await matchPassword(password, confirmPassword);
+      await checkString(firstName);
+      await checkString(lastName);
+      await checkGender(gender);
+      await checkString(address);
+      await checkString(city);
+      await checkState(state);
+      await checkZip(zip);
+      await checkPhone(phone);
+      await checkEmploymentStatus(employmentStatus);
+      await checkBoolean(isActiveEmployee);
+      await checkNumber(hourlyPay);
+      await checkDate(startDate);
+      await checkBoolean(isManager);
+
+      // submit form
+      $("#newEmployeeForm").submit();
+    } catch (e) {
+      event.preventDefault();
+      $("#errormessage").text(e);
+      $("#errormessage").attr("hidden", false);
+    }
+  });
+}
 
 $(document).on("click", ".editEmployee", async function (event) {
   event.preventDefault();
   let employeeId = $(this).attr("data-employee-id");
   $.ajax({
-    url: `manager/employee/${employeeId}`,
+    url: `/manager/employee/${employeeId}`,
     type: "GET",
   }).done((data) => {
     if (data.error) console.log("Error getting employee while editing: ", data.error);
@@ -347,7 +372,7 @@ $("#saveEditEmployee").on("click", async (event) => {
     await checkNumber(hourlyPay);
     await checkDate(startDate);
     $.ajax({
-      url: `manager/employee/${employeeId}`,
+      url: `/manager/employee/${employeeId}`,
       type: "PATCH",
       data: {
         email: email,
@@ -384,6 +409,12 @@ $("#saveEditEmployee").on("click", async (event) => {
           startDate = new Date(data.startDate);
           $(trQuery + " .employeeStart").text(startDate.toLocaleDateString("en-US"));
           $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
+          let element = $("[value=" + employeeId + "]");
+          if (data.isManager) {
+            element.text("Demote to Employee");
+          } else {
+            element.text("Promote to Manager");
+          }
           $("#editEmployeeModal").hide();
         }
         drawActiveEmployeesChart();
@@ -409,3 +440,100 @@ let resetModal = () => {
   $(".modal-body input").val("");
   $("#modalErrorMessage").attr("hidden", true);
 };
+
+//Updating business info from business login -> manager dashboard
+$(document).on("click", "#updateBusinessInfo", async function (event) {
+  event.preventDefault();
+  $.ajax({
+    url: `/manager/businessInfo`,
+    type: "GET",
+  }).done((data) => {
+    if (data.error) console.log("Error getting business: ", data.error);
+    const business = data;
+    $("#updateBusinessName").val(business.businessName);
+    $("#updateEmail").val(business.email);
+    $("#updateAddress").val(business.address);
+    $("#updateCity").val(business.city);
+    $("#updateState").val(business.state);
+    $("#updateZip").val(business.zip);
+    $("#updatePhoneNumber").val(business.phone);
+    $("#updateAbout").val(business.about);
+    $("#updateBusinessInfoModal").show();
+  });
+});
+
+$("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) => {
+  event.preventDefault();
+  $("#modalErrorMessage").attr("hidden", true);
+  try {
+    let businessName = $("#updateBusinessName").val();
+    let email = $("#updateEmail").val();
+    let address = $("#updateAddress").val();
+    let city = $("#updateCity").val();
+    let state = $("#updateState").val();
+    let zip = $("#updateZip").val();
+    let phone = $("#updatePhoneNumber").val();
+    let about = $("#updateAbout").val();
+
+    await checkString(businessName);
+    await checkEmail(email);
+    await checkString(address);
+    await checkString(city);
+    await checkState(state);
+    await checkZip(zip);
+    await checkPhone(phone);
+    await checkString(about);
+    await checkUpdateBusinessInfo(businessName, address, city, about);
+    $.ajax({
+      url: "/manager/updateInfo",
+      type: "PATCH",
+      data: {
+        businessName: businessName,
+        email: email,
+        address: address,
+        city: city,
+        state: state,
+        zip: zip,
+        phoneNumber: phone,
+        about: about,
+      },
+    })
+      .done((data) => {
+        if (data.error) {
+          console.log("Error updating business: ", data.error);
+          $("#updateBusinessInfoModal").hide();
+          resetModal();
+          if ($("#updateBusinessAlert").hasClass("alert-success")) $("#updateBusinessAlert").removeClass("alert-success");
+          if (!$("#updateBusinessAlert").hasClass("alert-danger")) $("#updateBusinessAlert").addClass("alert-danger");
+          $("#updateAlertText").text("Error: unsuccessful update attempt");
+          $("#updateBusinessAlert").attr("hidden", false);
+          setTimeout(function () {
+            $("#updateBusinessAlert").attr("hidden", true);
+          }, 2000);
+        } else {
+          $("#updateBusinessInfoModal").hide();
+          resetModal();
+          if ($("#updateBusinessAlert").hasClass("alert-danger")) $("#updateBusinessAlert").removeClass("alert-danger");
+          if (!$("#updateBusinessAlert").hasClass("alert-success")) $("#updateBusinessAlert").addClass("alert-success");
+          $("#updateAlertText").text("Successfully updated business info");
+          $("#updateBusinessAlert").attr("hidden", false);
+          setTimeout(function () {
+            $("#updateBusinessAlert").attr("hidden", true);
+          }, 2000);
+        }
+      })
+      .fail((req, status, error) => console.log(error));
+  } catch (e) {
+    event.preventDefault();
+    $("#modalErrorMessage").text(e);
+    $("#modalErrorMessage").attr("hidden", false);
+  }
+});
+
+$("#updateBusinessInfoModal").on("click", "#cancelUpdateBusiness", async (event) => {
+  event.preventDefault();
+  $("#updateBusinessInfoModal").hide();
+  $("#modalErrorMessage").attr("hidden", true);
+  // reset the contents of the modal
+  resetModal();
+});

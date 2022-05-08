@@ -101,11 +101,14 @@
   function timeOffFormErrorCheck(date1, date2) {
     if (!date1 || !date2) throw "Please complete all fields";
     if (date1 > date2) throw "Start date must be before end date";
+    let today = new Date().toISOString().split("T")[0];
+    if (date1 < today || date2 < today) throw "Inputs must be current date or future dates";
   }
 
   //Checks for input errors on "user/login" form and displays error msg to user if error detected
   if (loginForm) {
     loginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
       const errorDiv = document.getElementById("errorDiv");
       errorDiv.hidden = true;
 
@@ -114,6 +117,8 @@
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
         loginFormErrorCheck(businessEmail, email, password);
+
+        loginForm.submit();
       } catch (e) {
         event.preventDefault();
         errorDiv.innerHTML = e;
@@ -125,6 +130,7 @@
   //Checks for input errors on "business/login" form and displays error msg to user if error detected
   if (businessLoginForm) {
     businessLoginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
       const errorDiv = document.getElementById("errorDiv");
       errorDiv.hidden = true;
 
@@ -132,6 +138,8 @@
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         businessLoginFormErrorCheck(email, password);
+
+        businessLoginForm.submit();
       } catch (e) {
         event.preventDefault();
         errorDiv.innerHTML = e;
@@ -143,6 +151,7 @@
   //Checks for input errors on "business/signup" form and displays error msg to user if error detected
   if (businessSignUpForm) {
     businessSignUpForm.addEventListener("submit", (event) => {
+      event.preventDefault();
       const errorDiv = document.getElementById("errorDiv");
       errorDiv.hidden = true;
 
@@ -158,6 +167,8 @@
         const phoneNumber = document.getElementById("phoneNumber").value.trim();
         const about = document.getElementById("about").value.trim();
         businessSignUpFormErrorCheck(businessName, email, password, confirmPassword, address, city, state, zip, phoneNumber, about);
+
+        businessSignUpForm.submit();
       } catch (e) {
         event.preventDefault();
         errorDiv.innerHTML = e;
@@ -169,6 +180,7 @@
   //Checks for input errors on "Request Time Off" Form
   if (timeOffForm) {
     timeOffForm.addEventListener("submit", (event) => {
+      event.preventDefault();
       const errorMsg = document.getElementById("timeOffErrorMsg");
       const timeOffModal = document.getElementById("timeOffModal");
       errorMsg.hidden = true;
@@ -178,6 +190,8 @@
         const endDate = document.getElementById("timeOffEndDate").value;
         timeOffFormErrorCheck(startDate, endDate);
         timeOffModal.style.display = "none";
+
+        timeOffForm.submit();
       } catch (e) {
         event.preventDefault();
         errorMsg.innerHTML = e;
