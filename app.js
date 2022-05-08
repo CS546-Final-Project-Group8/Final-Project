@@ -8,7 +8,7 @@ app.use(
     secret: "4kAQJRzpPSJ27pttoqejyh8RsjfMFEJXeGqBCL5p4ow4HkszhbXjux8kWWr9BYpC",
     saveUninitialized: true,
     resave: false,
-    cookie: { maxAge: 6000000 },
+    cookie: { maxAge: 600000 },
   })
 );
 

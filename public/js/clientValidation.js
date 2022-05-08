@@ -101,6 +101,8 @@
   function timeOffFormErrorCheck(date1, date2) {
     if (!date1 || !date2) throw "Please complete all fields";
     if (date1 > date2) throw "Start date must be before end date";
+    let today = new Date().toISOString().split('T')[0];
+    if (date1 < today || date2 < today) throw "Inputs must be current date or future dates";
   }
 
   //Checks for input errors on "user/login" form and displays error msg to user if error detected

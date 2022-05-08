@@ -41,6 +41,59 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/businessInfo", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      await validate.checkID(req.session.businessId);
+      let businessInfo = await businesses.getBusiness(req.session.businessId);
+      res.json(businessInfo);
+    } catch (e) {
+      res.status(400).render("manager/manager", {
+        title: "Business",
+        error: e,
+      });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
+router.patch("/updateInfo", async (req, res) => {
+  if (req.session.isAdmin) {
+    try {
+      await validate.checkID(req.session.businessId);
+      let businessId = req.session.businessId.toLowerCase().trim();
+      await validate.checkString(req.body.businessName);
+      let businessName = req.body.businessName.trim();
+      await validate.checkEmail(req.body.email);
+      let email = req.body.email.toLowerCase().trim();
+      await validate.checkString(req.body.address);
+      let address = req.body.address.trim();
+      await validate.checkString(req.body.city);
+      let city = req.body.city.trim();
+      await validate.checkState(req.body.state);
+      let state = req.body.state.trim();
+      await validate.checkZip(req.body.zip);
+      let zip = req.body.zip.trim();
+      await validate.checkPhone(req.body.phoneNumber);
+      let phone = req.body.phoneNumber.trim();
+      await validate.checkString(req.body.about);
+      let about = req.body.about.trim();
+      const result = await businesses.updateBusinessInfo(businessId, businessName, email, address, city, state, zip, phone, about);
+
+      if (result) {
+        res.status(200).send("Business update success");
+      } else {
+        res.redirect("/home");
+      }
+    } catch (e) {
+      res.status(400).json({ error: e });
+    }
+  } else {
+    res.redirect("/home");
+  }
+});
+
 router.post("/", async (req, res) => {
   if (req.session.isAdmin && req.body.calculation !== null) {
     try {

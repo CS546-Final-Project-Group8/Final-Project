@@ -2,6 +2,9 @@
     <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
+<div hidden id="updateBusinessAlert" class="alert alert-dismissible fade show" style="position: fixed; margin-left: 33%;" id="alert" hidden role="alert">
+    <p class="mb-0" id="updateAlertText" style="margin-left:35px;">Successfully updated business info</p>
+</div>
 {{!-- if error --}}
 {{#if error}}
     <div class="alert alert-dismissible alert-danger fade show" style="position: fixed;  margin-left: 35%;" role="alert">
@@ -211,11 +214,66 @@
 
   <button class="btn btn-outline-primary" id="newEmployee">Create New Employee</button>
 
+  {{#if isBusiness}}
+  <button class="btn btn-outline-primary" id="updateBusinessInfo">Update Business Info</button>
+  {{! form to update business info }}
+  <div id="updateBusinessInfoModal" class="modal" >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Update Business Info</h3>
+      </div>
+      <div class="modal-body">
+        <form id="updateBusinessInfoForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="updateBusinessName">Business Name</label>
+              <input required type="text" class="form-control" id="updateBusinessName" name="businessName" placeholder="Business Name" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="updateEmail">Email</label>
+              <input required type="email" class="form-control" id="updateEmail" name="email" placeholder="Email" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="updateAddress">Address</label>
+              <input required type="text" class="form-control" id="updateAddress" name="address" placeholder="Address" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="updateCity">City</label>
+              <input required type="text" class="form-control" id="updateCity" name="city" placeholder="City" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="updateState">State</label>
+              <input required type="text" class="form-control" id="updateState" name="state" placeholder="State" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="updateZip">Zip</label>
+              <input required type="text" class="form-control" id="updateZip" name="zip" placeholder="Zip" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="updatePhoneNumber">Phone Number :</label>
+              <input required type="text" class="form-control" id="updatePhoneNumber" name="phoneNumber" placeholder="Phone Number" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="updateAbout">About :</label>
+              <input required type="text" class="form-control" id="updateAbout" name="about" placeholder="About the business" />
+            </div>
+            <p id="modalErrorMessage" class="error" hidden></p>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-success" id="saveUpdateBusiness">Save</button>
+        <button class="btn btn-outline-danger" id="cancelUpdateBusiness">Cancel</button>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
   {{! form to edit an employee }}
   <div id="editEmployeeModal" class="modal" >
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title">Edit Employee</h4>
+        <h3 class="modal-title">Edit Employee</h3>
       </div>
       <div class="modal-body">
         <form id="editEmployeeForm">
@@ -316,7 +374,7 @@
     </div>
   </div>
 
-  <h4>Time Off Requests</h4>
+<h4>Time Off Requests</h4>
 <div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
   <p class="mb-0" id="timeOffAlertText"></p>
   <button type="button" class="btn-close" aria-label="Close" id="timeOffAlertClose"></button>

@@ -170,10 +170,48 @@ let toggleStoreStatus = async (businessId) => {
   return { storeOpen: !business.storeOpen };
 };
 
+// function getBusiness get gets business given a businessId and returns its attributes
+let getBusiness = async (businessId) => {
+  await validate.checkID(businessId);
+  businessId = businessId.trim();
+
+  const businessCollection = await businesses();
+  const businessData = await businessCollection.findOne({ _id: ObjectId(businessId) });
+  if (!businessData) throw "Business ID given was invalid";
+  delete businessData.hashedPassword;
+  delete businessData.calculations;
+
+  return businessData;
+};
+
+//function updateBusinessInfo updates the business key values in database
+let updateBusinessInfo = async (businessId, businessName, email, address, city, state, zip, phone, about) => {
+  await validate.checkID(businessId);
+  businessId = businessId.trim();
+  const businessCollection = await businesses();
+  let updateInfo = {
+    businessName: businessName,
+    email: email,
+    address: address,
+    city: city,
+    state: state,
+    zip: zip,
+    phone: phone,
+    about: about
+  }
+  const businessData = await businessCollection.updateOne(
+    { _id: ObjectId(businessId)}, 
+    { $set: updateInfo });
+  if(!businessData) throw "Business could not be found in location";
+  return true
+}
+
 module.exports = {
   createBusiness,
   checkBusiness,
   calculatePay,
   getPastPayPeriods,
   toggleStoreStatus,
+  getBusiness,
+  updateBusinessInfo,
 };

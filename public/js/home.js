@@ -57,7 +57,6 @@ $("#userTimeOffReqTable").on('click','.deleteTimeOffRequest', function () {
   }
 });
 
-
 $("#showEmployeeInfo").click(function () {
   $("#employeeInfo").attr("hidden", false);
   $("#showEmployeeInfo").attr("hidden", true);
