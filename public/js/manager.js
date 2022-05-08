@@ -19,6 +19,24 @@ function drawActiveEmployeesChart() {
   chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
 }
 
+function drawEmployeeStatusChart() {
+  var data = $.ajax({
+    url: "/businesses/getEmployeeStatusData",
+    type: "PUT",
+    async: false,
+  }).responseText;
+
+  var options = {
+    title: "Employees Statuses",
+    width: 500,
+    height: 300,
+  };
+
+  var chart = new google.visualization.PieChart(document.getElementById("piechart2"));
+
+  chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
+}
+
 function drawHistoricalDataChart() {
   var data = $.ajax({
     url: "/businesses/getHistoricalData",
@@ -40,6 +58,7 @@ function drawHistoricalDataChart() {
 
 function drawCharts() {
   drawActiveEmployeesChart();
+  drawEmployeeStatusChart();
   drawHistoricalDataChart();
 }
 
