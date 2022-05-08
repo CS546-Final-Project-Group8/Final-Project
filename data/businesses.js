@@ -170,48 +170,39 @@ let toggleStoreStatus = async (businessId) => {
   return { storeOpen: !business.storeOpen };
 };
 
-let estimateWages = async (businessId, count) => {
+let estimateWages = async (businessId) => {
   await validate.checkID(businessId);
   businessId = businessId.toLowerCase().trim();
-  const businessCollection = await businesses();
-  const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
-  if (!business) throw "Couldn't find business";
+  const employeeCollection = await employees();
+  let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
 
-  if (business.calculations.length < count) {
-    return { succeeded: false };
-  }
-
-  let totalWages = 0;
-  let totalWagesWithLunch = 0;
-  let employees = 0;
   let totalHours = 0;
   let totalLunchHours = 0;
-  for (let i = 0; i < count; i++) {
-    business.calculations[i].forEach((payCheck) => {
-      totalWages += payCheck.totalPay;
-      totalWagesWithLunch += payCheck.totalPayLunch;
-      totalHours += payCheck.totalHours;
-      totalLunchHours += payCheck.totalLunchHours;
-      employees += 1;
-    });
+  let totalPay = 0;
+  let totalPayLunch = 0;
+  for (let i = 0; i < emps.length; i++) {
+    employee = emps[i];
+    shifts = await users.getShifts(employee._id.toString());
+    for (let j = 0; j < shifts.length; j++) {
+      totalHours += shifts[j].hours;
+      totalLunchHours += shifts[j].lunchHours;
+      totalPay += shifts[j].hours * employee.hourlyPay;
+      totalPayLunch += (shifts[j].hours + shifts[j].lunchHours) * employee.hourlyPay;
+    }
   }
-  let amount = totalWages / employees;
-  let amountString = amount.toFixed(2);
-  let lunchAmount = totalWagesWithLunch / employees;
-  let lunchAmountString = lunchAmount.toFixed(2);
-  let totalHoursString = totalHours.toFixed(2);
-  let totalLunchHoursString = totalLunchHours.toFixed(2);
+
+  let totalMinutes = Math.floor(((totalHours * 60) % 60) * 100) / 100;
+  let totalHoursString = totalHours.toFixed(0).padStart(2, "0") + "h " + String(totalMinutes.toFixed(2)).padStart(2, "0") + "m";
+  let totalLunchHoursString = String(Math.floor(totalLunchHours)).padStart(2, "0") + "h " + String((totalLunchHours * 60).toFixed(2)).padStart(2, "0") + "m";
+
   return {
     succeeded: true,
-    count: count,
-    amount: amount,
-    amountString: amountString,
-    lunchAmount: lunchAmount,
-    lunchAmountString: lunchAmountString,
     totalHours: totalHours,
     totalHoursString: totalHoursString,
     totalLunchHours: totalLunchHours,
     totalLunchHoursString: totalLunchHoursString,
+    totalPay: totalPay,
+    totalPayLunch: totalPayLunch,
   };
 };
 
