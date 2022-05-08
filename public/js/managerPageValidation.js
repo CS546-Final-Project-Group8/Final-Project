@@ -299,49 +299,52 @@ $(document).on("click", ".editEmployee", async function (event) {
   $.ajax({
     url: `/manager/employee/${employeeId}`,
     type: "GET",
-  }).done((data) => {
-    if (data.error) console.log("Error getting employee while editing: ", data.error);
-    const employee = data;
-    console.log("employee: ", employee);
-    $("#editEmployeeModal").attr("data-employee-id", employeeId);
-    $("#editEmail").val(employee.email);
-    $("#editFirstName").val(employee.firstName);
-    $("#editLastName").val(employee.lastName);
-    const gender = $("#editGender");
-    gender.find("option").each(function () {
-      if ($(this).val().toLowerCase() === employee.gender.toLowerCase()) {
-        $("#editGender").val($(this).val());
-      }
+  })
+    .done((data) => {
+      const employee = data;
+      console.log("employee: ", employee);
+      $("#editEmployeeModal").attr("data-employee-id", employeeId);
+      $("#editEmail").val(employee.email);
+      $("#editFirstName").val(employee.firstName);
+      $("#editLastName").val(employee.lastName);
+      const gender = $("#editGender");
+      gender.find("option").each(function () {
+        if ($(this).val().toLowerCase() === employee.gender.toLowerCase()) {
+          $("#editGender").val($(this).val());
+        }
+      });
+      $("#editAddress").val(employee.address);
+      $("#editCity").val(employee.city);
+      $("#editState").val(employee.state);
+      $("#editZip").val(employee.zip);
+      $("#editPhoneNumber").val(employee.phone);
+      // find relevent option for employment Status from select
+      const employmentStatus = $("#editEmploymentStatus");
+      employmentStatus.find("option").each(function () {
+        if ($(this).val().toLowerCase() === employee.employmentStatus.toLowerCase()) {
+          $("#editEmploymentStatus").val($(this).val());
+        }
+      });
+      const isActiveEmployee = $("#editIsActiveEmployee");
+      isActiveEmployee.find("option").each(function () {
+        // stringify employee.isActiveEmployee from boolean to string
+        if (JSON.stringify(employee.isActiveEmployee).toLowerCase() === $(this).val().toLowerCase()) {
+          $("#editIsActiveEmployee").val($(this).val());
+        }
+      });
+      $("#editHourlyPay").val(employee.hourlyPay);
+      $("#editStartDate").val(employee.startDate);
+      $("#editEmployeeModal").show();
+    })
+    .fail((error) => {
+      let data = JSON.parse(error.responseText);
+      alert(data.error);
     });
-    $("#editAddress").val(employee.address);
-    $("#editCity").val(employee.city);
-    $("#editState").val(employee.state);
-    $("#editZip").val(employee.zip);
-    $("#editPhoneNumber").val(employee.phone);
-    // find relevent option for employment Status from select
-    const employmentStatus = $("#editEmploymentStatus");
-    employmentStatus.find("option").each(function () {
-      if ($(this).val().toLowerCase() === employee.employmentStatus.toLowerCase()) {
-        $("#editEmploymentStatus").val($(this).val());
-      }
-    });
-    const isActiveEmployee = $("#editIsActiveEmployee");
-    isActiveEmployee.find("option").each(function () {
-      // stringify employee.isActiveEmployee from boolean to string
-      if (JSON.stringify(employee.isActiveEmployee).toLowerCase() === $(this).val().toLowerCase()) {
-        $("#editIsActiveEmployee").val($(this).val());
-      }
-    });
-    $("#editHourlyPay").val(employee.hourlyPay);
-    $("#editStartDate").val(employee.startDate);
-    $("#editEmployeeModal").show();
-  });
 });
 
-$("#saveEditEmployee").on("click", async (event) => {
+$("#editEmployeeForm").on("submit", async (event) => {
   event.preventDefault();
   let employeeId = $("#editEmployeeModal").attr("data-employee-id");
-  // TODO client side validation goes here BEFORE patching
   $("#modalErrorMessage").attr("hidden", true);
   try {
     let email = $("#editEmail").val();
@@ -391,35 +394,37 @@ $("#saveEditEmployee").on("click", async (event) => {
       },
     })
       .done((data) => {
-        if (data.error) console.log("Error updating employee: ", data.error);
-        else {
-          if (data.reload) {
-            window.location.replace("/home");
-          }
-          let trQuery = `tr[data-employee-id=${employeeId}] `;
-          $(trQuery + " .employeeName").text(data.firstName + " " + data.lastName);
-          $(trQuery + " .employeeStatus").text(data.currentStatus);
-          $(trQuery + " .employeeEmail").text(data.email);
-          $(trQuery + " .employeePhone").text(data.phone);
-          $(trQuery + " .employeeAddress").text(`${data.address}, ${data.city} ${data.state}, ${data.zip}`);
-          $(trQuery + " .employeeGender").text(data.gender);
-          $(trQuery + " .employeeHourlyPay").text("$" + data.hourlyPay);
-          $(trQuery + " .employeeEmployment").text(data.employmentStatus);
-          $(trQuery + " .employeeActive").text(data.isActiveEmployee === true ? "Yes" : "No");
-          startDate = new Date(data.startDate);
-          $(trQuery + " .employeeStart").text(startDate.toLocaleDateString("en-US"));
-          $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
-          let element = $("[value=" + employeeId + "]");
-          if (data.isManager) {
-            element.text("Demote to Employee");
-          } else {
-            element.text("Promote to Manager");
-          }
-          $("#editEmployeeModal").hide();
+        if (data.reload) {
+          window.location.replace("/home");
         }
-        drawActiveEmployeesChart();
+        let trQuery = `tr[data-employee-id=${employeeId}] `;
+        $(trQuery + " .employeeName").text(data.firstName + " " + data.lastName);
+        $(trQuery + " .employeeStatus").text(data.currentStatus);
+        $(trQuery + " .employeeEmail").text(data.email);
+        $(trQuery + " .employeePhone").text(data.phone);
+        $(trQuery + " .employeeAddress").text(`${data.address}, ${data.city} ${data.state}, ${data.zip}`);
+        $(trQuery + " .employeeGender").text(data.gender);
+        $(trQuery + " .employeeHourlyPay").text("$" + data.hourlyPay);
+        $(trQuery + " .employeeEmployment").text(data.employmentStatus);
+        $(trQuery + " .employeeActive").text(data.isActiveEmployee === true ? "Yes" : "No");
+        // start date is in the format of "YYYY-MM-DD", conevert to "MM/DD/YYYY"
+        let startDateArray = data.startDate.split("-");
+        $(trQuery + " .employeeStart").text(`${startDateArray[1]}/${startDateArray[2]}/${startDateArray[0]}`);
+        $(trQuery + " .employeeManager").text(data.isManager ? "Manager" : "Employee");
+        let element = $("[value=" + employeeId + "]");
+        if (data.isManager) {
+          element.text("Demote to Employee");
+        } else {
+          element.text("Promote to Manager");
+        }
+        $("#editEmployeeModal").hide();
+        refreshPieCharts();
       })
-      .fail((req, status, error) => console.log(error));
+      .fail((error) => {
+        let data = JSON.parse(error.responseText);
+        $("#modalErrorMessage").text(data.error);
+        $("#modalErrorMessage").attr("hidden", false);
+      });
   } catch (e) {
     event.preventDefault();
     $("#modalErrorMessage").text(e);
@@ -447,22 +452,27 @@ $(document).on("click", "#updateBusinessInfo", async function (event) {
   $.ajax({
     url: `/manager/businessInfo`,
     type: "GET",
-  }).done((data) => {
-    if (data.error) console.log("Error getting business: ", data.error);
-    const business = data;
-    $("#updateBusinessName").val(business.businessName);
-    $("#updateEmail").val(business.email);
-    $("#updateAddress").val(business.address);
-    $("#updateCity").val(business.city);
-    $("#updateState").val(business.state);
-    $("#updateZip").val(business.zip);
-    $("#updatePhoneNumber").val(business.phone);
-    $("#updateAbout").val(business.about);
-    $("#updateBusinessInfoModal").show();
-  });
+  })
+    .done((data) => {
+      if (data.error) console.log("Error getting business: ", data.error);
+      const business = data;
+      $("#updateBusinessName").val(business.businessName);
+      $("#updateEmail").val(business.email);
+      $("#updateAddress").val(business.address);
+      $("#updateCity").val(business.city);
+      $("#updateState").val(business.state);
+      $("#updateZip").val(business.zip);
+      $("#updatePhoneNumber").val(business.phone);
+      $("#updateAbout").val(business.about);
+      $("#updateBusinessInfoModal").show();
+    })
+    .fail((error) => {
+      let data = JSON.parse(error.responseText);
+      alert(data.error);
+    });
 });
 
-$("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) => {
+$("#updateBusinessInfoForm").on("submit", async (event) => {
   event.preventDefault();
   $("#modalErrorMessage").attr("hidden", true);
   try {
@@ -485,7 +495,7 @@ $("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) =
     await checkString(about);
     await checkUpdateBusinessInfo(businessName, address, city, about);
     $.ajax({
-      url: "/manager/updateInfo",
+      url: "/manager/updateBusinessInfo",
       type: "PATCH",
       data: {
         businessName: businessName,
@@ -499,18 +509,7 @@ $("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) =
       },
     })
       .done((data) => {
-        if (data.error) {
-          console.log("Error updating business: ", data.error);
-          $("#updateBusinessInfoModal").hide();
-          resetModal();
-          if ($("#updateBusinessAlert").hasClass("alert-success")) $("#updateBusinessAlert").removeClass("alert-success");
-          if (!$("#updateBusinessAlert").hasClass("alert-danger")) $("#updateBusinessAlert").addClass("alert-danger");
-          $("#updateAlertText").text("Error: unsuccessful update attempt");
-          $("#updateBusinessAlert").attr("hidden", false);
-          setTimeout(function () {
-            $("#updateBusinessAlert").attr("hidden", true);
-          }, 2000);
-        } else {
+        if (data === "Business update success") {
           $("#updateBusinessInfoModal").hide();
           resetModal();
           if ($("#updateBusinessAlert").hasClass("alert-danger")) $("#updateBusinessAlert").removeClass("alert-danger");
@@ -522,7 +521,20 @@ $("#updateBusinessInfoModal").on("click", "#saveUpdateBusiness", async (event) =
           }, 2000);
         }
       })
-      .fail((req, status, error) => console.log(error));
+      .fail((error) => {
+        let data = JSON.parse(error.responseText);
+        if (data.error) {
+          $("#updateBusinessInfoModal").hide();
+          resetModal();
+          if ($("#updateBusinessAlert").hasClass("alert-success")) $("#updateBusinessAlert").removeClass("alert-success");
+          if (!$("#updateBusinessAlert").hasClass("alert-danger")) $("#updateBusinessAlert").addClass("alert-danger");
+          $("#updateAlertText").text(data.error);
+          $("#updateBusinessAlert").attr("hidden", false);
+          setTimeout(function () {
+            $("#updateBusinessAlert").attr("hidden", true);
+          }, 2000);
+        }
+      });
   } catch (e) {
     event.preventDefault();
     $("#modalErrorMessage").text(e);

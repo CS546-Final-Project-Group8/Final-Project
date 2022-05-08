@@ -91,7 +91,7 @@ let createEmployee = async (
     isManager: isManager,
     currentStatus: "clockedOut",
     timeEntries: [],
-    timeEntiresOld: [],
+    timeEntriesOld: [],
   };
 
   //if businessId and email are unique, create employee
@@ -157,6 +157,14 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
     _id: ObjectId(employeeId),
   });
   if (!employee) throw "Couldn't update an employee that does not exist";
+
+  const employeeDataCheck = await employeesCollection.findOne({
+    businessId: businessId,
+    email: email,
+  });
+  if (employeeDataCheck && employeeDataCheck._id.toString() !== employeeId) {
+    throw "Email already exists";
+  }
 
   if (isActiveEmployee === false && employee.isManager === true) {
     await demoteEmployee(employeeId);
@@ -385,11 +393,11 @@ let clockOutLunch = async (employeeId, comment) => {
   timeEntries.sort((a, b) => (a.dateTime < b.dateTime ? 1 : -1));
 
   if (timeEntries[0].status == "lunchIn") {
-    throw "You have already clocked lunch for this shift.";
+    return { succeeded: false, e: "You have already clocked lunch for this shift." };
   }
 
   if (employee.currentStatus !== "clockedIn") {
-    throw "Critical error: You must be clocked in to clock out for lunch!";
+    throw "Error: You must be clocked in to clock out for lunch!";
   }
   const userCollection = await employees();
   let userUpdateInfo = {

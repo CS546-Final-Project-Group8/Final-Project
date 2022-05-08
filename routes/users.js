@@ -80,21 +80,23 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/logout", async (req, res) => {
-  try {
-    if (req.session.user) {
+  if (req.session.user) {
+    try {
       req.session.destroy();
+      res.render("users/logout", {
+        title: "Logout",
+      });
+    } catch (e) {
+      res.status(500).redirect("/login");
     }
-    res.render("users/logout", {
-      title: "Logout",
-    });
-  } catch (e) {
-    res.status(500).redirect("/login");
+  } else {
+    res.redirect("/login");
   }
 });
 
 router.post("/clockIn", async (req, res) => {
-  try {
-    if (!req.session.isBusiness && req.session.user) {
+  if (!req.session.isBusiness && req.session.user) {
+    try {
       req.body.comment = xss(req.body.comment);
       await validate.checkString(req.body.comment);
       let comment = req.body.comment.trim();
@@ -106,6 +108,7 @@ router.post("/clockIn", async (req, res) => {
       req.session.employee.currentStatus = currentStatus;
       if (!storeStatus) {
         let shifts = await users.getShifts(req.session.employeeId);
+        let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
         res.render("home/home", {
           title: "Home",
           user: req.session.user,
@@ -114,6 +117,7 @@ router.post("/clockIn", async (req, res) => {
           employeeId: req.session.employeeId,
           employee: req.session.employee,
           shifts: shifts,
+          timeOffUserEntries: timeOffUserEntries,
           error: "Store is closed",
         });
         return;
@@ -125,6 +129,7 @@ router.post("/clockIn", async (req, res) => {
         res.redirect("/home");
       } else {
         let shifts = await users.getShifts(req.session.employeeId);
+        let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
         // render error in home page
         res.render("home/home", {
           title: "Home",
@@ -134,30 +139,31 @@ router.post("/clockIn", async (req, res) => {
           employeeId: req.session.employeeId,
           employee: req.session.employee,
           shifts: shifts,
+          timeOffUserEntries: timeOffUserEntries,
           error: "Could not clock in, please try again.",
         });
       }
-    } else {
-      res.redirect("/home");
+    } catch (e) {
+      let shifts = await users.getShifts(req.session.employeeId);
+      res.status(400).render("home/home", {
+        title: "Home",
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        businessId: req.session.businessId,
+        employeeId: req.session.employeeId,
+        employee: req.session.employee,
+        shifts: shifts,
+        error: e,
+      });
     }
-  } catch (e) {
-    let shifts = await users.getShifts(req.session.employeeId);
-    res.status(400).render("home/home", {
-      title: "Home",
-      user: req.session.user,
-      isAdmin: req.session.isAdmin,
-      businessId: req.session.businessId,
-      employeeId: req.session.employeeId,
-      employee: req.session.employee,
-      shifts: shifts,
-      error: e,
-    });
+  } else {
+    res.redirect("/home");
   }
 });
 
 router.post("/clockOut", async (req, res) => {
-  try {
-    if (!req.session.isBusiness && req.session.user) {
+  if (!req.session.isBusiness && req.session.user) {
+    try {
       req.body.comment = xss(req.body.comment);
       await validate.checkString(req.body.comment);
       let comment = req.body.comment.trim();
@@ -173,6 +179,7 @@ router.post("/clockOut", async (req, res) => {
         res.redirect("/home");
       } else {
         let shifts = await users.getShifts(req.session.employeeId);
+        let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
         // render error in home page
         res.render("home/home", {
           title: "Home",
@@ -183,32 +190,33 @@ router.post("/clockOut", async (req, res) => {
           employee: req.session.employee,
           shifts: shifts,
           error: "Could not clock out, please try again.",
+          timeOffUserEntries: timeOffUserEntries,
         });
       }
-    } else {
-      res.redirect("/home");
+    } catch (e) {
+      let shifts = await users.getShifts(req.session.employeeId);
+      if (req.session.employee.currentStatus === "clockedOut") {
+        e = "You are clocked out, either store is closed or you are inactive.";
+      }
+      res.status(400).render("home/home", {
+        title: "Home",
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        businessId: req.session.businessId,
+        employeeId: req.session.employeeId,
+        employee: req.session.employee,
+        shifts: shifts,
+        error: e,
+      });
     }
-  } catch (e) {
-    let shifts = await users.getShifts(req.session.employeeId);
-    if (req.session.employee.currentStatus === "clockedOut") {
-      e = "You are clocked out, either store is closed or you are inactive.";
-    }
-    res.status(400).render("home/home", {
-      title: "Home",
-      user: req.session.user,
-      isAdmin: req.session.isAdmin,
-      businessId: req.session.businessId,
-      employeeId: req.session.employeeId,
-      employee: req.session.employee,
-      shifts: shifts,
-      error: e,
-    });
+  } else {
+    res.redirect("/home");
   }
 });
 
 router.post("/clockOutLunch", async (req, res) => {
-  try {
-    if (!req.session.isBusiness && req.session.user) {
+  if (!req.session.isBusiness && req.session.user) {
+    try {
       req.body.comment = xss(req.body.comment);
       await validate.checkString(req.body.comment);
       let comment = req.body.comment.trim();
@@ -224,6 +232,7 @@ router.post("/clockOutLunch", async (req, res) => {
         res.redirect("/home");
       } else {
         let shifts = await users.getShifts(req.session.employeeId);
+        let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
         // render error in home page
         res.render("home/home", {
           title: "Home",
@@ -233,33 +242,34 @@ router.post("/clockOutLunch", async (req, res) => {
           employeeId: req.session.employeeId,
           employee: req.session.employee,
           shifts: shifts,
+          timeOffUserEntries: timeOffUserEntries,
           error: result.e ?? "Could not clock out lunch, please try again.",
         });
       }
-    } else {
-      res.redirect("/home");
+    } catch (e) {
+      let shifts = await users.getShifts(req.session.employeeId);
+      if (req.session.employee.currentStatus === "clockedOut") {
+        e = "You are clocked out, either store is closed or you are inactive.";
+      }
+      res.status(400).render("home/home", {
+        title: "Home",
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        businessId: req.session.businessId,
+        employeeId: req.session.employeeId,
+        employee: req.session.employee,
+        shifts: shifts,
+        error: e,
+      });
     }
-  } catch (e) {
-    let shifts = await users.getShifts(req.session.employeeId);
-    if (req.session.employee.currentStatus === "clockedOut") {
-      e = "You are clocked out, either store is closed or you are inactive.";
-    }
-    res.status(400).render("home/home", {
-      title: "Home",
-      user: req.session.user,
-      isAdmin: req.session.isAdmin,
-      businessId: req.session.businessId,
-      employeeId: req.session.employeeId,
-      employee: req.session.employee,
-      shifts: shifts,
-      error: e,
-    });
+  } else {
+    res.redirect("/home");
   }
 });
 
 router.post("/clockInLunch", async (req, res) => {
-  try {
-    if (!req.session.isBusiness && req.session.user) {
+  if (!req.session.isBusiness && req.session.user) {
+    try {
       req.body.comment = xss(req.body.comment);
       await validate.checkString(req.body.comment);
       let comment = req.body.comment.trim();
@@ -291,6 +301,7 @@ router.post("/clockInLunch", async (req, res) => {
       if (result.succeeded) {
         req.session.employee.currentStatus = "clockedIn";
         res.redirect("/home");
+        return;
       } else {
         let shifts = await users.getShifts(req.session.employeeId);
         // render error in home page
@@ -305,24 +316,24 @@ router.post("/clockInLunch", async (req, res) => {
           error: "Could not clock in lunch, please try again.",
         });
       }
-    } else {
-      res.redirect("/home");
+    } catch (e) {
+      let shifts = await users.getShifts(req.session.employeeId);
+      if (req.session.employee.currentStatus === "clockedOut") {
+        e = "You are clocked out, either store is closed or you are inactive.";
+      }
+      res.status(400).render("home/home", {
+        title: "Home",
+        user: req.session.user,
+        isAdmin: req.session.isAdmin,
+        businessId: req.session.businessId,
+        employeeId: req.session.employeeId,
+        employee: req.session.employee,
+        shifts: shifts,
+        error: e,
+      });
     }
-  } catch (e) {
-    let shifts = await users.getShifts(req.session.employeeId);
-    if (req.session.employee.currentStatus === "clockedOut") {
-      e = "You are clocked out, either store is closed or you are inactive.";
-    }
-    res.status(400).render("home/home", {
-      title: "Home",
-      user: req.session.user,
-      isAdmin: req.session.isAdmin,
-      businessId: req.session.businessId,
-      employeeId: req.session.employeeId,
-      employee: req.session.employee,
-      shifts: shifts,
-      error: e,
-    });
+  } else {
+    res.redirect("/home");
   }
 });
 

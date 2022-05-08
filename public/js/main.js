@@ -13,7 +13,6 @@ $("#cancelDeleteEmployee").on("click", async function (event) {
 $("#confirmDeleteEmployee").on("click", async function (event) {
   event.preventDefault();
   let employeeId = $("#deleteEmployeeModal").attr("data-employee-id");
-  // TODO client-side validation HERE
   $.ajax({
     url: `manager/employee/${employeeId}`,
     type: "DELETE",
@@ -22,9 +21,6 @@ $("#confirmDeleteEmployee").on("click", async function (event) {
       if (data === "You cannot delete yourself") {
         $("#deleteEmployeeModal").hide();
         alert(data);
-      } else if (data.error) {
-        $("#deleteEmployeeModal").hide();
-        alert(data.error);
       } else {
         $(`tr[data-employee-id=${employeeId}]`).remove();
         $("#deleteEmployeeModal").attr("data-employee-id", "");
@@ -36,8 +32,10 @@ $("#confirmDeleteEmployee").on("click", async function (event) {
       }
       drawActiveEmployeesChart();
     })
-    .fail((req, status, error) => {
-      console.log(error);
+    .fail((error) => {
+      let data = JSON.parse(error.responseText);
+      $("#deleteEmployeeModal").hide();
+      alert(data.error);
     });
 });
 

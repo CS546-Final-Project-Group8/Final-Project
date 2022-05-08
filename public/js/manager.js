@@ -62,6 +62,11 @@ function drawCharts() {
   drawHistoricalDataChart();
 }
 
+function refreshPieCharts() {
+  drawActiveEmployeesChart();
+  drawEmployeeStatusChart();
+}
+
 $(".updateEmployee").click(function () {
   // send ajax request to promote employee
   let employeeId = $(this).attr("value");
@@ -286,6 +291,10 @@ $("#timeOffRequestTable").on("click", ".updateRequest", function () {
           }, 3000);
         }
       },
+      error: function (err) {
+        let data = JSON.parse(err.responseText);
+        alert(data.error);
+      },
     });
   } else if (element == "timeOffReqDecline") {
     $.ajax({
@@ -306,6 +315,10 @@ $("#timeOffRequestTable").on("click", ".updateRequest", function () {
             $("#alertTimeOff").attr("hidden", true);
           }, 3000);
         }
+      },
+      error: function (err) {
+        let data = JSON.parse(err.responseText);
+        alert(data.error);
       },
     });
   }
