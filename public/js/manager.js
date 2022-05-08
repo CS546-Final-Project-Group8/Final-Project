@@ -10,7 +10,7 @@ function drawActiveEmployeesChart() {
 
   var options = {
     title: "Active Employees",
-    width: 500,
+    width: 450,
     height: 300,
   };
 
@@ -28,7 +28,7 @@ function drawEmployeeStatusChart() {
 
   var options = {
     title: "Employees Statuses",
-    width: 500,
+    width: 450,
     height: 300,
   };
 

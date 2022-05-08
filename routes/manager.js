@@ -394,8 +394,10 @@ router.post("/calculate", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       let payChecks = await businesses.calculatePay(req.session.businessId);
-      let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
+      validate.checkID(req.session.businessId);
       let allEmployees = await users.getAllEmployees(req.session.businessId);
+      let allTimeOffRequests = await users.getTimeOffEntries(req.session.businessId);
+      let pastCalculations = await businesses.getPastPayPeriods(req.session.businessId);
 
       const employeeNames = allEmployees.map((employee) => {
         return employee.firstName + " " + employee.lastName;
@@ -410,6 +412,7 @@ router.post("/calculate", async (req, res) => {
           allEmployees: allEmployees,
           employeeNames: employeeNames,
           payChecks: payChecks,
+          timeOffRequests: allTimeOffRequests,
           pastCalculations: pastCalculations,
         });
       } else {
@@ -421,6 +424,7 @@ router.post("/calculate", async (req, res) => {
           allEmployees: allEmployees,
           employeeNames: employeeNames,
           payChecks: payChecks,
+          timeOffRequests: allTimeOffRequests,
           pastCalculations: pastCalculations,
           error: "No shifts worked since last calculation.",
         });
@@ -468,22 +472,20 @@ router.put("/estimateWages", async (req, res) => {
     try {
       await validate.checkID(req.session.businessId);
       let businessId = req.session.businessId.toLowerCase().trim();
-      const estimate = await businesses.estimateWages(businessId, 3);
+      const estimate = await businesses.estimateWages(req.session.businessId);
       if (estimate.succeeded) {
         res
           .status(200)
           .send(
-            "Based on the previous " +
-              estimate.count +
-              " calculations, total wages will be approx. $" +
-              estimate.amountString +
-              ", and $" +
-              estimate.lunchAmountString +
-              " with paid lunches. Based on " +
+            "Shift hours since last calculation: " +
               estimate.totalHoursString +
-              " estimated hours worked and " +
+              " and " +
               estimate.totalLunchHoursString +
-              " hours including lunches."
+              " hours with lunch. Estimated total pay: $" +
+              estimate.totalPay.toFixed(2) +
+              " or $" +
+              estimate.totalPayLunch.toFixed(2) +
+              " including lunch."
           );
       } else {
         res.status(200).send("Could not calculate estimate.");
