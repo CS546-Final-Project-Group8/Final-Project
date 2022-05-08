@@ -90,15 +90,15 @@ let checkDate = async (date) => {
 
   let currentYear = new Date().getFullYear();
   if (year < 1900 || year > currentYear) {
-    throw "Error: Value for year should be between 1900 and " + currentYear;
+    throw "Error: Value for year should be between 1900 and current year";
   } else if (year === currentYear) {
     let currentMonth = new Date().getMonth() + 1;
     if (month > currentMonth) {
-      throw "Error: Value for month should be less than or equal to " + currentMonth;
+      throw "Error: Value for month should be less than or equal to current month";
     } else if (month === currentMonth) {
       let currentDay = new Date().getDate();
       if (day > currentDay) {
-        throw "Error: Value for day should be less than or equal to " + currentDay;
+        throw "Error: Value for day should be less than or equal to current day";
       }
     }
   }

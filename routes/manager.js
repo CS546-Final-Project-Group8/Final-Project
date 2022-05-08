@@ -241,7 +241,7 @@ router.post("/new", async (req, res) => {
           hourlyPay: req.body.hourlyPay,
           startDate: req.body.startDate,
           isManager: req.body.isManager,
-          title: "Employee",
+          title: "Employee Creation",
           error: "Internal Server Error",
         });
       }
@@ -263,7 +263,7 @@ router.post("/new", async (req, res) => {
         hourlyPay: req.body.hourlyPay,
         startDate: req.body.startDate,
         isManager: req.body.isManager,
-        title: "Employee",
+        title: "Employee Creation",
         error: e,
       });
     }

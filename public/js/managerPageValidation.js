@@ -200,15 +200,15 @@ let checkDate = async (date) => {
 
   let currentYear = new Date().getFullYear();
   if (year < 1900 || year > currentYear) {
-    throw "Error: Value for year should be between 1900 and " + currentYear;
+    throw "Error: Value for year should be between 1900 and current year";
   } else if (year === currentYear) {
     let currentMonth = new Date().getMonth() + 1;
     if (month > currentMonth) {
-      throw "Error: Value for month should be less than or equal to " + currentMonth;
+      throw "Error: Value for month should be less than or equal to current month";
     } else if (month === currentMonth) {
       let currentDay = new Date().getDate();
       if (day > currentDay) {
-        throw "Error: Value for day should be less than or equal to " + currentDay;
+        throw "Error: Value for day should be less than or equal to current day";
       }
     }
   }
@@ -225,52 +225,73 @@ let checkUpdateBusinessInfo = async (businessName, address, city, about) => {
   if (!businessName || businessName.trim() == "" || !address || address.trim() == "" || !city || city.trim() == "" || !about || about.trim() == "") throw "Error: Cannot have an empty field";
 };
 
-const newEmployeeForm = $("#newEmployeeForm");
-newEmployeeForm.submit(async (event) => {
-  $("#errormessage").attr("hidden", true);
-  try {
-    let email = $("#email").val();
-    let password = $("#password").val();
-    let confirmPassword = $("#confirmPassword").val();
-    let firstName = $("#firstName").val();
-    let lastName = $("#lastName").val();
-    let address = $("#address").val();
-    let city = $("#city").val();
-    let state = $("#state").val();
-    let zip = $("#zip").val();
-    let phone = $("#phoneNumber").val();
-    let employmentStatus = $("#employmentStatus").val();
-    let isActiveEmployee = $("#isActiveEmployee").val();
-    let hourlyPay = $("#hourlyPay").val();
-    let startDate = $("#startDate").val();
-    let isManager = $("#isManager").val();
-    let gender = $("#gender").val();
-
-    await checkEmail(email);
-    await checkPassword(password);
-    password = password.trim();
-    await checkPassword(confirmPassword);
-    confirmPassword = confirmPassword.trim();
-    await matchPassword(password, confirmPassword);
-    await checkString(firstName);
-    await checkString(lastName);
-    await checkString(address);
-    await checkString(city);
-    await checkState(state);
-    await checkZip(zip);
-    await checkPhone(phone);
-    await checkEmploymentStatus(employmentStatus);
-    await checkBoolean(isActiveEmployee);
-    await checkNumber(hourlyPay);
-    await checkDate(startDate);
-    await checkBoolean(isManager);
-    await checkGender(gender);
-  } catch (e) {
-    event.preventDefault();
-    $("#errormessage").text(e);
-    $("#errormessage").attr("hidden", false);
+let emails = [];
+let checkExistingEmails = async (email) => {
+  console.log(emails);
+  if (emails.includes(email)) {
+    throw "Error: Email already exists";
   }
-});
+};
+
+const newEmployeeFormElement = document.getElementById("newEmployeeForm");
+if (newEmployeeFormElement) {
+  newEmployeeFormElement.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    $("#errormessage").attr("hidden", true);
+    try {
+      emails = [];
+      let table = $("#employeesTable").find("tbody");
+      table.find("tr").each(function () {
+        let existingEmail = $(this).find("td:nth-child(3)").text();
+        emails.push(existingEmail);
+      });
+      let email = $("#email").val();
+      let password = $("#password").val();
+      let confirmPassword = $("#confirmPassword").val();
+      let firstName = $("#firstName").val();
+      let lastName = $("#lastName").val();
+      let gender = $("#gender").val();
+      let address = $("#address").val();
+      let city = $("#city").val();
+      let state = $("#state").val();
+      let zip = $("#zip").val();
+      let phone = $("#phoneNumber").val();
+      let employmentStatus = $("#employmentStatus").val();
+      let isActiveEmployee = $("#isActiveEmployee").val();
+      let hourlyPay = $("#hourlyPay").val();
+      let startDate = $("#startDate").val();
+      let isManager = $("#isManager").val();
+
+      await checkEmail(email);
+      await checkExistingEmails(email);
+      await checkPassword(password);
+      password = password.trim();
+      await checkPassword(confirmPassword);
+      confirmPassword = confirmPassword.trim();
+      await matchPassword(password, confirmPassword);
+      await checkString(firstName);
+      await checkString(lastName);
+      await checkGender(gender);
+      await checkString(address);
+      await checkString(city);
+      await checkState(state);
+      await checkZip(zip);
+      await checkPhone(phone);
+      await checkEmploymentStatus(employmentStatus);
+      await checkBoolean(isActiveEmployee);
+      await checkNumber(hourlyPay);
+      await checkDate(startDate);
+      await checkBoolean(isManager);
+
+      // submit form
+      $("#newEmployeeForm").submit();
+    } catch (e) {
+      event.preventDefault();
+      $("#errormessage").text(e);
+      $("#errormessage").attr("hidden", false);
+    }
+  });
+}
 
 $(document).on("click", ".editEmployee", async function (event) {
   event.preventDefault();
