@@ -20,7 +20,7 @@ function drawActiveEmployeesChart() {
 }
 
 function drawEmployeeStatusChart() {
-  var data = $.ajax({
+  var jsondata = $.ajax({
     url: "/businesses/getEmployeeStatusData",
     type: "PUT",
     async: false,
@@ -34,7 +34,10 @@ function drawEmployeeStatusChart() {
 
   var chart = new google.visualization.PieChart(document.getElementById("piechart2"));
 
-  chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
+  var data = JSON.parse(jsondata)
+  let empCount = data[1][1] + data[2][1] + data[3][1];
+  //If there are not 0 employees, draw the chart
+  if (empCount !== 0) chart.draw(google.visualization.arrayToDataTable(data), options);
 }
 
 function drawHistoricalDataChart() {
@@ -53,6 +56,7 @@ function drawHistoricalDataChart() {
 
   var chart = new google.visualization.LineChart(document.getElementById("line_chart"));
 
+  //If there is some historical data, draw the chart
   if (data != "") chart.draw(google.visualization.arrayToDataTable(JSON.parse(data)), options);
 }
 
