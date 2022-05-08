@@ -204,7 +204,7 @@ router.put("/getHistoricalData", async (req, res) => {
       validate.checkID(req.session.businessId);
       let historicalData = await businesses.getPastPayPeriods(req.session.businessId);
       historicalData = historicalData.reverse();
-      numPeriods = historicalData.length;
+      let numPeriods = historicalData.length;
       if (numPeriods < 2) {
         res.status(200).send("");
       } else {

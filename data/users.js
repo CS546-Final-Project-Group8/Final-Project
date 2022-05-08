@@ -474,11 +474,11 @@ let getShifts = async (employeeId) => {
 
   timeEntries.sort((a, b) => (a.dateTime > b.dateTime ? 1 : -1));
 
-  shifts = [];
-  lastClockIn = null;
-  lastLunch = null;
+  let shifts = [];
+  let lastClockIn = null;
+  let lastLunch = null;
   let lunchhours = 0;
-  shiftComments = [];
+  let shiftComments = [];
   timeEntries.forEach((entry) => {
     if (lastClockIn == null) lastClockIn = entry.dateTime;
     if (entry.status == "clockIn") {
@@ -501,8 +501,8 @@ let getShifts = async (employeeId) => {
       shift["hours"] = (current - prev) / 1000 / 60 / 60 - lunchhours;
       shift["lunchHours"] = lunchhours;
 
-      shiftMinutes = Math.floor(((shift["hours"] * 60) % 60) * 100) / 100;
-      shiftHours = Math.floor(shift["hours"]);
+      let shiftMinutes = Math.floor(((shift["hours"] * 60) % 60) * 100) / 100;
+      let shiftHours = Math.floor(shift["hours"]);
 
       shift["hoursString"] = String(shiftHours).padStart(2, "0") + "h " + String(shiftMinutes.toFixed(2)).padStart(2, "0") + "m";
       shift["lunchHoursString"] = String(Math.floor(lunchhours)).padStart(2, "0") + "h " + String((lunchhours * 60).toFixed(2)).padStart(2, "0") + "m";
@@ -541,9 +541,8 @@ let addTimeOffEntry = async (businessId, employeeId, employeeName, startDate, en
     requestAccepted: false,
   };
   const updatedInfo = await businessCollection.updateOne({ _id: ObjectId(businessId) }, { $push: { timeOff: newTimeOffRequest } });
-  if (updatedInfo.modifiedCount === 0) {
-    return false;
-  }
+  if (!updatedInfo.matchedCount && !updatedInfo.modifiedCount) throw "Time off request unsuccessful";
+
   return true;
 };
 
@@ -557,9 +556,9 @@ let getTimeOffEntries = async (businessId) => {
   let allTimeEntries = business.timeOff;
   if (!allTimeEntries) throw new Error("Could not get time off entries");
   let activeRequests = [];
-  for (let i = 0; i < allTimeEntries.length; i++) {
-    if (allTimeEntries[i].requestAcknowledged == false) {
-      activeRequests.push(allTimeEntries[i]);
+  for (const element of allTimeEntries) {
+    if (element.requestAcknowledged === false) {
+      activeRequests.push(element);
     }
   }
   return activeRequests;
@@ -625,7 +624,7 @@ let deleteTimeOffRequest = async (objId, businessId) => {
   businessId = businessId.trim();
   const businessCollection = await businesses();
 
-  const deleteInfo = await businessCollection.updateOne({ _id: ObjectId(businessId), "timeOff.objId": objId }, { $pull: { timeOff: { objId: objId } } });
+  await businessCollection.updateOne({ _id: ObjectId(businessId), "timeOff.objId": objId }, { $pull: { timeOff: { objId: objId } } });
 
   return { requestStatus: true };
 };

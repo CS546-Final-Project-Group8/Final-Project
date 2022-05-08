@@ -80,7 +80,7 @@ let calculatePay = async (businessId) => {
   const employeeCollection = await employees();
   let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
 
-  payChecks = [];
+  let payChecks = [];
   for (const e of emps) {
     let shifts = await users.getShifts(e._id.toString());
     if (shifts.length === 0) continue;
@@ -102,7 +102,7 @@ let calculatePay = async (businessId) => {
     payCheck["allComments"] = allComments;
     payCheck["totalHours"] = totalHours;
 
-    totalMinutes = Math.floor(((payCheck["totalHours"] * 60) % 60) * 100) / 100;
+    let totalMinutes = Math.floor(((payCheck["totalHours"] * 60) % 60) * 100) / 100;
     totalHours = Math.floor(payCheck["totalHours"]);
 
     payCheck["totalHoursString"] = String(totalHours).padStart(2, "0") + "h " + String(totalMinutes.toFixed(2)).padStart(2, "0") + "m";
@@ -121,7 +121,7 @@ let calculatePay = async (businessId) => {
     let i;
     for (i = 0; i < timeEntries.length; i++) if (timeEntries[i].status === "clockOut") break;
     timeEntries = timeEntries.slice(0, i);
-    timeEntriesOld = timeEntries.slice(i, timeEntries.length);
+    let timeEntriesOld = timeEntries.slice(i, timeEntries.length);
 
     const userCollection = await employees();
     let userUpdateInfo = {
@@ -225,14 +225,13 @@ let estimateWages = async (businessId) => {
   let totalLunchHours = 0;
   let totalPay = 0;
   let totalPayLunch = 0;
-  for (let i = 0; i < emps.length; i++) {
-    employee = emps[i];
-    shifts = await users.getShifts(employee._id.toString());
-    for (let j = 0; j < shifts.length; j++) {
-      totalHours += shifts[j].hours;
-      totalLunchHours += shifts[j].lunchHours;
-      totalPay += shifts[j].hours * employee.hourlyPay;
-      totalPayLunch += (shifts[j].hours + shifts[j].lunchHours) * employee.hourlyPay;
+  for (const employee of emps) {
+    let shifts = await users.getShifts(employee._id.toString());
+    for (const element of shifts) {
+      totalHours += element.hours;
+      totalLunchHours += element.lunchHours;
+      totalPay += element.hours * employee.hourlyPay;
+      totalPayLunch += (element.hours + element.lunchHours) * employee.hourlyPay;
     }
   }
 
@@ -257,8 +256,8 @@ let getActiveEmployeesData = async (businessId) => {
   const employeeCollection = await employees();
   let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
 
-  totalActive = 0;
-  totalInactive = 0;
+  let totalActive = 0;
+  let totalInactive = 0;
   emps.forEach((employee) => {
     if (employee.isActiveEmployee) {
       totalActive += 1;
@@ -280,9 +279,9 @@ let getEmployeeStatusData = async (businessId) => {
   const employeeCollection = await employees();
   let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
 
-  totalClockedIn = emps.filter((obj) => obj.currentStatus === "clockedIn").length;
-  totalClockedOut = emps.filter((obj) => obj.currentStatus === "clockedOut").length;
-  totalMeal = emps.filter((obj) => obj.currentStatus === "meal").length;
+  let totalClockedIn = emps.filter((obj) => obj.currentStatus === "clockedIn").length;
+  let totalClockedOut = emps.filter((obj) => obj.currentStatus === "clockedOut").length;
+  let totalMeal = emps.filter((obj) => obj.currentStatus === "meal").length;
   //if (totalClockedIn + totalClockedOut + totalMeal == 0) return null;
   return [
     ["Status", "Employees"],

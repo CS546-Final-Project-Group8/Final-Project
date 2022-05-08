@@ -9,11 +9,7 @@
   //Checks validity of email
   function checkEmail(email) {
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (re.test(String(email).toLowerCase())) {
-      return true;
-    } else {
-      return false;
-    }
+    return !!re.test(String(email).toLowerCase());
   }
 
   //Error checking for all login form inputs, throws error if an input is invalid
@@ -123,6 +119,7 @@
         event.preventDefault();
         errorDiv.innerHTML = e;
         errorDiv.hidden = false;
+        errorDiv.style.color = "red";
       }
     });
   }
@@ -144,6 +141,7 @@
         event.preventDefault();
         errorDiv.innerHTML = e;
         errorDiv.hidden = false;
+        errorDiv.style.color = "red";
       }
     });
   }
@@ -173,6 +171,7 @@
         event.preventDefault();
         errorDiv.innerHTML = e;
         errorDiv.hidden = false;
+        errorDiv.style.color = "red";
       }
     });
   }
