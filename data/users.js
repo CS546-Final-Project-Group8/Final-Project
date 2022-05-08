@@ -91,7 +91,7 @@ let createEmployee = async (
     isManager: isManager,
     currentStatus: "clockedOut",
     timeEntries: [],
-    timeEntiresOld: [],
+    timeEntriesOld: [],
   };
 
   //if businessId and email are unique, create employee
