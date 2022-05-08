@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const validate = require("../validate/index.js");
 const users = require("../data/users.js");
+const businesses = require("../data/businesses.js");
 
 router.get("/", async (req, res) => {
   if (req.session.user) {
@@ -92,7 +93,13 @@ router.post("/clockIn", async (req, res) => {
     if (!req.session.isBusiness && req.session.user) {
       await validate.checkString(req.body.comment);
       let comment = req.body.comment.trim();
-      if (!req.session.storeOpen) {
+      // get store status from business
+      const storeStatus = await businesses.getStoreStatus(req.session.businessId);
+      req.session.storeOpen = storeStatus;
+      // get current status from employee
+      const currentStatus = await users.getCurrentStatus(req.session.employeeId);
+      req.session.employee.currentStatus = currentStatus;
+      if (!storeStatus) {
         let shifts = await users.getShifts(req.session.employeeId);
         res.render("home/home", {
           title: "Home",
@@ -148,6 +155,11 @@ router.post("/clockOut", async (req, res) => {
     if (!req.session.isBusiness && req.session.user) {
       await validate.checkString(req.body.comment);
       let comment = req.body.comment.trim();
+
+      // get current status from employee
+      const currentStatus = await users.getCurrentStatus(req.session.employeeId);
+      req.session.employee.currentStatus = currentStatus;
+
       const result = await users.clockOut(req.session.employeeId, comment);
 
       if (result.succeeded) {
@@ -172,6 +184,9 @@ router.post("/clockOut", async (req, res) => {
     }
   } catch (e) {
     let shifts = await users.getShifts(req.session.employeeId);
+    if (req.session.employee.currentStatus === "clockedOut") {
+      e = "You are already clocked out, since the store is closed";
+    }
     res.status(400).render("home/home", {
       title: "Home",
       user: req.session.user,
@@ -190,6 +205,11 @@ router.post("/clockOutLunch", async (req, res) => {
     if (!req.session.isBusiness && req.session.user) {
       await validate.checkString(req.body.comment);
       let comment = req.body.comment.trim();
+
+      // get current status from employee
+      const currentStatus = await users.getCurrentStatus(req.session.employeeId);
+      req.session.employee.currentStatus = currentStatus;
+
       const result = await users.clockOutLunch(req.session.employeeId, comment);
 
       if (result.succeeded) {
@@ -214,6 +234,9 @@ router.post("/clockOutLunch", async (req, res) => {
     }
   } catch (e) {
     let shifts = await users.getShifts(req.session.employeeId);
+    if (req.session.employee.currentStatus === "clockedOut") {
+      e = "You are already clocked out, since the store is closed";
+    }
     res.status(400).render("home/home", {
       title: "Home",
       user: req.session.user,
@@ -232,7 +255,15 @@ router.post("/clockInLunch", async (req, res) => {
     if (!req.session.isBusiness && req.session.user) {
       await validate.checkString(req.body.comment);
       let comment = req.body.comment.trim();
-      if (!req.session.storeOpen) {
+
+      // get store status from business
+      const storeStatus = await businesses.getStoreStatus(req.session.businessId);
+      req.session.storeOpen = storeStatus;
+      // get current status from employee
+      const currentStatus = await users.getCurrentStatus(req.session.employeeId);
+      req.session.employee.currentStatus = currentStatus;
+
+      if (!storeStatus) {
         let shifts = await users.getShifts(req.session.employeeId);
         res.render("home/home", {
           title: "Home",
@@ -271,6 +302,9 @@ router.post("/clockInLunch", async (req, res) => {
     }
   } catch (e) {
     let shifts = await users.getShifts(req.session.employeeId);
+    if (req.session.employee.currentStatus === "clockedOut") {
+      e = "You are already clocked out, since the store is closed";
+    }
     res.status(400).render("home/home", {
       title: "Home",
       user: req.session.user,

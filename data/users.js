@@ -622,6 +622,18 @@ let deleteTimeOffRequest = async (objId, businessId) => {
   return { requestStatus: true };
 };
 
+let getCurrentStatus = async (employeeId) => {
+  await validate.checkID(employeeId);
+  employeeId = employeeId.trim();
+  const employeeCollection = await employees();
+  const employee = await employeeCollection.findOne({
+    _id: ObjectId(employeeId),
+  });
+
+  if (!employee) throw new Error("Could not get employee");
+  return employee.currentStatus;
+};
+
 module.exports = {
   createEmployee,
   updateEmployee,
@@ -642,4 +654,5 @@ module.exports = {
   declineTimeOffRequest,
   getUserTimeOffEntries,
   deleteTimeOffRequest,
+  getCurrentStatus,
 };

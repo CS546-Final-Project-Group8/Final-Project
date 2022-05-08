@@ -167,7 +167,7 @@ $("#cancelEmployee").on("click", async () => {
   $("#managerDashboarddiv").removeAttr("hidden");
   // check is isbusiness is true
   const isBusiness = $("#isBusiness").val();
-  if (!isBusiness) {
+  if (isBusiness === "false") {
     $("#backToHome").attr("hidden", false);
   } else {
     $("#backToHome").attr("hidden", true);
@@ -235,6 +235,7 @@ $("#storeStatus").on("click", function () {
         }, 3000);
       } else if (data === "Store Closed") {
         $("#employeesTable tr .employeeStatus").text("clockedOut");
+        drawEmployeeStatusChart();
         $("#storeStatus").text("Open Store");
         $("#alert").removeClass("alert-danger");
         $("#alert").addClass("alert-success");
