@@ -417,7 +417,7 @@ $("#saveEditEmployee").on("click", async (event) => {
           }
           $("#editEmployeeModal").hide();
         }
-        drawActiveEmployeesChart();
+        refreshPieCharts();
       })
       .fail((req, status, error) => console.log(error));
   } catch (e) {

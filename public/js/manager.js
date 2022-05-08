@@ -62,6 +62,11 @@ function drawCharts() {
   drawHistoricalDataChart();
 }
 
+function refreshPieCharts() {
+  drawActiveEmployeesChart();
+  drawEmployeeStatusChart();
+}
+
 $(".updateEmployee").click(function () {
   // send ajax request to promote employee
   let employeeId = $(this).attr("value");

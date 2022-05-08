@@ -439,7 +439,7 @@
   <div class="row">
       <div class="col-md-4">
           {{#if pastCalculations}}
-          <h3 style="margin-top:20px">Past Pay Periods</h3>
+          <h4 style="margin-top:20px">Past Pay Periods</h4>
           <table id="pastCalculationsTable" class="table table-striped">
               <thead>
                   <tr>
@@ -465,7 +465,7 @@
       </div>
       <div class="col-md-8">
           {{#if payChecks}}
-          <h3 style="margin-top:20px">Paychecks calculated on {{dateFormat payChecks.[0].date "MM/D/YYYY"}}</h3>
+          <h4 style="margin-top:20px">Paycheck{{#if payChecks.[1]}}s{{/if}} calculated on {{dateFormat payChecks.[0].date "MM/D/YYYY"}}</h4>
           <table id="calculationTable" class="table table-striped">
               <thead>
                   <tr>

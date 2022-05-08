@@ -106,6 +106,7 @@ router.post("/clockIn", async (req, res) => {
       req.session.employee.currentStatus = currentStatus;
       if (!storeStatus) {
         let shifts = await users.getShifts(req.session.employeeId);
+        let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
         res.render("home/home", {
           title: "Home",
           user: req.session.user,
@@ -114,6 +115,7 @@ router.post("/clockIn", async (req, res) => {
           employeeId: req.session.employeeId,
           employee: req.session.employee,
           shifts: shifts,
+          timeOffUserEntries: timeOffUserEntries,
           error: "Store is closed",
         });
         return;
@@ -125,6 +127,7 @@ router.post("/clockIn", async (req, res) => {
         res.redirect("/home");
       } else {
         let shifts = await users.getShifts(req.session.employeeId);
+        let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
         // render error in home page
         res.render("home/home", {
           title: "Home",
@@ -134,6 +137,7 @@ router.post("/clockIn", async (req, res) => {
           employeeId: req.session.employeeId,
           employee: req.session.employee,
           shifts: shifts,
+          timeOffUserEntries: timeOffUserEntries,
           error: "Could not clock in, please try again.",
         });
       }
@@ -142,6 +146,7 @@ router.post("/clockIn", async (req, res) => {
     }
   } catch (e) {
     let shifts = await users.getShifts(req.session.employeeId);
+    let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
     res.status(400).render("home/home", {
       title: "Home",
       user: req.session.user,
@@ -150,6 +155,7 @@ router.post("/clockIn", async (req, res) => {
       employeeId: req.session.employeeId,
       employee: req.session.employee,
       shifts: shifts,
+      timeOffUserEntries: timeOffUserEntries,
       error: e,
     });
   }
@@ -173,6 +179,7 @@ router.post("/clockOut", async (req, res) => {
         res.redirect("/home");
       } else {
         let shifts = await users.getShifts(req.session.employeeId);
+        let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
         // render error in home page
         res.render("home/home", {
           title: "Home",
@@ -183,6 +190,7 @@ router.post("/clockOut", async (req, res) => {
           employee: req.session.employee,
           shifts: shifts,
           error: "Could not clock out, please try again.",
+          timeOffUserEntries: timeOffUserEntries,
         });
       }
     } else {
@@ -224,6 +232,7 @@ router.post("/clockOutLunch", async (req, res) => {
         res.redirect("/home");
       } else {
         let shifts = await users.getShifts(req.session.employeeId);
+        let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
         // render error in home page
         res.render("home/home", {
           title: "Home",
@@ -233,6 +242,7 @@ router.post("/clockOutLunch", async (req, res) => {
           employeeId: req.session.employeeId,
           employee: req.session.employee,
           shifts: shifts,
+          timeOffUserEntries: timeOffUserEntries,
           error: result.e ?? "Could not clock out lunch, please try again.",
         });
       }
