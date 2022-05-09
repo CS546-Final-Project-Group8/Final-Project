@@ -38,7 +38,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  if (req.session.user && !req.session.isBusiness) {
+  if (req.session.user && !req.session.isAdmin) {
     try {
       req.body.timeOffStartDate = xss(req.body.timeOffStartDate);
       await validate.checkTimeOffDateFormat(req.body.timeOffStartDate);
@@ -73,7 +73,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/userTimeOffDelete", async (req, res) => {
-  if (req.session.user && !req.session.isBusiness) {
+  if (req.session.user && !req.session.isAdmin) {
     try {
       req.body.objId = xss(req.body.objId);
       await validate.checkID(req.body.objId);

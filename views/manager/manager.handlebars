@@ -2,7 +2,7 @@
     <p class="mb-0" id="alertText">Successfully promoted employee to manager.</p>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-<div id="updateBusinessAlert" class="alert alert-dismissible fade show" style="position: fixed; margin-left: 33%;" hidden role="alert">
+<div id="updateBusinessAlert" class="alert alert-dismissible fade show" style="position: fixed; margin-left: 33%; z-index: 1;" hidden role="alert">
     <p class="mb-0" id="updateAlertText" style="margin-left:35px;">Successfully updated business info</p>
 </div>
 {{!-- if error --}}
@@ -259,7 +259,7 @@
             </div>
             <p id="modalErrorMessage" class="error" hidden></p>
           </div>
-          <div style="text-align: end;>
+          <div style="text-align: end;">
             <button class="btn btn-outline-success" id="saveUpdateBusiness">Save</button>
             <button class="btn btn-outline-danger" id="cancelUpdateBusiness">Cancel</button>
           </div>
