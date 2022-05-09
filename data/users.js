@@ -3,7 +3,7 @@ const employees = mongoCollections.employees;
 const businesses = mongoCollections.businesses;
 const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const saltRounds = 12;
 const validate = require("../validate/index.js");
 
 // function createEmployee(businessId, email, password, confirmPassword, firstName, lastName, gender,  address, city, state, zip, phone, employmentStatus, isActiveEmployee, hourlyPay, startDate, isManager) this function creates an employee in monogoDB database

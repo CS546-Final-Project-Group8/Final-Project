@@ -34,7 +34,7 @@ function drawEmployeeStatusChart() {
 
   var chart = new google.visualization.PieChart(document.getElementById("piechart2"));
 
-  var data = JSON.parse(jsondata)
+  var data = JSON.parse(jsondata);
   let empCount = data[1][1] + data[2][1] + data[3][1];
   //If there are not 0 employees, draw the chart
   if (empCount !== 0) chart.draw(google.visualization.arrayToDataTable(data), options);
@@ -70,6 +70,54 @@ function refreshPieCharts() {
   drawActiveEmployeesChart();
   drawEmployeeStatusChart();
 }
+
+$(document).on("click", ".deleteEmployee", async function (event) {
+  event.preventDefault();
+  $("#deleteEmployeeModal").attr("data-employee-id", $(this).attr("data-employee-id"));
+  $("#deleteEmployeeModal").show();
+});
+
+$("#cancelDeleteEmployee").on("click", async function (event) {
+  event.preventDefault();
+  $("#deleteEmployeeModal").attr("data-employee-id", "");
+  $("#deleteEmployeeModal").hide();
+});
+
+$("#confirmDeleteEmployee").on("click", async function (event) {
+  event.preventDefault();
+  let employeeId = $("#deleteEmployeeModal").attr("data-employee-id");
+  $.ajax({
+    url: `/manager/employee/${employeeId}`,
+    type: "DELETE",
+  })
+    .done((data) => {
+      if (data === "You cannot delete yourself") {
+        $("#deleteEmployeeModal").hide();
+        alert(data);
+      } else {
+        $(`tr[data-employee-id=${employeeId}]`).remove();
+        $("#deleteEmployeeModal").attr("data-employee-id", "");
+        $("#deleteEmployeeModal").hide();
+        // check if there are no employees left
+        if ($("#employeesTable tr").length === 1) {
+          $("#noEmployeeFound").attr("hidden", false);
+          // redirect to /manager
+          window.location.href = "/manager";
+        }
+      }
+      refreshPieCharts();
+    })
+    .fail((error) => {
+      let data = JSON.parse(error.responseText);
+      $("#deleteEmployeeModal").hide();
+      alert(data.error);
+    });
+});
+
+$("#backToHome").on("click", async () => {
+  // redirect to the home page
+  window.location.href = "/home";
+});
 
 $(".updateEmployee").click(function () {
   // send ajax request to promote employee

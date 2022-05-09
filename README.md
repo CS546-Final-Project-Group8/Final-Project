@@ -105,6 +105,12 @@ managers and business owners can delete employees from the dashboard. This is do
 - Business owners can delete both employees and managers
 - Managers can delete other managers, but not themselves.
 
+## promote/demote employee
+
+Business owners and managers can promote/demote employees, Promote to Manager/Demote to Employee buttons are displayed in the employee table. This is done using AJAX.
+
+- Only active employees can be promoted to managers.
+
 ## Employee Search
 
 There is a search bar which filters the employees in the table by their name.

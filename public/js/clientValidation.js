@@ -105,6 +105,8 @@
   if (loginForm) {
     loginForm.addEventListener("submit", (event) => {
       event.preventDefault();
+      const error = document.querySelector(".error");
+      if (error) error.innerHTML = "";
       const errorDiv = document.getElementById("errorDiv");
       errorDiv.hidden = true;
 
@@ -128,6 +130,8 @@
   if (businessLoginForm) {
     businessLoginForm.addEventListener("submit", (event) => {
       event.preventDefault();
+      const error = document.querySelector(".error");
+      if (error) error.innerHTML = "";
       const errorDiv = document.getElementById("errorDiv");
       errorDiv.hidden = true;
 
@@ -150,6 +154,8 @@
   if (businessSignUpForm) {
     businessSignUpForm.addEventListener("submit", (event) => {
       event.preventDefault();
+      const error = document.querySelector(".error");
+      if (error) error.innerHTML = "";
       const errorDiv = document.getElementById("errorDiv");
       errorDiv.hidden = true;
 
