@@ -79,7 +79,11 @@ A numbered list of the previously clocked shifts with the most recent ones at th
 
 ## Request Time Off
 
-If the employee is not a manager, they can view their Time Off Requests and create new requests with the Request Time Off button. This opens a modal window with a form to enter the dates for the request. It then shows up on the list and managers can approve/reject the request from the dashboard.
+If the employee is not a manager, there will be a table rendered on their homepage alongside a Request Time Off button in which
+the employee's already submitted time-off requests will be presented. The Request Time Off button opens a modal window with a form to enter the start and end dates for the request. Upon submission, the request will have a status of pending until a manager
+approves or declines the request from the manager dashboard. Only pending requests are visible in the manager dashboard. The
+status displayed on the employees home page will be updated according to the managers choice, upon which an employee can delete
+their time off request. Employees can delete a request at any point in time.
 
 # Features (Manager Dashboard)
 
@@ -124,7 +128,7 @@ We chose Google Charts because of its ease of implementation and since a team me
 
 ## Time Off Requests
 
-Managers can see all active time off requests in a table with accept and reject buttons. After reviewed, the request is only visible on the employee's dashboard where they can delete the request.
+Managers can see all active time off requests in a table with accept and decline buttons. After reviewed, the request is only visible on the employee's dashboard where the employee can then delete the request.
 
 ## Store Open/Close button
 
