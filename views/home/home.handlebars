@@ -92,7 +92,7 @@
             <p id="time"></p>
             {{#if_eq employee.currentStatus "clockedOut"}}
             <p>Current status: <span style="font-weight: bold;">Clocked out</span></p>
-            <form action="/clockIn" style="margin: 30px;" method="POST">
+            <form action="/clockIn" id="clockInForm" style="margin: 30px;" method="POST">
                 <div class="row">
                     <div>
                         <label class="form-label" for="comment">Comment</label>
@@ -106,7 +106,7 @@
             {{/if_eq}}
             {{#if_eq employee.currentStatus "clockedIn"}}
             <p>Current status: <span style="font-weight: bold;">Clocked in</span></p>
-            <form style="margin: 30px;" method="POST">
+            <form style="margin: 30px;" id="clockOutForm" method="POST">
                 <div class="row">
                     <div>
                         <label class="form-label" for="comment">Comment</label>
@@ -121,19 +121,19 @@
             {{/if_eq}}
             {{#if_eq employee.currentStatus "meal"}}
             <p>Current status: <span style="font-weight: bold;">Meal Break</span></p>
-            <form style="margin: 30px;" method="POST">
+            <form style="margin: 30px;" action="/clockInLunch" id="mealBreakForm" method="POST">
                 <div class="row">
                     <div>
                         <label class="form-label" for="comment">Comment</label>
                         <input class="form-control" id="comment" name="comment" type="text" placeholder="(optional)" />
                     </div>
                     <span id="buttons">
-                        <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" formaction="/clockInLunch" type="submit">Lunch in</button>
+                        <button class="col-4 btn btn-primary" style="height: 38px; margin-top: 32px;" type="submit">Lunch in</button>
                     </span>
                 </div>
             </form>
             {{/if_eq}}
-
+            <p hidden class="clientError"></p>
             {{#if error}}
                 <p class="error">{{error}}</p>
             {{/if}}

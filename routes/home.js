@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
       await validate.checkTimeOffDateFormat(req.body.timeOffEndDate);
       let endDate = req.body.timeOffEndDate;
       await validate.checkTimeOffDates(startDate, endDate);
-      let businessId = req.session.businessId.toLowerCase().trim();
+      let businessId = req.session.businessId.trim();
       let employeeId = req.session.employeeId;
       let employeeName = req.session.employee.firstName + " " + req.session.employee.lastName;
       const newTimeEntry = await users.addTimeOffEntry(businessId, employeeId, employeeName, startDate, endDate);
@@ -77,9 +77,9 @@ router.put("/userTimeOffDelete", async (req, res) => {
     try {
       req.body.objId = xss(req.body.objId);
       await validate.checkID(req.body.objId);
-      let objId = req.body.objId.toLowerCase().trim();
+      let objId = req.body.objId.trim();
       await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
+      let businessId = req.session.businessId.trim();
       const result = await users.deleteTimeOffRequest(objId, businessId);
       if (result.requestStatus) {
         res.status(200).send("Request deleted");

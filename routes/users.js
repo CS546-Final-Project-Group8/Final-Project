@@ -98,7 +98,7 @@ router.post("/clockIn", async (req, res) => {
   if (!req.session.isBusiness && req.session.user) {
     try {
       req.body.comment = xss(req.body.comment);
-      await validate.checkString(req.body.comment);
+      await validate.checkCommentString(req.body.comment);
       let comment = req.body.comment.trim();
       // get store status from business
       const storeStatus = await businesses.getStoreStatus(req.session.businessId);
@@ -167,7 +167,7 @@ router.post("/clockOut", async (req, res) => {
   if (!req.session.isBusiness && req.session.user) {
     try {
       req.body.comment = xss(req.body.comment);
-      await validate.checkString(req.body.comment);
+      await validate.checkCommentString(req.body.comment);
       let comment = req.body.comment.trim();
 
       // get current status from employee
@@ -222,7 +222,7 @@ router.post("/clockOutLunch", async (req, res) => {
   if (!req.session.isBusiness && req.session.user) {
     try {
       req.body.comment = xss(req.body.comment);
-      await validate.checkString(req.body.comment);
+      await validate.checkCommentString(req.body.comment);
       let comment = req.body.comment.trim();
 
       // get current status from employee
@@ -277,7 +277,7 @@ router.post("/clockInLunch", async (req, res) => {
   if (!req.session.isBusiness && req.session.user) {
     try {
       req.body.comment = xss(req.body.comment);
-      await validate.checkString(req.body.comment);
+      await validate.checkCommentString(req.body.comment);
       let comment = req.body.comment.trim();
 
       // get store status from business

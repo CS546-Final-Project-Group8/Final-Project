@@ -60,7 +60,7 @@ router.patch("/updateBusinessInfo", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
+      let businessId = req.session.businessId.trim();
       req.body.businessName = xss(req.body.businessName);
       await validate.checkString(req.body.businessName);
       let businessName = req.body.businessName.trim();
@@ -150,7 +150,7 @@ router.post("/new", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
+      let businessId = req.session.businessId.trim();
       req.body.email = xss(req.body.email);
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();
@@ -274,7 +274,7 @@ router.put("/promoteEmployee", async (req, res) => {
     try {
       req.body.employeeId = xss(req.body.employeeId);
       await validate.checkID(req.body.employeeId);
-      let employeeId = req.body.employeeId.toLowerCase().trim();
+      let employeeId = req.body.employeeId.trim();
 
       const result = await users.promoteEmployee(employeeId);
       if (result.employeePromoted) {
@@ -295,7 +295,7 @@ router.put("/demoteEmployee", async (req, res) => {
     try {
       req.body.employeeId = xss(req.body.employeeId);
       await validate.checkID(req.body.employeeId);
-      let employeeId = req.body.employeeId.toLowerCase().trim();
+      let employeeId = req.body.employeeId.trim();
 
       const result = await users.demoteEmployee(employeeId);
 
@@ -321,7 +321,7 @@ router.get("/employee/:employee_id", async (req, res) => {
     try {
       req.params.employee_id = xss(req.params.employee_id);
       await validate.checkID(req.params.employee_id);
-      let employeeId = req.params.employee_id.toLowerCase().trim();
+      let employeeId = req.params.employee_id.trim();
       await validate.checkID(req.session.businessId);
       let employee = await users.getEmployee(req.session.businessId, employeeId);
       res.json(employee);
@@ -377,7 +377,7 @@ router.patch("/employee/:employee_id", async (req, res) => {
       let isActiveEmployee = req.body.isActiveEmployee.trim();
       req.params.employee_id = xss(req.params.employee_id);
       validate.checkID(req.params.employee_id);
-      let employeeId = req.params.employee_id.toLowerCase().trim();
+      let employeeId = req.params.employee_id.trim();
       validate.checkID(req.session.businessId);
       let updateResult = await users.updateEmployee(
         employeeId,
@@ -420,13 +420,13 @@ router.delete("/employee/:employee_id", async (req, res) => {
     try {
       req.params.employee_id = xss(req.params.employee_id);
       await validate.checkID(req.params.employee_id);
-      let employee_id = req.params.employee_id.toLowerCase().trim();
+      let employee_id = req.params.employee_id.trim();
       if (employee_id === req.session.employeeId) {
         res.status(200).send("You cannot delete yourself");
         return;
       }
       await validate.checkID(req.session.businessId);
-      let business_id = req.session.businessId.toLowerCase().trim();
+      let business_id = req.session.businessId.trim();
       const deleteResult = await users.deleteEmployee(business_id, employee_id);
       if (deleteResult.succeeded) {
         res.status(200).send("Employee deleted");
@@ -446,9 +446,9 @@ router.put("/acceptTimeOffRequest", async (req, res) => {
     try {
       req.body.objId = xss(req.body.objId);
       await validate.checkID(req.body.objId);
-      let objId = req.body.objId.toLowerCase().trim();
+      let objId = req.body.objId.trim();
       await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
+      let businessId = req.session.businessId.trim();
       const result = await users.acceptTimeOffRequest(objId, businessId);
       if (result.requestStatus) {
         res.status(200).send("Request accepted");
@@ -468,9 +468,9 @@ router.put("/declineTimeOffRequest", async (req, res) => {
     try {
       req.body.objId = xss(req.body.objId);
       await validate.checkID(req.body.objId);
-      let objId = req.body.objId.toLowerCase().trim();
+      let objId = req.body.objId.trim();
       await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
+      let businessId = req.session.businessId.trim();
       const result = await users.declineTimeOffRequest(objId, businessId);
       if (result.requestStatus) {
         res.status(200).send("Request declined");
@@ -539,7 +539,7 @@ router.put("/toggleStoreStatus", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
+      let businessId = req.session.businessId.trim();
       const toggleResult = await businesses.toggleStoreStatus(businessId);
       if (toggleResult.storeOpen) {
         req.session.storeOpen = true;
@@ -563,7 +563,7 @@ router.put("/estimateWages", async (req, res) => {
   if (req.session.isAdmin) {
     try {
       await validate.checkID(req.session.businessId);
-      let businessId = req.session.businessId.toLowerCase().trim();
+      let businessId = req.session.businessId.trim();
       const estimate = await businesses.estimateWages(businessId);
       if (estimate.succeeded) {
         res

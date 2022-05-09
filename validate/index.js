@@ -2,7 +2,10 @@ const { ObjectId } = require("mongodb");
 
 // function checkString(string) this function checks if the string is valid
 let checkString = async (str) => {
-  return !(!str || typeof str !== "string" || !str.trim());
+  if (!str || typeof str !== "string" || !str.trim()) {
+    throw "Error: Invalid string, please enter a string";
+  }
+  return true;
 };
 
 // function checkNumber(number) this function checks if the number is a valid positive number
@@ -108,9 +111,9 @@ let checkDate = async (date) => {
 // function cheackEmail(email) this function checks if the email is valid
 let checkEmail = async (email) => {
   await checkString(email);
-  email = email.trim();
+  email = email.toLowerCase().trim();
   let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if (!re.test(String(email).toLowerCase())) {
+  if (!re.test(String(email))) {
     throw "Invalid, Enter a proper email";
   } else {
     return true;
@@ -252,6 +255,13 @@ let checkTimeOffDateFormat = async (date) => {
   return true;
 };
 
+let checkCommentString = async (comment) => {
+  if (typeof comment !== "string") {
+    throw "Please enter a comment";
+  }
+  return true;
+};
+
 module.exports = {
   checkString,
   checkNumber,
@@ -267,4 +277,5 @@ module.exports = {
   checkEmploymentStatus,
   checkTimeOffDates,
   checkTimeOffDateFormat,
+  checkCommentString,
 };

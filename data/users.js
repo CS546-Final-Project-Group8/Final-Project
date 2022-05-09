@@ -27,7 +27,7 @@ let createEmployee = async (
   isManager
 ) => {
   await validate.checkID(businessId);
-  businessId = businessId.toLowerCase().trim();
+  businessId = businessId.trim();
   await validate.checkEmail(email);
   email = email.toLowerCase().trim();
   await validate.checkPassword(password);
@@ -134,14 +134,14 @@ let updateEmployee = async (employeeId, businessId, email, firstName, lastName, 
   zip = zip.trim();
   await validate.checkPhone(phone);
   phone = phone.trim();
-  await validate.checkNumber(hourlyPay);
-  hourlyPay = parseInt(hourlyPay);
-  await validate.checkDate(startDate);
-  startDate = startDate.trim();
   await validate.checkEmploymentStatus(employmentStatus);
   employmentStatus = employmentStatus.trim();
   await validate.checkBoolean(isActiveEmployee);
   isActiveEmployee = isActiveEmployee.toLowerCase().trim() === "true";
+  await validate.checkNumber(hourlyPay);
+  hourlyPay = parseInt(hourlyPay);
+  await validate.checkDate(startDate);
+  startDate = startDate.trim();
 
   // Check if businessId exists
   const businessCollection = await businesses();
@@ -272,17 +272,17 @@ let getEmployee = async (businessId, employeeId) => {
     businessId: businessId,
     _id: ObjectId(employeeId),
   });
-  if (!employee) throw `Employee with ObjectID: '${employeeId}' was not found.`;
+  if (!employee) throw `Employee was not found.`;
   employee._id = employee._id.toString();
   employee.hashedPassword = null;
   return employee;
 };
 
 let deleteEmployee = async (businessId, employeeId) => {
-  await validate.checkID(employeeId);
-  employeeId = employeeId.trim();
   await validate.checkID(businessId);
   businessId = businessId.trim();
+  await validate.checkID(employeeId);
+  employeeId = employeeId.trim();
   const employeesCollection = await employees();
   const deleteInfo = await employeesCollection.deleteOne({
     businessId: businessId,
@@ -295,7 +295,7 @@ let deleteEmployee = async (businessId, employeeId) => {
 let clockIn = async (employeeId, comment) => {
   await validate.checkID(employeeId);
   employeeId = employeeId.trim();
-  await validate.checkString(comment);
+  await validate.checkCommentString(comment);
   comment = comment.trim();
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
@@ -324,7 +324,7 @@ let clockIn = async (employeeId, comment) => {
 let clockOut = async (employeeId, comment) => {
   await validate.checkID(employeeId);
   employeeId = employeeId.trim();
-  await validate.checkString(comment);
+  await validate.checkCommentString(comment);
   comment = comment.trim();
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
@@ -352,7 +352,7 @@ let clockOut = async (employeeId, comment) => {
 let clockInLunch = async (employeeId, comment) => {
   await validate.checkID(employeeId);
   employeeId = employeeId.trim();
-  await validate.checkString(comment);
+  await validate.checkCommentString(comment);
   comment = comment.trim();
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
@@ -381,7 +381,7 @@ let clockInLunch = async (employeeId, comment) => {
 let clockOutLunch = async (employeeId, comment) => {
   await validate.checkID(employeeId);
   employeeId = employeeId.trim();
-  await validate.checkString(comment);
+  await validate.checkCommentString(comment);
   comment = comment.trim();
   const employeeCollection = await employees();
   const employee = await employeeCollection.findOne({ _id: ObjectId(employeeId) });
@@ -426,10 +426,6 @@ let promoteEmployee = async (employeeId) => {
   if (employee.isManager) throw "Employee is already a manager";
   if (employee.isActiveEmployee === false) throw "Employee is not active";
 
-  const businessCollection = await businesses();
-  const business = await businessCollection.findOne({ _id: ObjectId(employee.businessId) });
-  if (!business) throw "Business not found";
-
   const userUpdateInfo = {
     isManager: true,
   };
@@ -448,10 +444,6 @@ let demoteEmployee = async (employeeId) => {
   if (!employee) throw "Employee not found";
 
   if (!employee.isManager) throw "Employee is not a manager";
-
-  const businessCollection = await businesses();
-  const business = await businessCollection.findOne({ _id: ObjectId(employee.businessId) });
-  if (!business) throw "Business not found";
 
   const userUpdateInfo = {
     isManager: false,
@@ -528,7 +520,15 @@ let getShifts = async (employeeId) => {
 
 let addTimeOffEntry = async (businessId, employeeId, employeeName, startDate, endDate) => {
   await validate.checkID(businessId);
+  businessId = businessId.trim();
   await validate.checkID(employeeId);
+  employeeId = employeeId.trim();
+  await validate.checkString(employeeName);
+  employeeName = employeeName.trim();
+  await validate.checkTimeOffDateFormat(startDate);
+  startDate = startDate.trim();
+  await validate.checkTimeOffDateFormat(endDate);
+  endDate = endDate.trim();
   await validate.checkTimeOffDates(startDate, endDate);
   const businessCollection = await businesses();
   let newTimeOffRequest = {

@@ -4,9 +4,9 @@ let checkString = async (str) => {
 
 let checkEmail = async (email) => {
   await checkString(email);
-  email = email.trim();
+  email = email.toLowerCase().trim();
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if (!re.test(String(email).toLowerCase())) {
+  if (!re.test(String(email))) {
     throw "Invalid, Enter a proper email";
   } else {
     return true;
@@ -345,7 +345,7 @@ $(document).on("click", ".editEmployee", async function (event) {
 $("#editEmployeeForm").on("submit", async (event) => {
   event.preventDefault();
   let employeeId = $("#editEmployeeModal").attr("data-employee-id");
-  $("#modalErrorMessage").attr("hidden", true);
+  $("#employeeModalErrorMessage").attr("hidden", true);
   try {
     let email = $("#editEmail").val();
     let firstName = $("#editFirstName").val();
@@ -422,20 +422,20 @@ $("#editEmployeeForm").on("submit", async (event) => {
       })
       .fail((error) => {
         let data = JSON.parse(error.responseText);
-        $("#modalErrorMessage").text(data.error);
-        $("#modalErrorMessage").attr("hidden", false);
+        $("#employeeModalErrorMessage").text(data.error);
+        $("#employeeModalErrorMessage").attr("hidden", false);
       });
   } catch (e) {
     event.preventDefault();
-    $("#modalErrorMessage").text(e);
-    $("#modalErrorMessage").attr("hidden", false);
+    $("#employeeModalErrorMessage").text(e);
+    $("#employeeModalErrorMessage").attr("hidden", false);
   }
 });
 
 $("#cancelEditEmployee").on("click", async (event) => {
   event.preventDefault();
   $("#editEmployeeModal").hide();
-  $("#modalErrorMessage").attr("hidden", true);
+  $("#employeeModalErrorMessage").attr("hidden", true);
   // reset the contents of the modal
   resetModal();
 });
@@ -443,7 +443,7 @@ $("#cancelEditEmployee").on("click", async (event) => {
 let resetModal = () => {
   // reset modal back to original state
   $(".modal-body input").val("");
-  $("#modalErrorMessage").attr("hidden", true);
+  $("#employeeModalErrorMessage").attr("hidden", true);
 };
 
 //Updating business info from business login -> manager dashboard
