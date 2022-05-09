@@ -12,14 +12,14 @@ There are also extra features like the ability for employees to request time off
 
 # Steps to run the application
 
-0. Install the latest versions of npm and MongoDB
+1. Install the latest versions of npm and MongoDB
 
-1. Clone the repository
-2. Navigate to the folder in a command line and run:
-3. `npm ci` (to install the dependencies)
-4. `npm run seed` (to seed the database)
+2. Clone the repository
+3. Navigate to the folder in a command line and run:
+4. `npm ci` (to install the dependencies, according to the package-lock.json file))
+5. `npm run seed` (to seed the database)
    - Login information below
-5. `npm start` (to start the server)
+6. `npm start` (to start the server)
 
 Open http://localhost:3000/
 
