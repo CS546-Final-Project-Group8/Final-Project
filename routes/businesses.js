@@ -27,7 +27,7 @@ router.post("/signup", async (req, res) => {
     try {
       req.body.businessName = xss(req.body.businessName);
       await validate.checkString(req.body.businessName);
-      let businessName = req.body.businessName.toLowerCase().trim();
+      let businessName = req.body.businessName.trim();
       req.body.email = xss(req.body.email);
       await validate.checkEmail(req.body.email);
       let email = req.body.email.toLowerCase().trim();

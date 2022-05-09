@@ -68,10 +68,11 @@ let checkBusiness = async (email, password) => {
   const businessCollection = await businesses();
   const businessData = await businessCollection.findOne({ email: email });
   if (!businessData) throw "Either the email or password is invalid";
+  let businessId = businessData._id.toString();
   const passwordStatus = await bcrypt.compare(password, businessData.hashedPassword);
   if (!passwordStatus) throw "Either the email or password is invalid";
 
-  return { authenticated: true, businessID: businessData._id, storeStatus: businessData.storeOpen, isAdmin: true };
+  return { authenticated: true, businessID: businessId, storeStatus: businessData.storeOpen, isAdmin: true };
 };
 
 let calculatePay = async (businessId) => {
@@ -155,7 +156,7 @@ let getPastPayPeriods = async (businessId) => {
 
 let toggleStoreStatus = async (businessId) => {
   await validate.checkID(businessId);
-  businessId = businessId.toLowerCase().trim();
+  businessId = businessId.trim();
   const businessCollection = await businesses();
   const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
   if (!business) throw "Couldn't find business";
@@ -194,6 +195,22 @@ let getBusiness = async (businessId) => {
 let updateBusinessInfo = async (businessId, businessName, email, address, city, state, zip, phone, about) => {
   await validate.checkID(businessId);
   businessId = businessId.trim();
+  await validate.checkString(businessName);
+  businessName = businessName.trim();
+  await validate.checkEmail(email);
+  email = email.toLowerCase().trim();
+  await validate.checkString(address);
+  address = address.trim();
+  await validate.checkString(city);
+  city = city.trim();
+  await validate.checkState(state);
+  state = state.trim();
+  await validate.checkZip(zip);
+  zip = zip.trim();
+  await validate.checkPhone(phone);
+  phone = phone.trim();
+  await validate.checkString(about);
+  about = about.trim();
   const businessCollection = await businesses();
 
   // make sure that the email is unique
@@ -217,7 +234,7 @@ let updateBusinessInfo = async (businessId, businessName, email, address, city, 
 
 let estimateWages = async (businessId) => {
   await validate.checkID(businessId);
-  businessId = businessId.toLowerCase().trim();
+  businessId = businessId.trim();
   const employeeCollection = await employees();
   let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
 
@@ -252,6 +269,7 @@ let estimateWages = async (businessId) => {
 
 let getActiveEmployeesData = async (businessId) => {
   await validate.checkID(businessId);
+  businessId = businessId.trim();
 
   const employeeCollection = await employees();
   let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
@@ -275,6 +293,7 @@ let getActiveEmployeesData = async (businessId) => {
 
 let getEmployeeStatusData = async (businessId) => {
   await validate.checkID(businessId);
+  businessId = businessId.trim();
 
   const employeeCollection = await employees();
   let emps = await (await employeeCollection.find({ businessId: businessId })).toArray();
@@ -294,7 +313,7 @@ let getEmployeeStatusData = async (businessId) => {
 // get store status for a business
 let getStoreStatus = async (businessId) => {
   await validate.checkID(businessId);
-  businessId = businessId.toLowerCase().trim();
+  businessId = businessId.trim();
   const businessCollection = await businesses();
   const business = await businessCollection.findOne({ _id: ObjectId(businessId) });
   if (!business) throw "Couldn't find business";
