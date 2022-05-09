@@ -521,7 +521,7 @@ router.post("/calculate", async (req, res) => {
           payChecks: payChecks,
           timeOffRequests: allTimeOffRequests,
           pastCalculations: pastCalculations,
-          error: "No shifts worked since last calculation.",
+          error: "No active time entries available",
         });
       }
     } catch (e) {

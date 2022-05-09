@@ -3,7 +3,7 @@ const employees = mongoCollections.employees;
 const businesses = mongoCollections.businesses;
 const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const saltRounds = 12;
 const validate = require("../validate/index.js");
 const users = require("../data/users.js");
 

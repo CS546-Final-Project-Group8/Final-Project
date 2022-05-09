@@ -381,42 +381,42 @@
     <div id="line_chart" style="flex: 1;"></div>
   </div>
 
+  {{#if allEmployees.length}}
   <h4 style="margin-top:20px">Time Off Requests</h4>
-<div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
-  <p class="mb-0" id="timeOffAlertText"></p>
-  <button type="button" class="btn-close" aria-label="Close" id="timeOffAlertClose"></button>
-</div>
-<table class="table table-striped table-hover" id="timeOffRequestTable">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Start Date</th>
-      <th>End Date</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each timeOffRequests}}
+  <div class="alert alert-success alert-dismissible fade show" id="alertTimeOff" hidden role="alert">
+    <p class="mb-0" id="timeOffAlertText"></p>
+    <button type="button" class="btn-close" aria-label="Close" id="timeOffAlertClose"></button>
+  </div>
+  <table class="table table-striped table-hover" id="timeOffRequestTable">
+    <thead>
       <tr>
-        <td>{{employeeName}}</td>
-        <td>{{dateFormat timeOffStartDate "M/D/YYYY"}}</td>
-        <td>{{dateFormat timeOffEndDate "M/D/YYYY"}}</td>
-        <td>
-          <button class="updateRequest btn btn-primary" id="timeOffReqAccept" value={{objId}} style="line-height: inherit; padding: revert;">Accept</button>
-          <button class="updateRequest btn btn-primary" id="timeOffReqDecline" value={{objId}} style="line-height: inherit; padding: revert;">Decline</button>
-        </td>
+        <th>Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Actions</th>
       </tr>
-    {{else}}
-      <tr>
-        <td colspan="4">There are no pending time off requests.</td>
-      </tr>
-    {{/each}}
-  </tbody>
-</table>
-<br />
-
+    </thead>
+    <tbody>
+      {{#each timeOffRequests}}
+        <tr>
+          <td>{{employeeName}}</td>
+          <td>{{dateFormat timeOffStartDate "M/D/YYYY"}}</td>
+          <td>{{dateFormat timeOffEndDate "M/D/YYYY"}}</td>
+          <td>
+            <button class="updateRequest btn btn-primary" id="timeOffReqAccept" value={{objId}} style="line-height: inherit; padding: revert;">Accept</button>
+            <button class="updateRequest btn btn-primary" id="timeOffReqDecline" value={{objId}} style="line-height: inherit; padding: revert;">Decline</button>
+          </td>
+        </tr>
+      {{else}}
+        <tr>
+          <td colspan="4">There are no pending time off requests.</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <br />
+  {{/if}}
   <hr />
-
   <h2 style="margin-top:15px" id="calculation">Payroll Calculation</h2>
 
   
