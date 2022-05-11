@@ -277,7 +277,14 @@ router.put("/promoteEmployee", async (req, res) => {
       let employeeId = req.body.employeeId.trim();
 
       const result = await users.promoteEmployee(employeeId);
+      if (result.timeEntriesDeleted) {
+        res.status(200).send("Employee promoted and time entries deleted");
+        return;
+      }
       if (result.employeePromoted) {
+        req.session.isManager = true;
+        req.session.isAdmin = true;
+        req.session.isEmployee = false;
         res.status(200).send("Employee promoted");
       } else {
         res.status(500).send("Internal Server Error");
@@ -302,6 +309,7 @@ router.put("/demoteEmployee", async (req, res) => {
       if (result.employeeDemoted && req.body.employeeId === req.session.employeeId) {
         req.session.isAdmin = false;
         req.session.isEmployee = true;
+        req.session.isManager = false;
         res.status(200).send("redirect to home");
       } else if (result.employeeDemoted) {
         res.status(200).send("Employee demoted");

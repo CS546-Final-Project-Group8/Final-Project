@@ -433,7 +433,25 @@ let promoteEmployee = async (employeeId) => {
   const updateInfo2 = await employeeCollection.updateOne({ _id: ObjectId(employeeId) }, { $set: userUpdateInfo });
   if (!updateInfo2.matchedCount && !updateInfo2.modifiedCount) throw "Update failed";
 
-  return { employeePromoted: true };
+  // delete timeoff all entries for employee
+  const businessCollection = await businesses();
+  const business = await businessCollection.findOne({ _id: ObjectId(employee.businessId) });
+  if (!business) throw "Business not found";
+  let timeOffEntries = business.timeOff;
+  let newTimeOffEntries = [];
+  for (const element of timeOffEntries) {
+    if (element.employeeId !== employeeId) {
+      newTimeOffEntries.push(element);
+    }
+  }
+  const updateInfo = await businessCollection.updateOne({ _id: ObjectId(employee.businessId) }, { $set: { timeOff: newTimeOffEntries } });
+  if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw "Updated to manager but failed to delete time off entries";
+
+  if (timeOffEntries.length !== newTimeOffEntries.length) {
+    return { employeePromoted: true, timeEntriesDeleted: true };
+  } else {
+    return { employeePromoted: true, timeEntriesDeleted: false };
+  }
 };
 
 let demoteEmployee = async (employeeId) => {
