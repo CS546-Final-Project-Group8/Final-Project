@@ -5,7 +5,7 @@ const businessSignUpForm = document.getElementById("businessSignUp");
 const timeOffForm = document.getElementById("timeOffForm");
 
 //Checks validity of email
-function checkEmail(email) {
+function checkEmailInHome(email) {
   let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return !!re.test(String(email).toLowerCase());
 }
@@ -13,16 +13,16 @@ function checkEmail(email) {
 //Error checking for all login form inputs, throws error if an input is invalid
 function loginFormErrorCheck(businessEmail, email, password) {
   if (!businessEmail || !email || !password) throw "Please complete all fields";
-  if (!checkEmail(businessEmail) && !checkEmail(email)) throw "Email addresses provided are invalid";
-  if (!checkEmail(businessEmail)) throw "Business email address provided is invalid";
-  if (!checkEmail(email)) throw "Email provided address is invalid";
+  if (!checkEmailInHome(businessEmail) && !checkEmailInHome(email)) throw "Email addresses provided are invalid";
+  if (!checkEmailInHome(businessEmail)) throw "Business email address provided is invalid";
+  if (!checkEmailInHome(email)) throw "Email provided address is invalid";
   if (password.length < 8) throw "Password must be at least 8 characters";
 }
 
 //Error checking for all business login form inputs, throws error if an input is invalid
 function businessLoginFormErrorCheck(email, password) {
   if (!email || !password) throw "Please complete all fields";
-  if (!checkEmail(email)) throw "Email address provided is invalid";
+  if (!checkEmailInHome(email)) throw "Email address provided is invalid";
   if (password.length < 8) throw "Password must be at least 8 characters";
 }
 
@@ -83,7 +83,7 @@ function businessSignUpFormErrorCheck(businessName, email, password, confirmPass
   let zipRE = /^\d{5}$/;
   let phoneRE = /^\d{10}$/;
   if (!businessName || !email || !password || !confirmPassword || !address || !city || !state || !zip || !phoneNumber || !about) throw "Please complete all fields";
-  if (!checkEmail(email)) throw "Email address provided is invalid";
+  if (!checkEmailInHome(email)) throw "Email address provided is invalid";
   if (password.length < 8) throw "Password must be at least 8 characters";
   if (password != confirmPassword) throw "Passwords do not match";
   if (!states.includes(state.toUpperCase())) throw "State must be entered in 2 letter format";

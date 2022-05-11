@@ -167,7 +167,12 @@ let toggleStoreStatus = async (businessId) => {
     let clockedEmployees = await employeeCollection.find({ businessId: businessId, currentStatus: { $ne: "clockedOut" } }).toArray();
     for (const employee of clockedEmployees) {
       let employee_id = employee._id.toString();
-      await users.clockOut(employee_id, "Store closed");
+      if (employee.currentStatus === "clockedIn") {
+        await users.clockOut(employee_id, "Store closed");
+      } else {
+        await users.clockInLunch(employee_id, "");
+        await users.clockOut(employee_id, "Store closed");
+      }
     }
   }
 
