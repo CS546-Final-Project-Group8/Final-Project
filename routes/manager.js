@@ -47,7 +47,7 @@ router.get("/businessInfo", async (req, res) => {
     try {
       await validate.checkID(req.session.businessId);
       let businessInfo = await businesses.getBusiness(req.session.businessId);
-      res.json(businessInfo);
+      res.status(200).json(businessInfo);
     } catch (e) {
       res.status(400).json({ error: e });
     }
@@ -324,7 +324,7 @@ router.get("/employee/:employee_id", async (req, res) => {
       let employeeId = req.params.employee_id.trim();
       await validate.checkID(req.session.businessId);
       let employee = await users.getEmployee(req.session.businessId, employeeId);
-      res.json(employee);
+      res.status(200).json(employee);
     } catch (e) {
       res.status(400).json({ error: e });
     }
