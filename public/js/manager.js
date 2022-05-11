@@ -132,7 +132,9 @@ $(".updateEmployee").click(function () {
         employeeId: employeeId,
       },
       success: function (data) {
-        if (data === "Employee promoted") {
+        if (data === "Employee promoted and time entries deleted") {
+          window.location.replace("/manager");
+        } else if (data === "Employee promoted") {
           // get element with value of employeeId
           element = $("[value=" + employeeId + "]");
           element.text("Demote to Employee");

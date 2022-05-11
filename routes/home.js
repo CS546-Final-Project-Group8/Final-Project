@@ -8,6 +8,8 @@ router.get("/", async (req, res) => {
   if (req.session.user && !req.session.isBusiness) {
     try {
       let shifts = await users.getShifts(req.session.employeeId);
+      let employee = await users.getEmployee(req.session.businessId, req.session.employeeId);
+      req.session.isAdmin = employee.isManager;
       let timeOffUserEntries = await users.getUserTimeOffEntries(req.session.businessId, req.session.employeeId);
       res.render("home/home", {
         title: "Home",
