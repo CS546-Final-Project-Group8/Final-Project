@@ -2,9 +2,11 @@
 
 The repository for Group 8's Final Project for 2022S CS 546 - Web Programming.
 
+A timekeeping web application with a virtual punch clock built using Node.js and express, with mongodb for storage, bcrypt for encryption, handlebars for layouts, and google charts for visualization
+
 Group members: Peter Rauscher, Joseph Sofia, Harsha Penugonda, Murat Ulu
 
-# Payroll Application for small scale businesses.
+# Payroll Application for small scale businesses
 
 This application provides an account system and a virtual punch clock for employees in small businesses. Employees can clock in and out while their hours worked are recorded as shifts. Salary is calculated based on the number of hours worked during their shifts, multiplied by their wage.  
 Managers can access the Manager Dashboard to view/edit employee information with visualizations powered by Google Charts. They can perform payroll calculations with the push of a button, and also view an estimate of total wages to be paid based on shifts worked so far.  
